@@ -4,7 +4,7 @@
 	<groupId>org.eclipse.emf.gwt</groupId>
 	<packaging>pom</packaging>
 	<artifactId>emf-genmymodel-parent</artifactId>
-	<version>2.9.0-SNAPSHOT</version>
+	<version>2.9.1-SNAPSHOT</version>
 	<name>EMF GWT Parent Project</name>
 
 	<modules>
@@ -73,6 +73,11 @@
 	</build>
 
 	<distributionManagement>
+		<repository>
+			<id>axellience-release</id>
+			<name>Axellience Release Repository</name>
+			<url>dav:https://repository-axellience.forge.cloudbees.com/release/</url>
+		</repository>
 		<snapshotRepository>
 			<id>axellience-snapshot</id>
 			<name>Axellience Snapshot Repository</name>
