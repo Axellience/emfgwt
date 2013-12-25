@@ -111,7 +111,7 @@
 		</plugins>
 	</build>
 
-	<distributionManagement>
+<!--	<distributionManagement>
 		<repository>
 			<id>axellience-release</id>
 			<name>Axellience Release Repository</name>
@@ -123,4 +123,5 @@
 			<url>dav:https://repository-axellience.forge.cloudbees.com/snapshot/</url>
 		</snapshotRepository>
 	</distributionManagement>
+-->
 </project>
