@@ -1,6 +1,17 @@
 *.class
+*.orig
 
 # Package Files #
 *.jar
 *.war
 *.ear
+
+# Eclipse files #
+bin/
+target/
+.gwt/
+.settings/
+.classpath
+.project
+.metadata
+
