@@ -1,2 +1,2 @@
-emfgwt essai
-============
+The EMF GWT implementation 
+==========================
