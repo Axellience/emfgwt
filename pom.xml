@@ -64,6 +64,10 @@
             <configuration>
             	<enableFeatureVersions>true</enableFeatureVersions>
            		<autoVersionSubmodules>true</autoVersionSubmodules>
+           		<enableSshAgent>true</enableSshAgent>
+           		<noReleaseBuild>true</noReleaseBuild>
+           		<noDeploy>true</noDeploy>
+           		<pushReleases>true</pushReleases>
             </configuration>
         </plugin>
     </plugins>
