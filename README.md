@@ -1,2 +1,2 @@
-emfgwt
-======
+The EMF GWT implementation 
+==========================
