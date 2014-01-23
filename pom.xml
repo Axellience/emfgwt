@@ -62,9 +62,7 @@
             <artifactId>maven-jgitflow-plugin</artifactId>
             <version>1.0-alpha26</version>
             <configuration>
-            	<enableFeatureVersions>true</enableFeatureVersions>
            		<autoVersionSubmodules>true</autoVersionSubmodules>
-           		<enableSshAgent>true</enableSshAgent>
            		<noReleaseBuild>true</noReleaseBuild>
            		<noDeploy>true</noDeploy>
            		<pushReleases>true</pushReleases>
