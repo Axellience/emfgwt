@@ -1,10 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<parent>
+		<groupId>com.axellience</groupId>
+		<artifactId>gobal-parent</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
 	<groupId>org.eclipse.emf.gwt</groupId>
 	<packaging>pom</packaging>
 	<artifactId>emf-genmymodel-parent</artifactId>
-	<version>2.10</version>
+	<version>2.10.1</version>
 	<name>EMF GWT Parent Project</name>
 
 	<modules>
@@ -12,13 +18,6 @@
 		<module>emf-ecore</module>
 		<module>emf-edit</module>
 	</modules>
-
-	<properties>
-		<gwt.version>2.5.1</gwt.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.7</maven.compiler.source>
-    	<maven.compiler.target>1.7</maven.compiler.target>
-	</properties>
 
 	<scm>
 		<connection>scm:git://github.com/Axellience/emfgwt.git</connection>
@@ -56,19 +55,5 @@
 				<directory>src/main/resources</directory>
 			</resource>
 		</resources>
-		<plugins>
-        <plugin>
-            <groupId>com.atlassian.maven.plugins</groupId>
-            <artifactId>maven-jgitflow-plugin</artifactId>
-            <version>1.0-alpha26</version>
-            <configuration>
-           		<autoVersionSubmodules>true</autoVersionSubmodules>
-           		<noReleaseBuild>true</noReleaseBuild>
-           		<noDeploy>true</noDeploy>
-           		<pushReleases>true</pushReleases>
-            </configuration>
-        </plugin>
-    </plugins>
 	</build>
-
 </project>
