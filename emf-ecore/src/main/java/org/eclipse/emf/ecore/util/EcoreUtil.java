@@ -68,7 +68,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
  */
 public class EcoreUtil
 {
-	private static final Logger logger = Logger.getLogger(EcoreUtil.class.getName());
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = Logger.getLogger(EcoreUtil.class.getName());
   //   // Suppress default constructor for noninstantiability.
   //   private EcoreUtil()
   //   {
