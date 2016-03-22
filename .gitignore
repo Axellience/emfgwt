@@ -1,17 +1,35 @@
-*.class
-*.orig
+# ------------------------------------------------------
+#  EMF GWT: ignored files
+# ------------------------------------------------------
 
-# Package Files #
-*.jar
-*.war
-*.ear
-
-# Eclipse files #
-bin/
+# Maven
 target/
-.gwt/
+
+# eclipse
 .settings/
 .classpath
 .project
 .metadata
 
+# IntelliJ
+*.iml
+*.iws
+*.ipr
+.idea/
+
+# OS
+.DS_Store
+
+# Misc
+*.swp
+
+# GWT
+/**/.gwt
+/**/workdir
+
+# Others
+*.class
+*.war
+*.orig
+*.jar
+*.ear
