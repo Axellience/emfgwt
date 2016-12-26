@@ -21,6 +21,8 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.IChildCreationExtender;
 
+import com.google.gwt.core.client.GWT;
+
 
 /**
  * The <b>Plugin</b> for the model EMF.Edit library.
@@ -182,8 +184,7 @@ public final class EMFEditPlugin extends EMFPlugin
     else if ("_UI_DeleteCommand_label".equals(key)) return PROPERTIES.deleteCommandLabel();
     else if ("_UI_DeleteCommand_description".equals(key)) return PROPERTIES.deleteCommandDescription();
     else if ("_UI_ChildCreationExtender_extensionpoint".equals(key)) return PROPERTIES.childCreationExtenderExtensionpoint();
-    else return key;*/
-	  return key;
+    else*/ return key;
   }
 
   @Override
@@ -198,8 +199,7 @@ public final class EMFEditPlugin extends EMFPlugin
     else if ("_UI_Property_description".equals(key)) return PROPERTIES.propertyDescription(substitutions[0], substitutions[1]);
     else if ("_UI_CreateChild_text2".equals(key)) return PROPERTIES.createChildText2(substitutions[0], substitutions[1]);
     else if ("_UI_CreateChild_text3".equals(key)) return PROPERTIES.createChildText3(substitutions[1]);
-    else return key;*/
-	  return key;
+    else*/ return key;
   }
   /**
    * <!-- begin-user-doc -->
@@ -218,7 +218,6 @@ public final class EMFEditPlugin extends EMFPlugin
   {
     /*if ("full/obj16/Resource".equals(key)) return IMAGES.resource();
     else if ("full/obj16/ResourceSet".equals(key)) return IMAGES.resourceSet();
-    else return key;*/
-	  return key;
+    else*/ return key;
   }
 }
