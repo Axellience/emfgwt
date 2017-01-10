@@ -22,90 +22,89 @@ import org.eclipse.emf.ecore.resource.URIService;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-
 public class URIServiceImpl extends RemoteServiceServlet implements URIService
 {
-  private static final long serialVersionUID = 1L;
-
-  private static class SafeSimpleDateFormat extends SimpleDateFormat implements EFactoryImpl.InternalEDateTimeFormat
-  {
     private static final long serialVersionUID = 1L;
-
-    public SafeSimpleDateFormat(String pattern)
+    
+    private static class SafeSimpleDateFormat extends SimpleDateFormat
+            implements EFactoryImpl.InternalEDateTimeFormat
     {
-      super(pattern, Locale.ENGLISH);
+        private static final long serialVersionUID = 1L;
+        
+        public SafeSimpleDateFormat(String pattern)
+        {
+            super(pattern, Locale.ENGLISH);
+        }
+        
+        @Override
+        public synchronized Date parse(String source)
+        {
+            try
+            {
+                return super.parse(source);
+            }
+            catch (ParseException parseException)
+            {
+                throw new RuntimeException(parseException);
+            }
+        }
+        
+        @Override
+        public synchronized StringBuffer format(Date date, StringBuffer toAppendTo,
+                FieldPosition fieldPosition)
+        {
+            return super.format(date, toAppendTo, fieldPosition);
+        }
     }
-
-    @Override
-    public synchronized Date parse(String source)
+    
+    static
     {
-      try
-      {
-        return super.parse(source);
-      }
-      catch (ParseException parseException)
-      {
-        throw new RuntimeException(parseException);
-      }
+        // For initialization of this class so its static initializer block is called.
+        //
+        //DatastoreUtil.class.getName();
+        
+        // The client side implementation for date/time formatting doesn't work on the server, so use the regular Java runtime support for it on the server.
+        //
+        EFactoryImpl.EDATE_FORMATS =
+            new EFactoryImpl.InternalEDateTimeFormat[] {
+                new SafeSimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'SSSZ"),
+                new SafeSimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'SSS"),
+                new SafeSimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"),
+                new SafeSimpleDateFormat("yyyy-MM-dd'T'HH:mm"),
+                new SafeSimpleDateFormat("yyyy-MM-dd") };
     }
-
-    @Override
-    public synchronized StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition fieldPosition)
+    
+    public URIServiceImpl()
     {
-      return super.format(date, toAppendTo, fieldPosition);
+        super();
     }
-  }
-
-  static
-  {
-    // For initialization of this class so its static initializer block is called.
-    //
-    //DatastoreUtil.class.getName();
-
-    // The client side implementation for date/time formatting doesn't work on the server, so use the regular Java runtime support for it on the server.
-    //
-    EFactoryImpl.EDATE_FORMATS =
-      new EFactoryImpl.InternalEDateTimeFormat[]
-      {
-        new SafeSimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'SSSZ"),
-        new SafeSimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'SSS"),
-        new SafeSimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"),
-        new SafeSimpleDateFormat("yyyy-MM-dd'T'HH:mm"),
-        new SafeSimpleDateFormat("yyyy-MM-dd")
-      };
-  }
-
-  public URIServiceImpl()
-  {
-    super();
-  }
-
-  public Map<?, ?> fetch(String uri, Map<?, ?> options)
-  {
-	  throw new UnsupportedOperationException();
-    //return DatastoreUtil.fetch(uri, options);
-  }
-
-  public Map<?, ?> store(String uri, byte[] bytes, Map<?, ?> options)
-  {
-	  throw new UnsupportedOperationException();
-    //return DatastoreUtil.store(uri, bytes, options);
-  }
-
-  public Map<?, ?> delete(String uri, Map<?, ?> options)
-  {
-	  throw new UnsupportedOperationException();
-    //return DatastoreUtil.delete(uri, options);
-  }
-
-  public boolean exists(String uri, Map<?, ?> options)
-  {
-	  throw new UnsupportedOperationException();
-    //return DatastoreUtil.exists(uri, options);
-  }
-
-  public WhiteList whiteList(WhiteList whiteList)
-  {
-    return null;
-  }
+    
+    public Map<?, ?> fetch(String uri, Map<?, ?> options)
+    {
+        throw new UnsupportedOperationException();
+        //return DatastoreUtil.fetch(uri, options);
+    }
+    
+    public Map<?, ?> store(String uri, byte[] bytes, Map<?, ?> options)
+    {
+        throw new UnsupportedOperationException();
+        //return DatastoreUtil.store(uri, bytes, options);
+    }
+    
+    public Map<?, ?> delete(String uri, Map<?, ?> options)
+    {
+        throw new UnsupportedOperationException();
+        //return DatastoreUtil.delete(uri, options);
+    }
+    
+    public boolean exists(String uri, Map<?, ?> options)
+    {
+        throw new UnsupportedOperationException();
+        //return DatastoreUtil.exists(uri, options);
+    }
+    
+    public WhiteList whiteList(WhiteList whiteList)
+    {
+        return null;
+    }
 }

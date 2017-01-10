@@ -1,7 +1,5 @@
 /**
- * <copyright>
- *
- * Copyright (c) 2002-2011 IBM Corporation and others.
+ * Copyright (c) 2002-2012 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,10 +7,6 @@
  *
  * Contributors:
  *   IBM - Initial API and implementation
- *
- * </copyright>
- *
- * $Id: EcoreUtil.java,v 1.7 2011/10/25 13:44:05 emerks Exp $
  */
 package org.eclipse.emf.ecore.util;
 
@@ -30,7 +24,6 @@ import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.RandomAccess;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.AdapterFactory;
@@ -68,7 +61,6 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
  */
 public class EcoreUtil
 {
-	private static final Logger logger = Logger.getLogger(EcoreUtil.class.getName());
   //   // Suppress default constructor for noninstantiability.
   //   private EcoreUtil()
   //   {
@@ -4255,7 +4247,7 @@ public class EcoreUtil
       if (settingDelegates != null)
       {
         List<String> result = new ArrayList<String>();
-        for (String settingDelegate : settingDelegates.split("\\w"))
+        for (String settingDelegate : settingDelegates.split("\\w+"))
         {
           result.add(settingDelegate);
         }

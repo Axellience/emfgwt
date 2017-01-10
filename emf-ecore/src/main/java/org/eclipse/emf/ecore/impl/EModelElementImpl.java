@@ -154,12 +154,12 @@ public abstract class EModelElementImpl extends MinimalEObjectImpl.Container imp
         int size = eAnnotations.size();
         if (size > 0)
         {
-          Object [] eAnnotationArray = ((BasicEList<?>)eAnnotations).data();
+          EAnnotation [] eAnnotationArray = (EAnnotation[])((BasicEList<?>)eAnnotations).data();
           if (source == null)
           {
             for (int i = 0; i < size; ++i)
             {
-              EAnnotation eAnnotation = (EAnnotation) eAnnotationArray[i];
+              EAnnotation eAnnotation = eAnnotationArray[i];
               if (eAnnotation.getSource() == null)
               {
                 return eAnnotation;
@@ -170,7 +170,7 @@ public abstract class EModelElementImpl extends MinimalEObjectImpl.Container imp
           {
             for (int i = 0; i < size; ++i)
             {
-              EAnnotation eAnnotation = (EAnnotation) eAnnotationArray[i];
+              EAnnotation eAnnotation = eAnnotationArray[i];
               if (source.equals(eAnnotation.getSource()))
               {
                 return eAnnotation;

@@ -44,9 +44,9 @@ public class DatastoreURIHandlerImpl extends URIHandlerImpl
         @Override
         public void flush() throws IOException
         {
-          byte[] bytes = toByteArray();
-    	  throw new UnsupportedOperationException();
-          /*DatastoreUtil.store(uri.toString(), bytes, options);
+            throw new UnsupportedOperationException();
+          /*byte[] bytes = toByteArray();
+          DatastoreUtil.store(uri.toString(), bytes, options);
           Map<Object, Object> response = getResponse(options);
           Long timestamp = (Long)response.get(URIConverter.RESPONSE_TIME_STAMP_PROPERTY);
           if (timestamp == null)
@@ -65,9 +65,9 @@ public class DatastoreURIHandlerImpl extends URIHandlerImpl
   @Override
   public InputStream createInputStream(URI uri, Map<?, ?> options) throws IOException
   {
-    String uriString = uri.toString();
-	throw new UnsupportedOperationException();
-    /*DatastoreUtil.fetch(uriString, options);
+      throw new UnsupportedOperationException();
+    /*String uriString = uri.toString();
+    DatastoreUtil.fetch(uriString, options);
     Map<Object, Object> response = getResponse(options);
     Object result = response.get(URIConverter.RESPONSE_RESULT);
     if (result == null)
@@ -88,14 +88,14 @@ public class DatastoreURIHandlerImpl extends URIHandlerImpl
   @Override
   public void delete(URI uri, Map<?, ?> options) throws IOException
   {
-	  throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException();
     //DatastoreUtil.delete(uri.toString(), options);
   }
 
   @Override
   public boolean exists(URI uri, Map<?, ?> options)
   {
-	  throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException();
     //return DatastoreUtil.exists(uri.toString(), options);
   }
 
