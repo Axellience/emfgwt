@@ -21,6 +21,7 @@ import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.notify.impl.NotificationImpl;
 import org.eclipse.emf.common.util.Array;
 import org.eclipse.emf.common.util.BasicEList;
+import org.eclipse.emf.common.util.Reflect;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
@@ -70,9 +71,7 @@ public abstract class EcoreEList<E> extends NotifyingInternalEListImpl<E> implem
 
   protected boolean isInstance(Object object)
   {
-    // TODO
-    return true;
-    // return dataClass.isInstance(object);
+      return Reflect.isInstance(dataClass, object);
   }
 
   @Override
