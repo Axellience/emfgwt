@@ -617,7 +617,6 @@ public class BasicEList<E> extends AbstractEList<E> implements RandomAccess, Ser
         if (index >= size)
             throw new BasicIndexOutOfBoundsException(index, size);
         
-        ++modCount;
         @SuppressWarnings("unchecked")
         E oldObject = (E) data[index];
         
@@ -654,8 +653,6 @@ public class BasicEList<E> extends AbstractEList<E> implements RandomAccess, Ser
     @Override
     public void clear()
     {
-        ++modCount;
-        
         Object[] oldData = data;
         int oldSize = size;
         
@@ -683,8 +680,6 @@ public class BasicEList<E> extends AbstractEList<E> implements RandomAccess, Ser
     @Override
     public E move(int targetIndex, int sourceIndex)
     {
-        ++modCount;
-        
         if (targetIndex >= size)
             throw new IndexOutOfBoundsException("targetIndex=" + targetIndex + ", size=" + size);
         
@@ -718,8 +713,6 @@ public class BasicEList<E> extends AbstractEList<E> implements RandomAccess, Ser
      */
     public void shrink()
     {
-        ++modCount;
-        
         // Conditionally create the data.
         //
         if (size == 0)
@@ -744,7 +737,6 @@ public class BasicEList<E> extends AbstractEList<E> implements RandomAccess, Ser
      */
     public void grow(int minimumCapacity)
     {
-        ++modCount;
         int oldCapacity = data == null ? 0 : data.length;
         if (minimumCapacity > oldCapacity)
         {
