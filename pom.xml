@@ -3,7 +3,7 @@
 	<groupId>org.eclipse.emf.gwt</groupId>
 	<packaging>pom</packaging>
 	<artifactId>emf-genmymodel-parent</artifactId>
-	<version>2.13-SNAPSHOT</version>
+	<version>2.13</version>
 	<name>EMF GWT Parent Project</name>
 
 	<properties>
