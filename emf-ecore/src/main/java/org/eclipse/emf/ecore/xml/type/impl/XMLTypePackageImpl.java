@@ -11,7 +11,8 @@
 package org.eclipse.emf.ecore.xml.type.impl;
 
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import org.eclipse.emf.common.util.Reflect;
@@ -29,6 +30,8 @@ import org.eclipse.emf.ecore.xml.type.XMLTypeDocumentRoot;
 import org.eclipse.emf.ecore.xml.type.XMLTypeFactory;
 import org.eclipse.emf.ecore.xml.type.XMLTypePackage;
 import org.eclipse.emf.ecore.xml.type.util.XMLTypeValidator;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * <!-- begin-user-doc -->
@@ -533,7 +536,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (theXMLTypePackage, 
        new EValidator.Descriptor()
        {
-         public EValidator getEValidator()
+         @Override
+        public EValidator getEValidator()
          {
            return XMLTypeValidator.INSTANCE;
          }
@@ -559,12 +563,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (AnyType.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof AnyType;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new AnyType[size];
          }
@@ -573,12 +579,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (ProcessingInstruction.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof ProcessingInstruction;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new ProcessingInstruction[size];
          }
@@ -587,12 +595,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (SimpleAnyType.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof SimpleAnyType;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new SimpleAnyType[size];
          }
@@ -601,12 +611,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (XMLTypeDocumentRoot.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof XMLTypeDocumentRoot;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new XMLTypeDocumentRoot[size];
          }
@@ -615,12 +627,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -629,12 +643,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (byte[].class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof byte[];
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new byte[size][];
          }
@@ -643,12 +659,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (Boolean.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof Boolean;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new Boolean[size];
          }
@@ -657,12 +675,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (Byte.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof Byte;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new Byte[size];
          }
@@ -671,12 +691,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -685,12 +707,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -699,12 +723,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -713,12 +739,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (Double.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof Double;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new Double[size];
          }
@@ -727,12 +755,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -741,12 +771,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (List.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof List<?>;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new List[size];
          }
@@ -755,12 +787,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (List.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof List<?>;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new List[size];
          }
@@ -769,12 +803,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -783,12 +819,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (Float.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof Float;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new Float[size];
          }
@@ -797,12 +835,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -811,12 +851,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -825,12 +867,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -839,12 +883,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -853,12 +899,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -867,12 +915,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (byte[].class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof byte[];
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new byte[size][];
          }
@@ -881,12 +931,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -895,12 +947,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -909,12 +963,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (List.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof List<?>;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new List[size];
          }
@@ -923,12 +979,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (List.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof List<?>;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new List[size];
          }
@@ -937,12 +995,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -951,12 +1011,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (Integer.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof Integer;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new Integer[size];
          }
@@ -965,12 +1027,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -979,12 +1043,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (Long.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof Long;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new Long[size];
          }
@@ -993,12 +1059,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -1007,12 +1075,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -1021,12 +1091,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -1035,12 +1107,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -1049,12 +1123,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (List.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof List<?>;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new List[size];
          }
@@ -1063,12 +1139,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (List.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof List<?>;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new List[size];
          }
@@ -1077,12 +1155,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -1091,12 +1171,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -1105,12 +1187,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -1119,12 +1203,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -1133,12 +1219,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -1147,12 +1235,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -1161,12 +1251,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (Short.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof Short;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new Short[size];
          }
@@ -1175,12 +1267,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -1189,12 +1283,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -1203,12 +1299,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -1217,12 +1315,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (Short.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof Short;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new Short[size];
          }
@@ -1231,12 +1331,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (Long.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof Long;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new Long[size];
          }
@@ -1245,12 +1347,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (String.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof String;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new String[size];
          }
@@ -1259,12 +1363,14 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
       (Integer.class, 
        new Reflect.Helper() 
        {
-         public boolean isInstance(Object instance)
+         @Override
+        public boolean isInstance(Object instance)
          {
            return instance instanceof Integer;
          }
 
-         public Object newArrayInstance(int size)
+         @Override
+        public Object newArrayInstance(int size)
          {
            return new Integer[size];
          }
@@ -1712,7 +1818,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getAnyType()
+  @Override
+public EClass getAnyType()
   {
     return anyTypeEClass;
   }
@@ -1722,7 +1829,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getAnyType_Mixed()
+  @Override
+public EAttribute getAnyType_Mixed()
   {
     return (EAttribute)anyTypeEClass.getEStructuralFeatures().get(0);
   }
@@ -1732,7 +1840,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getAnyType_Any()
+  @Override
+public EAttribute getAnyType_Any()
   {
     return (EAttribute)anyTypeEClass.getEStructuralFeatures().get(1);
   }
@@ -1742,7 +1851,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getAnyType_AnyAttribute()
+  @Override
+public EAttribute getAnyType_AnyAttribute()
   {
     return (EAttribute)anyTypeEClass.getEStructuralFeatures().get(2);
   }
@@ -1752,7 +1862,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getProcessingInstruction()
+  @Override
+public EClass getProcessingInstruction()
   {
     return processingInstructionEClass;
   }
@@ -1762,7 +1873,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getProcessingInstruction_Data()
+  @Override
+public EAttribute getProcessingInstruction_Data()
   {
     return (EAttribute)processingInstructionEClass.getEStructuralFeatures().get(0);
   }
@@ -1772,7 +1884,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getProcessingInstruction_Target()
+  @Override
+public EAttribute getProcessingInstruction_Target()
   {
     return (EAttribute)processingInstructionEClass.getEStructuralFeatures().get(1);
   }
@@ -1782,7 +1895,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getSimpleAnyType()
+  @Override
+public EClass getSimpleAnyType()
   {
     return simpleAnyTypeEClass;
   }
@@ -1792,7 +1906,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getSimpleAnyType_RawValue()
+  @Override
+public EAttribute getSimpleAnyType_RawValue()
   {
     return (EAttribute)simpleAnyTypeEClass.getEStructuralFeatures().get(0);
   }
@@ -1802,7 +1917,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getSimpleAnyType_Value()
+  @Override
+public EAttribute getSimpleAnyType_Value()
   {
     return (EAttribute)simpleAnyTypeEClass.getEStructuralFeatures().get(1);
   }
@@ -1812,7 +1928,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getSimpleAnyType_InstanceType()
+  @Override
+public EReference getSimpleAnyType_InstanceType()
   {
     return (EReference)simpleAnyTypeEClass.getEStructuralFeatures().get(2);
   }
@@ -1822,7 +1939,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getXMLTypeDocumentRoot()
+  @Override
+public EClass getXMLTypeDocumentRoot()
   {
     return xmlTypeDocumentRootEClass;
   }
@@ -1832,7 +1950,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getXMLTypeDocumentRoot_Mixed()
+  @Override
+public EAttribute getXMLTypeDocumentRoot_Mixed()
   {
     return (EAttribute)xmlTypeDocumentRootEClass.getEStructuralFeatures().get(0);
   }
@@ -1842,7 +1961,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getXMLTypeDocumentRoot_XMLNSPrefixMap()
+  @Override
+public EReference getXMLTypeDocumentRoot_XMLNSPrefixMap()
   {
     return (EReference)xmlTypeDocumentRootEClass.getEStructuralFeatures().get(1);
   }
@@ -1852,7 +1972,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getXMLTypeDocumentRoot_XSISchemaLocation()
+  @Override
+public EReference getXMLTypeDocumentRoot_XSISchemaLocation()
   {
     return (EReference)xmlTypeDocumentRootEClass.getEStructuralFeatures().get(2);
   }
@@ -1862,7 +1983,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getXMLTypeDocumentRoot_CDATA()
+  @Override
+public EAttribute getXMLTypeDocumentRoot_CDATA()
   {
     return (EAttribute)xmlTypeDocumentRootEClass.getEStructuralFeatures().get(3);
   }
@@ -1872,7 +1994,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getXMLTypeDocumentRoot_Comment()
+  @Override
+public EAttribute getXMLTypeDocumentRoot_Comment()
   {
     return (EAttribute)xmlTypeDocumentRootEClass.getEStructuralFeatures().get(4);
   }
@@ -1882,7 +2005,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getXMLTypeDocumentRoot_Text()
+  @Override
+public EAttribute getXMLTypeDocumentRoot_Text()
   {
     return (EAttribute)xmlTypeDocumentRootEClass.getEStructuralFeatures().get(6);
   }
@@ -1892,7 +2016,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getXMLTypeDocumentRoot_ProcessingInstruction()
+  @Override
+public EReference getXMLTypeDocumentRoot_ProcessingInstruction()
   {
     return (EReference)xmlTypeDocumentRootEClass.getEStructuralFeatures().get(5);
   }
@@ -1902,7 +2027,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getAnySimpleType()
+  @Override
+public EDataType getAnySimpleType()
   {
     return anySimpleTypeEDataType;
   }
@@ -1912,7 +2038,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getAnyURI()
+  @Override
+public EDataType getAnyURI()
   {
     return anyURIEDataType;
   }
@@ -1922,7 +2049,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getBase64Binary()
+  @Override
+public EDataType getBase64Binary()
   {
     return base64BinaryEDataType;
   }
@@ -1932,7 +2060,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getBoolean()
+  @Override
+public EDataType getBoolean()
   {
     return booleanEDataType;
   }
@@ -1942,7 +2071,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getBooleanObject()
+  @Override
+public EDataType getBooleanObject()
   {
     return booleanObjectEDataType;
   }
@@ -1952,7 +2082,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getDecimal()
+  @Override
+public EDataType getDecimal()
   {
     return decimalEDataType;
   }
@@ -1962,7 +2093,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getInteger()
+  @Override
+public EDataType getInteger()
   {
     return integerEDataType;
   }
@@ -1972,7 +2104,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getIntObject()
+  @Override
+public EDataType getIntObject()
   {
     return intObjectEDataType;
   }
@@ -1982,7 +2115,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getLong()
+  @Override
+public EDataType getLong()
   {
     return longEDataType;
   }
@@ -1992,7 +2126,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getLongObject()
+  @Override
+public EDataType getLongObject()
   {
     return longObjectEDataType;
   }
@@ -2002,7 +2137,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getInt()
+  @Override
+public EDataType getInt()
   {
     return intEDataType;
   }
@@ -2012,7 +2148,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getShort()
+  @Override
+public EDataType getShort()
   {
     return shortEDataType;
   }
@@ -2022,7 +2159,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getShortObject()
+  @Override
+public EDataType getShortObject()
   {
     return shortObjectEDataType;
   }
@@ -2032,7 +2170,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getByte()
+  @Override
+public EDataType getByte()
   {
     return byteEDataType;
   }
@@ -2042,7 +2181,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getByteObject()
+  @Override
+public EDataType getByteObject()
   {
     return byteObjectEDataType;
   }
@@ -2052,7 +2192,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getDate()
+  @Override
+public EDataType getDate()
   {
     return dateEDataType;
   }
@@ -2062,7 +2203,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getDateTime()
+  @Override
+public EDataType getDateTime()
   {
     return dateTimeEDataType;
   }
@@ -2072,7 +2214,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getString()
+  @Override
+public EDataType getString()
   {
     return stringEDataType;
   }
@@ -2082,7 +2225,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getDouble()
+  @Override
+public EDataType getDouble()
   {
     return doubleEDataType;
   }
@@ -2092,7 +2236,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getDoubleObject()
+  @Override
+public EDataType getDoubleObject()
   {
     return doubleObjectEDataType;
   }
@@ -2102,7 +2247,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getDuration()
+  @Override
+public EDataType getDuration()
   {
     return durationEDataType;
   }
@@ -2112,7 +2258,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getENTITIESBase()
+  @Override
+public EDataType getENTITIESBase()
   {
     return entitiesBaseEDataType;
   }
@@ -2122,7 +2269,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getNormalizedString()
+  @Override
+public EDataType getNormalizedString()
   {
     return normalizedStringEDataType;
   }
@@ -2132,7 +2280,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getToken()
+  @Override
+public EDataType getToken()
   {
     return tokenEDataType;
   }
@@ -2142,7 +2291,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getName_()
+  @Override
+public EDataType getName_()
   {
     return nameEDataType;
   }
@@ -2152,7 +2302,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getNCName()
+  @Override
+public EDataType getNCName()
   {
     return ncNameEDataType;
   }
@@ -2162,7 +2313,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getENTITY()
+  @Override
+public EDataType getENTITY()
   {
     return entityEDataType;
   }
@@ -2172,7 +2324,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getENTITIES()
+  @Override
+public EDataType getENTITIES()
   {
     return entitiesEDataType;
   }
@@ -2182,7 +2335,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getFloat()
+  @Override
+public EDataType getFloat()
   {
     return floatEDataType;
   }
@@ -2192,7 +2346,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getFloatObject()
+  @Override
+public EDataType getFloatObject()
   {
     return floatObjectEDataType;
   }
@@ -2202,7 +2357,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getGDay()
+  @Override
+public EDataType getGDay()
   {
     return gDayEDataType;
   }
@@ -2212,7 +2368,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getGMonth()
+  @Override
+public EDataType getGMonth()
   {
     return gMonthEDataType;
   }
@@ -2222,7 +2379,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getGMonthDay()
+  @Override
+public EDataType getGMonthDay()
   {
     return gMonthDayEDataType;
   }
@@ -2232,7 +2390,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getGYear()
+  @Override
+public EDataType getGYear()
   {
     return gYearEDataType;
   }
@@ -2242,7 +2401,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getGYearMonth()
+  @Override
+public EDataType getGYearMonth()
   {
     return gYearMonthEDataType;
   }
@@ -2252,7 +2412,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getHexBinary()
+  @Override
+public EDataType getHexBinary()
   {
     return hexBinaryEDataType;
   }
@@ -2262,7 +2423,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getID()
+  @Override
+public EDataType getID()
   {
     return idEDataType;
   }
@@ -2272,7 +2434,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getIDREF()
+  @Override
+public EDataType getIDREF()
   {
     return idrefEDataType;
   }
@@ -2282,7 +2445,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getIDREFSBase()
+  @Override
+public EDataType getIDREFSBase()
   {
     return idrefsBaseEDataType;
   }
@@ -2292,7 +2456,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getIDREFS()
+  @Override
+public EDataType getIDREFS()
   {
     return idrefsEDataType;
   }
@@ -2302,7 +2467,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getLanguage()
+  @Override
+public EDataType getLanguage()
   {
     return languageEDataType;
   }
@@ -2312,7 +2478,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getNonPositiveInteger()
+  @Override
+public EDataType getNonPositiveInteger()
   {
     return nonPositiveIntegerEDataType;
   }
@@ -2322,7 +2489,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getNegativeInteger()
+  @Override
+public EDataType getNegativeInteger()
   {
     return negativeIntegerEDataType;
   }
@@ -2332,7 +2500,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getNMTOKEN()
+  @Override
+public EDataType getNMTOKEN()
   {
     return nmtokenEDataType;
   }
@@ -2342,7 +2511,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getNMTOKENSBase()
+  @Override
+public EDataType getNMTOKENSBase()
   {
     return nmtokensBaseEDataType;
   }
@@ -2352,7 +2522,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getNMTOKENS()
+  @Override
+public EDataType getNMTOKENS()
   {
     return nmtokensEDataType;
   }
@@ -2362,7 +2533,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getNonNegativeInteger()
+  @Override
+public EDataType getNonNegativeInteger()
   {
     return nonNegativeIntegerEDataType;
   }
@@ -2372,7 +2544,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getNOTATION()
+  @Override
+public EDataType getNOTATION()
   {
     return notationEDataType;
   }
@@ -2382,7 +2555,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getPositiveInteger()
+  @Override
+public EDataType getPositiveInteger()
   {
     return positiveIntegerEDataType;
   }
@@ -2392,7 +2566,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getQName()
+  @Override
+public EDataType getQName()
   {
     return qNameEDataType;
   }
@@ -2402,7 +2577,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getTime()
+  @Override
+public EDataType getTime()
   {
     return timeEDataType;
   }
@@ -2412,7 +2588,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getUnsignedLong()
+  @Override
+public EDataType getUnsignedLong()
   {
     return unsignedLongEDataType;
   }
@@ -2422,7 +2599,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getUnsignedInt()
+  @Override
+public EDataType getUnsignedInt()
   {
     return unsignedIntEDataType;
   }
@@ -2432,7 +2610,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getUnsignedIntObject()
+  @Override
+public EDataType getUnsignedIntObject()
   {
     return unsignedIntObjectEDataType;
   }
@@ -2442,7 +2621,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getUnsignedShort()
+  @Override
+public EDataType getUnsignedShort()
   {
     return unsignedShortEDataType;
   }
@@ -2452,7 +2632,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getUnsignedShortObject()
+  @Override
+public EDataType getUnsignedShortObject()
   {
     return unsignedShortObjectEDataType;
   }
@@ -2462,7 +2643,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getUnsignedByte()
+  @Override
+public EDataType getUnsignedByte()
   {
     return unsignedByteEDataType;
   }
@@ -2472,7 +2654,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType getUnsignedByteObject()
+  @Override
+public EDataType getUnsignedByteObject()
   {
     return unsignedByteObjectEDataType;
   }
@@ -2482,7 +2665,8 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public XMLTypeFactory getXMLTypeFactory()
+  @Override
+public XMLTypeFactory getXMLTypeFactory()
   {
     return (XMLTypeFactory)getEFactoryInstance();
   }
@@ -2659,7 +2843,7 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
     initEDataType(byteObjectEDataType, Byte.class, "ByteObject", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(dateEDataType, String.class, "Date", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(dateTimeEDataType, String.class, "DateTime", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-    initEDataType(decimalEDataType, String.class, "Decimal", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+    initEDataType(decimalEDataType, BigDecimal.class, "Decimal", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(doubleEDataType, double.class, "Double", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(doubleObjectEDataType, Double.class, "DoubleObject", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(durationEDataType, String.class, "Duration", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
@@ -2679,19 +2863,19 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
     initEDataType(idrefsEDataType, List.class, "IDREFS", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(idrefsBaseEDataType, List.class, "IDREFSBase", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(intEDataType, int.class, "Int", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-    initEDataType(integerEDataType, String.class, "Integer", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+    initEDataType(integerEDataType, BigInteger.class, "Integer", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(intObjectEDataType, Integer.class, "IntObject", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(languageEDataType, String.class, "Language", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(longEDataType, long.class, "Long", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(longObjectEDataType, Long.class, "LongObject", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(nameEDataType, String.class, "Name", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(ncNameEDataType, String.class, "NCName", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-    initEDataType(negativeIntegerEDataType, String.class, "NegativeInteger", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+    initEDataType(negativeIntegerEDataType, BigInteger.class, "NegativeInteger", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(nmtokenEDataType, String.class, "NMTOKEN", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(nmtokensEDataType, List.class, "NMTOKENS", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(nmtokensBaseEDataType, List.class, "NMTOKENSBase", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-    initEDataType(nonNegativeIntegerEDataType, String.class, "NonNegativeInteger", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-    initEDataType(nonPositiveIntegerEDataType, String.class, "NonPositiveInteger", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+    initEDataType(nonNegativeIntegerEDataType, BigInteger.class, "NonNegativeInteger", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+    initEDataType(nonPositiveIntegerEDataType, BigInteger.class, "NonPositiveInteger", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(normalizedStringEDataType, String.class, "NormalizedString", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(notationEDataType, String.class, "NOTATION", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(positiveIntegerEDataType, String.class, "PositiveInteger", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
@@ -2705,7 +2889,7 @@ public class XMLTypePackageImpl extends EPackageImpl implements XMLTypePackage
     initEDataType(unsignedByteObjectEDataType, Short.class, "UnsignedByteObject", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(unsignedIntEDataType, long.class, "UnsignedInt", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(unsignedIntObjectEDataType, Long.class, "UnsignedIntObject", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-    initEDataType(unsignedLongEDataType, String.class, "UnsignedLong", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+    initEDataType(unsignedLongEDataType, BigInteger.class, "UnsignedLong", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(unsignedShortEDataType, int.class, "UnsignedShort", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
     initEDataType(unsignedShortObjectEDataType, Integer.class, "UnsignedShortObject", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 

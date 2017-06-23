@@ -10,10 +10,11 @@
  */
 package org.eclipse.emf.ecore.xml.type.impl;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -21,7 +22,13 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-import org.eclipse.emf.ecore.xml.type.*;
+import org.eclipse.emf.ecore.xml.type.AnyType;
+import org.eclipse.emf.ecore.xml.type.InvalidDatatypeValueException;
+import org.eclipse.emf.ecore.xml.type.ProcessingInstruction;
+import org.eclipse.emf.ecore.xml.type.SimpleAnyType;
+import org.eclipse.emf.ecore.xml.type.XMLTypeDocumentRoot;
+import org.eclipse.emf.ecore.xml.type.XMLTypeFactory;
+import org.eclipse.emf.ecore.xml.type.XMLTypePackage;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.Base64;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.HexBin;
 
@@ -38,7 +45,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public Object createAnySimpleType(String literal)
+  @Override
+public Object createAnySimpleType(String literal)
   {
     return literal;
   }
@@ -48,7 +56,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertAnySimpleType(Object instanceValue)
+  @Override
+public String convertAnySimpleType(Object instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }
@@ -58,7 +67,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT 
    */
-  public String createAnyURI(String literal)
+  @Override
+public String createAnyURI(String literal)
   {
     // Per Schema 1.0 it is not clear if the result returned should be a valid URI. 
     // For the future if we plant to support IRIs then it is better not to massage
@@ -90,7 +100,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertAnyURI(String instanceValue)
+  @Override
+public String convertAnyURI(String instanceValue)
   {
     return instanceValue;
   }
@@ -100,7 +111,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public byte[] createBase64Binary(String literal)
+  @Override
+public byte[] createBase64Binary(String literal)
   {
     if (literal == null) return null;
     byte[] value = Base64.decode(collapseWhiteSpace(literal));
@@ -116,7 +128,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertBase64Binary(byte[] instanceValue)
+  @Override
+public String convertBase64Binary(byte[] instanceValue)
   {
     return instanceValue == null ? null : Base64.encode(instanceValue);
   }
@@ -126,7 +139,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public boolean createBoolean(String initialValue)
+  @Override
+public boolean createBoolean(String initialValue)
   {
     return initialValue == null ? false : primitiveBooleanValueOf(initialValue);	
   }
@@ -136,7 +150,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertBoolean(boolean instanceValue)
+  @Override
+public String convertBoolean(boolean instanceValue)
   {
     return instanceValue ? "true" : "false";
   }	
@@ -146,7 +161,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public Boolean createBooleanObject(String literal)
+  @Override
+public Boolean createBooleanObject(String literal)
   {
     return literal == null ? null : booleanValueOf(literal);
   }
@@ -156,7 +172,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertBooleanObject(Boolean instanceValue)
+  @Override
+public String convertBooleanObject(Boolean instanceValue)
   {
     return instanceValue == null ? null : convertBoolean(instanceValue);
   }
@@ -166,7 +183,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public byte createByte(String literal)
+  @Override
+public byte createByte(String literal)
   {
     return literal == null ? 0 : Byte.parseByte(collapseWhiteSpaceAndLeadingPlus(literal));
   }
@@ -176,7 +194,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertByte(byte instanceValue)
+  @Override
+public String convertByte(byte instanceValue)
   {
     return Byte.toString(instanceValue);
   }
@@ -186,7 +205,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public Byte createByteObject(String literal)
+  @Override
+public Byte createByteObject(String literal)
   {
     return literal == null ? null : Byte.valueOf(collapseWhiteSpaceAndLeadingPlus(literal));
   }
@@ -196,7 +216,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertByteObject(Byte instanceValue)
+  @Override
+public String convertByteObject(Byte instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }
@@ -206,7 +227,30 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public double createDouble(String literal)
+  @Override
+public BigDecimal createDecimal(String literal)
+  {
+    return literal == null ? null : new BigDecimal(collapseWhiteSpace(literal));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated NOT
+   */
+  @Override
+public String convertDecimal(BigDecimal instanceValue)
+  {
+    return instanceValue == null ? null : instanceValue.toPlainString();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated NOT
+   */
+  @Override
+public double createDouble(String literal)
   {
     if (literal == null)
     {
@@ -244,7 +288,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertDouble(double instanceValue)
+  @Override
+public String convertDouble(double instanceValue)
   {
     return instanceValue == Double.POSITIVE_INFINITY ? "INF" : instanceValue == Double.NEGATIVE_INFINITY ? "-INF" : Double.toString(instanceValue);
   }	
@@ -257,7 +302,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public Double createDoubleObject(String literal)
+  @Override
+public Double createDoubleObject(String literal)
   {
     if (literal == null)
     {
@@ -295,7 +341,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertDoubleObject(Double instanceValue)
+  @Override
+public String convertDoubleObject(Double instanceValue)
   {
     return instanceValue == null ? null : convertDouble(instanceValue);
   }
@@ -305,7 +352,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public List<String> createENTITIES(String literal)
+  @Override
+public List<String> createENTITIES(String literal)
   {
     return createENTITIESBase(literal);
   }
@@ -325,7 +373,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertENTITIES(List<? extends String> instanceValue)
+  @Override
+public String convertENTITIES(List<? extends String> instanceValue)
   {
     return convertENTITIESBase(instanceValue);
   }
@@ -345,7 +394,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public List<String> createENTITIESBase(String literal)
+  @Override
+public List<String> createENTITIESBase(String literal)
   {
     if (literal == null) return null;
     List<String> result = new ArrayList<String>();
@@ -371,7 +421,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertENTITIESBase(List<? extends String> instanceValue)
+  @Override
+public String convertENTITIESBase(List<? extends String> instanceValue)
   {
     if (instanceValue == null) return null;
     if (instanceValue.isEmpty()) return "";
@@ -408,7 +459,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String createENTITY(String literal)
+  @Override
+public String createENTITY(String literal)
   {
     return collapseWhiteSpace(literal);
   }
@@ -418,7 +470,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertENTITY(String instanceValue)
+  @Override
+public String convertENTITY(String instanceValue)
   {
     return instanceValue;
   }
@@ -428,7 +481,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public float createFloat(String literal)
+  @Override
+public float createFloat(String literal)
   {
     if (literal == null)
     {
@@ -466,7 +520,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertFloat(float instanceValue)
+  @Override
+public String convertFloat(float instanceValue)
   {
     return instanceValue == Float.POSITIVE_INFINITY ? "INF" : instanceValue == Float.NEGATIVE_INFINITY ? "-INF" : Float.toString(instanceValue);
   }	
@@ -479,7 +534,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public Float createFloatObject(String literal)
+  @Override
+public Float createFloatObject(String literal)
   {
     if (literal == null)
     {
@@ -517,7 +573,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertFloatObject(Float instanceValue)
+  @Override
+public String convertFloatObject(Float instanceValue)
   {
     return instanceValue == null ? null : convertFloat(instanceValue);
   }
@@ -533,7 +590,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public byte[] createHexBinary(String literal)
+  @Override
+public byte[] createHexBinary(String literal)
   {
     if (literal == null) return null;
     byte[] value = HexBin.decode(collapseWhiteSpace(literal));
@@ -549,7 +607,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertHexBinary(byte[] instanceValue)
+  @Override
+public String convertHexBinary(byte[] instanceValue)
   {
     return instanceValue == null ? null : HexBin.encode(instanceValue);
   }
@@ -559,7 +618,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String createID(String literal)
+  @Override
+public String createID(String literal)
   {
     return collapseWhiteSpace(literal);
   }
@@ -579,7 +639,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertID(String instanceValue)
+  @Override
+public String convertID(String instanceValue)
   {
     return instanceValue;
   }
@@ -589,7 +650,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String createIDREF(String literal)
+  @Override
+public String createIDREF(String literal)
   {
     return collapseWhiteSpace(literal);
   }
@@ -609,7 +671,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertIDREF(String instanceValue)
+  @Override
+public String convertIDREF(String instanceValue)
   {
     return instanceValue;
   }
@@ -619,7 +682,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public List<String> createIDREFS(String literal)
+  @Override
+public List<String> createIDREFS(String literal)
   {
     return createIDREFSBase(literal);
   }
@@ -639,7 +703,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertIDREFS(List<? extends String> instanceValue)
+  @Override
+public String convertIDREFS(List<? extends String> instanceValue)
   {
     return convertIDREFSBase(instanceValue);
   }
@@ -659,7 +724,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public List<String> createIDREFSBase(String literal)
+  @Override
+public List<String> createIDREFSBase(String literal)
   {
     if (literal == null) return null;
     List<String> result = new ArrayList<String>();
@@ -685,7 +751,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertIDREFSBase(List<? extends String> instanceValue)
+  @Override
+public String convertIDREFSBase(List<? extends String> instanceValue)
   {
     if (instanceValue == null) return null;
     if (instanceValue.isEmpty()) return "";
@@ -714,7 +781,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public int createInt(String initialValue)
+  @Override
+public int createInt(String initialValue)
   {
     return initialValue == null ? 0 : Integer.parseInt(collapseWhiteSpaceAndLeadingPlus(initialValue));
   }	
@@ -724,7 +792,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertInt(int instanceValue)
+  @Override
+public String convertInt(int instanceValue)
   {
     return Integer.toString(instanceValue);
   }
@@ -734,7 +803,30 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public Integer createIntObject(String literal)
+  @Override
+public BigInteger createInteger(String literal)
+  {
+    return literal == null ? null : new BigInteger(collapseWhiteSpaceAndLeadingPlus(literal));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated NOT
+   */
+  @Override
+public String convertInteger(BigInteger instanceValue)
+  {
+    return instanceValue == null ? null : instanceValue.toString();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated NOT
+   */
+  @Override
+public Integer createIntObject(String literal)
   {
     return literal == null ? null : Integer.valueOf(collapseWhiteSpaceAndLeadingPlus(literal));
   }
@@ -744,7 +836,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertIntObject(Integer instanceValue)
+  @Override
+public String convertIntObject(Integer instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }
@@ -754,7 +847,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String createLanguage(String literal)
+  @Override
+public String createLanguage(String literal)
   {
     return collapseWhiteSpace(literal);
   }
@@ -764,7 +858,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertLanguage(String instanceValue)
+  @Override
+public String convertLanguage(String instanceValue)
   {
     return instanceValue;
   }
@@ -774,7 +869,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public long createLong(String literal)
+  @Override
+public long createLong(String literal)
   {
     return literal == null ? 0L : Long.parseLong(collapseWhiteSpaceAndLeadingPlus(literal));
   }
@@ -784,7 +880,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertLong(long instanceValue)
+  @Override
+public String convertLong(long instanceValue)
   {
     return Long.toString(instanceValue);
   }
@@ -794,7 +891,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public Long createLongObject(String literal)
+  @Override
+public Long createLongObject(String literal)
   {
     return literal == null ? null : Long.valueOf(collapseWhiteSpaceAndLeadingPlus(literal));
   }
@@ -804,7 +902,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertLongObject(Long instanceValue)
+  @Override
+public String convertLongObject(Long instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }
@@ -814,7 +913,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String createName(String literal)
+  @Override
+public String createName(String literal)
   {
     return collapseWhiteSpace(literal);
   }
@@ -824,7 +924,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertName(String instanceValue)
+  @Override
+public String convertName(String instanceValue)
   {
     return instanceValue;
   }
@@ -834,7 +935,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String createNCName(String literal)
+  @Override
+public String createNCName(String literal)
   {
     return collapseWhiteSpace(literal);
   }
@@ -844,9 +946,21 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertNCName(String instanceValue)
+  @Override
+public String convertNCName(String instanceValue)
   {
     return instanceValue;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated NOT
+   */
+  @Override
+public BigInteger createNegativeInteger(String literal)
+  {
+    return createNonPositiveIntegerFromString(XMLTypePackage.Literals.NON_POSITIVE_INTEGER, literal);
   }
 
   /**
@@ -854,7 +968,18 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertNegativeInteger(String instanceValue)
+  public BigInteger createNegativeIntegerFromString(EDataType eDataType, String initialValue)
+  {
+    return createNonPositiveIntegerFromString(XMLTypePackage.Literals.NON_POSITIVE_INTEGER, initialValue);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+public String convertNegativeInteger(BigInteger instanceValue)
   {
     return convertNonPositiveInteger(instanceValue);
   }
@@ -874,7 +999,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String createNMTOKEN(String literal)
+  @Override
+public String createNMTOKEN(String literal)
   {
     return collapseWhiteSpace(literal);
   }
@@ -884,7 +1010,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertNMTOKEN(String instanceValue)
+  @Override
+public String convertNMTOKEN(String instanceValue)
   {
     return instanceValue;
   }
@@ -894,7 +1021,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public List<String> createNMTOKENS(String literal)
+  @Override
+public List<String> createNMTOKENS(String literal)
   {
     return createNMTOKENSBase(literal);
   }
@@ -914,7 +1042,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertNMTOKENS(List<? extends String> instanceValue)
+  @Override
+public String convertNMTOKENS(List<? extends String> instanceValue)
   {
     return convertNMTOKENSBase(instanceValue);
   }
@@ -934,7 +1063,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public List<String> createNMTOKENSBase(String literal)
+  @Override
+public List<String> createNMTOKENSBase(String literal)
   {
     if (literal == null) return null;
     List<String> result = new ArrayList<String>();
@@ -960,7 +1090,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertNMTOKENSBase(List<? extends String> instanceValue)
+  @Override
+public String convertNMTOKENSBase(List<? extends String> instanceValue)
   {
     if (instanceValue == null) return null;
     if (instanceValue.isEmpty()) return "";
@@ -990,21 +1121,12 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @generated
+   * @generated NOT
    */
-  public String createNonNegativeInteger(String literal)
+  @Override
+public BigInteger createNonNegativeInteger(String literal)
   {
-    return createInteger(literal);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String createNonNegativeIntegerFromString(EDataType eDataType, String initialValue)
-  {
-    return createIntegerFromString(XMLTypePackage.Literals.INTEGER, initialValue);
+    return literal == null ? null : new BigInteger(collapseWhiteSpaceAndLeadingPlus(literal));
   }
 
   /**
@@ -1012,7 +1134,41 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String createNormalizedString(String literal)
+  @Override
+public String convertNonNegativeInteger(BigInteger instanceValue)
+  {
+    return instanceValue == null ? null : instanceValue.toString();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated NOT
+   */
+  @Override
+public BigInteger createNonPositiveInteger(String literal)
+  {
+    return literal == null ? null : new BigInteger(collapseWhiteSpaceAndLeadingPlus(literal));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated NOT
+   */
+  @Override
+public String convertNonPositiveInteger(BigInteger instanceValue)
+  {
+    return instanceValue == null ? null : instanceValue.toString();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated NOT
+   */
+  @Override
+public String createNormalizedString(String literal)
   {
     return replaceWhiteSpace(literal);
   }
@@ -1022,7 +1178,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertNormalizedString(String instanceValue)
+  @Override
+public String convertNormalizedString(String instanceValue)
   {
     return instanceValue;
   }
@@ -1032,7 +1189,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String createPositiveInteger(String literal)
+  @Override
+public BigInteger createPositiveInteger(String literal)
   {
     return createNonNegativeInteger(literal);
   }
@@ -1042,7 +1200,7 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String createPositiveIntegerFromString(EDataType eDataType, String initialValue)
+  public BigInteger createPositiveIntegerFromString(EDataType eDataType, String initialValue)
   {
     return createNonNegativeIntegerFromString(XMLTypePackage.Literals.NON_NEGATIVE_INTEGER, initialValue);
   }
@@ -1052,7 +1210,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertPositiveInteger(String instanceValue)
+  @Override
+public String convertPositiveInteger(BigInteger instanceValue)
   {
     return convertNonNegativeInteger(instanceValue);
   }
@@ -1072,7 +1231,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String createQName(String literal)
+  @Override
+public String createQName(String literal)
   {
     return (String)super.createFromString(XMLTypePackage.Literals.QNAME, literal);
   }
@@ -1082,7 +1242,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public short createShort(String literal)
+  @Override
+public short createShort(String literal)
   {
     return literal == null ? 0 : Short.parseShort(collapseWhiteSpaceAndLeadingPlus(literal));
   }
@@ -1092,7 +1253,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertShort(short instanceValue)
+  @Override
+public String convertShort(short instanceValue)
   {
     return Short.toString(instanceValue);
   }	
@@ -1102,7 +1264,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public Short createShortObject(String literal)
+  @Override
+public Short createShortObject(String literal)
   {
     return literal == null ? null : Short.valueOf(collapseWhiteSpaceAndLeadingPlus(literal));
   }
@@ -1112,7 +1275,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertShortObject(Short instanceValue)
+  @Override
+public String convertShortObject(Short instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }
@@ -1122,7 +1286,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String createString(String initialValue)
+  @Override
+public String createString(String initialValue)
   {	
     return initialValue;
   }	
@@ -1132,7 +1297,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertString(String instanceValue)
+  @Override
+public String convertString(String instanceValue)
   {
     return instanceValue;	
   }	
@@ -1149,7 +1315,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String createToken(String literal)
+  @Override
+public String createToken(String literal)
   {
     return collapseWhiteSpace(literal);
   }
@@ -1159,7 +1326,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertToken(String instanceValue)
+  @Override
+public String convertToken(String instanceValue)
   {
     return instanceValue;
   }
@@ -1169,7 +1337,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public short createUnsignedByte(String literal)
+  @Override
+public short createUnsignedByte(String literal)
   {
     return literal == null ? 0 : Short.parseShort(collapseWhiteSpaceAndLeadingPlus(literal));
   }	
@@ -1179,7 +1348,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertUnsignedByte(short instanceValue)
+  @Override
+public String convertUnsignedByte(short instanceValue)
   {
     return Short.toString(instanceValue);
   }	
@@ -1189,7 +1359,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public Short createUnsignedByteObject(String literal)
+  @Override
+public Short createUnsignedByteObject(String literal)
   {
     return literal == null ? null : Short.valueOf(collapseWhiteSpaceAndLeadingPlus(literal));
   }
@@ -1199,7 +1370,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertUnsignedByteObject(Short instanceValue)
+  @Override
+public String convertUnsignedByteObject(Short instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }
@@ -1209,7 +1381,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public long createUnsignedInt(String literal)
+  @Override
+public long createUnsignedInt(String literal)
   {
     return literal == null ? 0 : Long.parseLong(collapseWhiteSpaceAndLeadingPlus(literal));
   }
@@ -1219,7 +1392,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertUnsignedInt(long instanceValue)
+  @Override
+public String convertUnsignedInt(long instanceValue)
   {
     return Long.toString(instanceValue);
   }	
@@ -1229,7 +1403,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public Long createUnsignedIntObject(String literal)
+  @Override
+public Long createUnsignedIntObject(String literal)
   {
     return literal == null ? null : Long.valueOf(collapseWhiteSpaceAndLeadingPlus(literal));
   }
@@ -1239,7 +1414,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertUnsignedIntObject(Long instanceValue)
+  @Override
+public String convertUnsignedIntObject(Long instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }
@@ -1249,7 +1425,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String createUnsignedLong(String literal)
+  @Override
+public BigInteger createUnsignedLong(String literal)
   {
     return createNonNegativeInteger(literal);
   }
@@ -1259,7 +1436,7 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String createUnsignedLongFromString(EDataType eDataType, String initialValue)
+  public BigInteger createUnsignedLongFromString(EDataType eDataType, String initialValue)
   {
     return createNonNegativeIntegerFromString(XMLTypePackage.Literals.NON_NEGATIVE_INTEGER, initialValue);
   }
@@ -1269,7 +1446,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertUnsignedLong(String instanceValue)
+  @Override
+public String convertUnsignedLong(BigInteger instanceValue)
   {
     return convertNonNegativeInteger(instanceValue);
   }
@@ -1289,7 +1467,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public int createUnsignedShort(String literal)
+  @Override
+public int createUnsignedShort(String literal)
   {
     return literal == null ? 0 : Integer.parseInt(collapseWhiteSpaceAndLeadingPlus(literal));
   }	
@@ -1299,7 +1478,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertUnsignedShort(int instanceValue)
+  @Override
+public String convertUnsignedShort(int instanceValue)
   {
     return Integer.toString(instanceValue);
   }	
@@ -1309,7 +1489,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public Integer createUnsignedShortObject(String literal)
+  @Override
+public Integer createUnsignedShortObject(String literal)
   {
     return literal == null ? null : Integer.valueOf(collapseWhiteSpaceAndLeadingPlus(literal));
   }
@@ -1319,7 +1500,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public String convertUnsignedShortObject(Integer instanceValue)
+  @Override
+public String convertUnsignedShortObject(Integer instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }
@@ -1666,7 +1848,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public AnyType createAnyType()
+  @Override
+public AnyType createAnyType()
   {
     AnyTypeImpl anyType = new AnyTypeImpl();
     return anyType;
@@ -1677,7 +1860,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public ProcessingInstruction createProcessingInstruction()
+  @Override
+public ProcessingInstruction createProcessingInstruction()
   {
     ProcessingInstructionImpl processingInstruction = new ProcessingInstructionImpl();
     return processingInstruction;
@@ -1688,7 +1872,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public SimpleAnyType createSimpleAnyType()
+  @Override
+public SimpleAnyType createSimpleAnyType()
   {
     SimpleAnyTypeImpl simpleAnyType = new SimpleAnyTypeImpl();
     return simpleAnyType;
@@ -1699,7 +1884,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public XMLTypeDocumentRoot createXMLTypeDocumentRoot()
+  @Override
+public XMLTypeDocumentRoot createXMLTypeDocumentRoot()
   {
     XMLTypeDocumentRootImpl xmlTypeDocumentRoot = new XMLTypeDocumentRootImpl();
     return xmlTypeDocumentRoot;
@@ -1808,11 +1994,31 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @generated
+   * @generated NOT
    */
-  public String convertInteger(String instanceValue)
+  public BigDecimal createDecimalFromString(EDataType eDataType, String initialValue)
   {
-    return super.convertToString(XMLTypePackage.Literals.INTEGER, instanceValue);
+    return createDecimal(initialValue);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated NOT
+   */
+  public String convertDecimalToString(EDataType eDataType, Object instanceValue)
+  {
+    return instanceValue == null ? null : ((BigDecimal)instanceValue).toPlainString();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated NOT
+   */
+  public BigInteger createIntegerFromString(EDataType eDataType, String initialValue)
+  {
+    return createInteger(initialValue);
   }
 
   /**
@@ -1908,26 +2114,6 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @generated
-   */
-  public String createInteger(String literal)
-  {
-    return (String)super.createFromString(XMLTypePackage.Literals.INTEGER, literal);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String createIntegerFromString(EDataType eDataType, String initialValue)
-  {
-    return (String)super.createFromString(eDataType, initialValue);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
    * @generated NOT
    */
   public Short createShortFromString(EDataType eDataType, String initialValue)
@@ -2010,7 +2196,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String createDate(String literal)
+  @Override
+public String createDate(String literal)
   {
     return (String)super.createFromString(XMLTypePackage.Literals.DATE, literal);
   }
@@ -2030,7 +2217,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertDate(String instanceValue)
+  @Override
+public String convertDate(String instanceValue)
   {
     return super.convertToString(XMLTypePackage.Literals.DATE, instanceValue);
   }
@@ -2050,7 +2238,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String createDateTime(String literal)
+  @Override
+public String createDateTime(String literal)
   {
     return (String)super.createFromString(XMLTypePackage.Literals.DATE_TIME, literal);
   }
@@ -2070,7 +2259,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertDateTime(String instanceValue)
+  @Override
+public String convertDateTime(String instanceValue)
   {
     return super.convertToString(XMLTypePackage.Literals.DATE_TIME, instanceValue);
   }
@@ -2085,25 +2275,26 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
     return super.convertToString(eDataType, instanceValue);
   }
 
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String createDecimal(String literal)
-  {
-    return (String)super.createFromString(XMLTypePackage.Literals.DECIMAL, literal);
-  }
+//  /**
+//   * <!-- begin-user-doc -->
+//   * <!-- end-user-doc -->
+//   * @generated
+//   */
+//  @Override
+//public BigDecimal createDecimal(String literal)
+//  {
+//    return (String)super.createFromString(XMLTypePackage.Literals.DECIMAL, literal);
+//  }
 
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String createDecimalFromString(EDataType eDataType, String initialValue)
-  {
-    return (String)super.createFromString(eDataType, initialValue);
-  }
+//  /**
+//   * <!-- begin-user-doc -->
+//   * <!-- end-user-doc -->
+//   * @generated
+//   */
+//  public String createDecimalFromString(EDataType eDataType, String initialValue)
+//  {
+//    return (String)super.createFromString(eDataType, initialValue);
+//  }
 
   /**
    * <!-- begin-user-doc -->
@@ -2115,15 +2306,15 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
     return super.convertToString(XMLTypePackage.Literals.DECIMAL, instanceValue);
   }
 
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String convertDecimalToString(EDataType eDataType, Object instanceValue)
-  {
-    return super.convertToString(eDataType, instanceValue);
-  }
+//  /**
+//   * <!-- begin-user-doc -->
+//   * <!-- end-user-doc -->
+//   * @generated
+//   */
+//  public String convertDecimalToString(EDataType eDataType, Object instanceValue)
+//  {
+//    return super.convertToString(eDataType, instanceValue);
+//  }
 
   /**
    * <!-- begin-user-doc -->
@@ -2150,7 +2341,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String createTime(String literal)
+  @Override
+public String createTime(String literal)
   {
     return (String)super.createFromString(XMLTypePackage.Literals.TIME, literal);
   }
@@ -2200,7 +2392,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String createDuration(String literal)
+  @Override
+public String createDuration(String literal)
   {
     return (String)super.createFromString(XMLTypePackage.Literals.DURATION, literal);
   }
@@ -2220,7 +2413,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertDuration(String instanceValue)
+  @Override
+public String convertDuration(String instanceValue)
   {
     return super.convertToString(XMLTypePackage.Literals.DURATION, instanceValue);
   }
@@ -2260,7 +2454,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String createNOTATION(String literal)
+  @Override
+public String createNOTATION(String literal)
   {
     return (String)super.createFromString(XMLTypePackage.Literals.NOTATION, literal);
   }
@@ -2327,25 +2522,25 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
     return (String)instanceValue;
   }
 
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String createNegativeInteger(String literal)
-  {
-    return createNonPositiveInteger(literal);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String createNegativeIntegerFromString(EDataType eDataType, String initialValue)
-  {
-    return createNonPositiveIntegerFromString(XMLTypePackage.Literals.NON_POSITIVE_INTEGER, initialValue);
-  }
+//  /**
+//   * <!-- begin-user-doc -->
+//   * <!-- end-user-doc -->
+//   * @generated
+//   */
+//  public String createNegativeInteger(String literal)
+//  {
+//    return createNonPositiveInteger(literal);
+//  }
+//
+//  /**
+//   * <!-- begin-user-doc -->
+//   * <!-- end-user-doc -->
+//   * @generated
+//   */
+//  public String createNegativeIntegerFromString(EDataType eDataType, String initialValue)
+//  {
+//    return createNonPositiveIntegerFromString(XMLTypePackage.Literals.NON_POSITIVE_INTEGER, initialValue);
+//  }
 
   /**
    * <!-- begin-user-doc -->
@@ -2412,7 +2607,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String createGDay(String literal)
+  @Override
+public String createGDay(String literal)
   {
     return (String)super.createFromString(XMLTypePackage.Literals.GDAY, literal);
   }
@@ -2432,7 +2628,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertGDay(String instanceValue)
+  @Override
+public String convertGDay(String instanceValue)
   {
     return super.convertToString(XMLTypePackage.Literals.GDAY, instanceValue);
   }
@@ -2452,7 +2649,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String createGMonth(String literal)
+  @Override
+public String createGMonth(String literal)
   {
     return (String)super.createFromString(XMLTypePackage.Literals.GMONTH, literal);
   }
@@ -2472,7 +2670,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertGMonth(String instanceValue)
+  @Override
+public String convertGMonth(String instanceValue)
   {
     return super.convertToString(XMLTypePackage.Literals.GMONTH, instanceValue);
   }
@@ -2492,7 +2691,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String createGMonthDay(String literal)
+  @Override
+public String createGMonthDay(String literal)
   {
     return (String)super.createFromString(XMLTypePackage.Literals.GMONTH_DAY, literal);
   }
@@ -2512,7 +2712,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertGMonthDay(String instanceValue)
+  @Override
+public String convertGMonthDay(String instanceValue)
   {
     return super.convertToString(XMLTypePackage.Literals.GMONTH_DAY, instanceValue);
   }
@@ -2532,7 +2733,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String createGYear(String literal)
+  @Override
+public String createGYear(String literal)
   {
     return (String)super.createFromString(XMLTypePackage.Literals.GYEAR, literal);
   }
@@ -2552,7 +2754,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertGYear(String instanceValue)
+  @Override
+public String convertGYear(String instanceValue)
   {
     return super.convertToString(XMLTypePackage.Literals.GYEAR, instanceValue);
   }
@@ -2572,7 +2775,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String createGYearMonth(String literal)
+  @Override
+public String createGYearMonth(String literal)
   {
     return (String)super.createFromString(XMLTypePackage.Literals.GYEAR_MONTH, literal);
   }
@@ -2592,7 +2796,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertGYearMonth(String instanceValue)
+  @Override
+public String convertGYearMonth(String instanceValue)
   {
     return super.convertToString(XMLTypePackage.Literals.GYEAR_MONTH, instanceValue);
   }
@@ -2670,11 +2875,11 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @generated
+   * @generated NOT
    */
-  public String convertNonPositiveInteger(String instanceValue)
+  public BigInteger createNonPositiveIntegerFromString(EDataType eDataType, String initialValue)
   {
-    return convertInteger(instanceValue);
+    return createNonPositiveInteger(initialValue);
   }
 
   /**
@@ -2710,11 +2915,11 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @generated
+   * @generated NOT
    */
-  public String convertNonNegativeInteger(String instanceValue)
+  public BigInteger createNonNegativeIntegerFromString(EDataType eDataType, String initialValue)
   {
-    return convertInteger(instanceValue);
+    return createNonNegativeInteger(initialValue);
   }
 
   /**
@@ -2727,25 +2932,25 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
     return instanceValue == null ? null : instanceValue.toString();
   }
 
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String createNonPositiveInteger(String literal)
-  {
-    return createInteger(literal);
-  }
+//  /**
+//   * <!-- begin-user-doc -->
+//   * <!-- end-user-doc -->
+//   * @generated
+//   */
+//  public String createNonPositiveInteger(String literal)
+//  {
+//    return createInteger(literal);
+//  }
 
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String createNonPositiveIntegerFromString(EDataType eDataType, String initialValue)
-  {
-    return createIntegerFromString(XMLTypePackage.Literals.INTEGER, initialValue);
-  }
+//  /**
+//   * <!-- begin-user-doc -->
+//   * <!-- end-user-doc -->
+//   * @generated
+//   */
+//  public String createNonPositiveIntegerFromString(EDataType eDataType, String initialValue)
+//  {
+//    return createIntegerFromString(XMLTypePackage.Literals.INTEGER, initialValue);
+//  }
 
   /**
    * <!-- begin-user-doc -->
@@ -2762,7 +2967,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertNOTATION(String instanceValue)
+  @Override
+public String convertNOTATION(String instanceValue)
   {
     return super.convertToString(XMLTypePackage.Literals.NOTATION, instanceValue);
   }
@@ -2792,7 +2998,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertQName(String instanceValue)
+  @Override
+public String convertQName(String instanceValue)
   {
     return super.convertToString(XMLTypePackage.Literals.QNAME, instanceValue);
   }
@@ -2822,7 +3029,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertTime(String instanceValue)
+  @Override
+public String convertTime(String instanceValue)
   {
     return super.convertToString(XMLTypePackage.Literals.TIME, instanceValue);
   }
@@ -2962,7 +3170,8 @@ public class XMLTypeFactoryImpl extends EFactoryImpl implements XMLTypeFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public XMLTypePackage getXMLTypePackage()
+  @Override
+public XMLTypePackage getXMLTypePackage()
   {
     return (XMLTypePackage)getEPackage();
   }

@@ -10,17 +10,22 @@
  */
 package org.eclipse.emf.ecore.xml.type.util;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 
 import org.eclipse.emf.common.util.DiagnosticChain;
 import org.eclipse.emf.common.util.ResourceLocator;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.eclipse.emf.ecore.util.EObjectValidator;
-import org.eclipse.emf.ecore.xml.type.*;
+import org.eclipse.emf.ecore.xml.type.AnyType;
+import org.eclipse.emf.ecore.xml.type.ProcessingInstruction;
+import org.eclipse.emf.ecore.xml.type.SimpleAnyType;
+import org.eclipse.emf.ecore.xml.type.XMLTypeDocumentRoot;
+import org.eclipse.emf.ecore.xml.type.XMLTypePackage;
 
 /**
  * <!-- begin-user-doc -->
@@ -128,7 +133,7 @@ public class XMLTypeValidator extends EObjectValidator
       case XMLTypePackage.DATE_TIME:
         return validateDateTime((String)value, diagnostics, context);
       case XMLTypePackage.DECIMAL:
-        return validateDecimal((String)value, diagnostics, context);
+        return validateDecimal((BigDecimal)value, diagnostics, context);
       case XMLTypePackage.DOUBLE:
         return validateDouble((Double)value, diagnostics, context);
       case XMLTypePackage.DOUBLE_OBJECT:
@@ -168,7 +173,7 @@ public class XMLTypeValidator extends EObjectValidator
       case XMLTypePackage.INT:
         return validateInt((Integer)value, diagnostics, context);
       case XMLTypePackage.INTEGER:
-        return validateInteger((String)value, diagnostics, context);
+        return validateInteger((BigInteger)value, diagnostics, context);
       case XMLTypePackage.INT_OBJECT:
         return validateIntObject((Integer)value, diagnostics, context);
       case XMLTypePackage.LANGUAGE:
@@ -182,7 +187,7 @@ public class XMLTypeValidator extends EObjectValidator
       case XMLTypePackage.NC_NAME:
         return validateNCName((String)value, diagnostics, context);
       case XMLTypePackage.NEGATIVE_INTEGER:
-        return validateNegativeInteger((String)value, diagnostics, context);
+        return validateNegativeInteger((BigInteger)value, diagnostics, context);
       case XMLTypePackage.NMTOKEN:
         return validateNMTOKEN((String)value, diagnostics, context);
       case XMLTypePackage.NMTOKENS:
@@ -190,15 +195,15 @@ public class XMLTypeValidator extends EObjectValidator
       case XMLTypePackage.NMTOKENS_BASE:
         return validateNMTOKENSBase((List<?>)value, diagnostics, context);
       case XMLTypePackage.NON_NEGATIVE_INTEGER:
-        return validateNonNegativeInteger((String)value, diagnostics, context);
+        return validateNonNegativeInteger((BigInteger)value, diagnostics, context);
       case XMLTypePackage.NON_POSITIVE_INTEGER:
-        return validateNonPositiveInteger((String)value, diagnostics, context);
+        return validateNonPositiveInteger((BigInteger)value, diagnostics, context);
       case XMLTypePackage.NORMALIZED_STRING:
         return validateNormalizedString((String)value, diagnostics, context);
       case XMLTypePackage.NOTATION:
         return validateNOTATION((String)value, diagnostics, context);
       case XMLTypePackage.POSITIVE_INTEGER:
-        return validatePositiveInteger((String)value, diagnostics, context);
+        return validatePositiveInteger((BigInteger)value, diagnostics, context);
       case XMLTypePackage.QNAME:
         return validateQName((String)value, diagnostics, context);
       case XMLTypePackage.SHORT:
@@ -220,7 +225,7 @@ public class XMLTypeValidator extends EObjectValidator
       case XMLTypePackage.UNSIGNED_INT_OBJECT:
         return validateUnsignedIntObject((Long)value, diagnostics, context);
       case XMLTypePackage.UNSIGNED_LONG:
-        return validateUnsignedLong((String)value, diagnostics, context);
+        return validateUnsignedLong((BigInteger)value, diagnostics, context);
       case XMLTypePackage.UNSIGNED_SHORT:
         return validateUnsignedShort((Integer)value, diagnostics, context);
       case XMLTypePackage.UNSIGNED_SHORT_OBJECT:
@@ -366,7 +371,7 @@ public class XMLTypeValidator extends EObjectValidator
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean validateDecimal(String decimal, DiagnosticChain diagnostics, Map<Object, Object> context)
+  public boolean validateDecimal(BigDecimal decimal, DiagnosticChain diagnostics, Map<Object, Object> context)
   {
     return true;
   }
@@ -661,7 +666,7 @@ public class XMLTypeValidator extends EObjectValidator
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean validateInteger(String integer, DiagnosticChain diagnostics, Map<Object, Object> context)
+  public boolean validateInteger(BigInteger integer, DiagnosticChain diagnostics, Map<Object, Object> context)
   {
     return true;
   }
@@ -816,7 +821,7 @@ public class XMLTypeValidator extends EObjectValidator
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean validateNegativeInteger(String negativeInteger, DiagnosticChain diagnostics, Map<Object, Object> context)
+  public boolean validateNegativeInteger(BigInteger negativeInteger, DiagnosticChain diagnostics, Map<Object, Object> context)
   {
     boolean result = validateNegativeInteger_Max(negativeInteger, diagnostics, context);
     return result;
@@ -828,7 +833,7 @@ public class XMLTypeValidator extends EObjectValidator
    * @generated
    * @see #validateNegativeInteger_Max
    */
-  public static final String NEGATIVE_INTEGER__MAX__VALUE = "-1";
+  public static final BigInteger NEGATIVE_INTEGER__MAX__VALUE = new BigInteger("-1");
 
   /**
    * Validates the Max constraint of '<em>Negative Integer</em>'.
@@ -836,7 +841,7 @@ public class XMLTypeValidator extends EObjectValidator
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean validateNegativeInteger_Max(String negativeInteger, DiagnosticChain diagnostics, Map<Object, Object> context)
+  public boolean validateNegativeInteger_Max(BigInteger negativeInteger, DiagnosticChain diagnostics, Map<Object, Object> context)
   {
     boolean result = negativeInteger.compareTo(NEGATIVE_INTEGER__MAX__VALUE) <= 0;
     if (!result && diagnostics != null)
@@ -949,7 +954,7 @@ public class XMLTypeValidator extends EObjectValidator
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean validateNonNegativeInteger(String nonNegativeInteger, DiagnosticChain diagnostics, Map<Object, Object> context)
+  public boolean validateNonNegativeInteger(BigInteger nonNegativeInteger, DiagnosticChain diagnostics, Map<Object, Object> context)
   {
     boolean result = validateNonNegativeInteger_Min(nonNegativeInteger, diagnostics, context);
     return result;
@@ -961,7 +966,7 @@ public class XMLTypeValidator extends EObjectValidator
    * @generated
    * @see #validateNonNegativeInteger_Min
    */
-  public static final String NON_NEGATIVE_INTEGER__MIN__VALUE = "0";
+  public static final BigInteger NON_NEGATIVE_INTEGER__MIN__VALUE = new BigInteger("0");
 
   /**
    * Validates the Min constraint of '<em>Non Negative Integer</em>'.
@@ -969,7 +974,7 @@ public class XMLTypeValidator extends EObjectValidator
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean validateNonNegativeInteger_Min(String nonNegativeInteger, DiagnosticChain diagnostics, Map<Object, Object> context)
+  public boolean validateNonNegativeInteger_Min(BigInteger nonNegativeInteger, DiagnosticChain diagnostics, Map<Object, Object> context)
   {
     boolean result = nonNegativeInteger.compareTo(NON_NEGATIVE_INTEGER__MIN__VALUE) >= 0;
     if (!result && diagnostics != null)
@@ -982,7 +987,7 @@ public class XMLTypeValidator extends EObjectValidator
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean validateNonPositiveInteger(String nonPositiveInteger, DiagnosticChain diagnostics, Map<Object, Object> context)
+  public boolean validateNonPositiveInteger(BigInteger nonPositiveInteger, DiagnosticChain diagnostics, Map<Object, Object> context)
   {
     boolean result = validateNonPositiveInteger_Max(nonPositiveInteger, diagnostics, context);
     return result;
@@ -994,7 +999,7 @@ public class XMLTypeValidator extends EObjectValidator
    * @generated
    * @see #validateNonPositiveInteger_Max
    */
-  public static final String NON_POSITIVE_INTEGER__MAX__VALUE = "0";
+  public static final BigInteger NON_POSITIVE_INTEGER__MAX__VALUE = new BigInteger("0");
 
   /**
    * Validates the Max constraint of '<em>Non Positive Integer</em>'.
@@ -1002,7 +1007,7 @@ public class XMLTypeValidator extends EObjectValidator
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean validateNonPositiveInteger_Max(String nonPositiveInteger, DiagnosticChain diagnostics, Map<Object, Object> context)
+  public boolean validateNonPositiveInteger_Max(BigInteger nonPositiveInteger, DiagnosticChain diagnostics, Map<Object, Object> context)
   {
     boolean result = nonPositiveInteger.compareTo(NON_POSITIVE_INTEGER__MAX__VALUE) <= 0;
     if (!result && diagnostics != null)
@@ -1035,7 +1040,7 @@ public class XMLTypeValidator extends EObjectValidator
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean validatePositiveInteger(String positiveInteger, DiagnosticChain diagnostics, Map<Object, Object> context)
+  public boolean validatePositiveInteger(BigInteger positiveInteger, DiagnosticChain diagnostics, Map<Object, Object> context)
   {
     boolean result = validatePositiveInteger_Min(positiveInteger, diagnostics, context);
     return result;
@@ -1053,7 +1058,7 @@ public class XMLTypeValidator extends EObjectValidator
    * @generated
    * @see #validatePositiveInteger_Min
    */
-  public static final String POSITIVE_INTEGER__MIN__VALUE = "1";
+  public static final BigInteger POSITIVE_INTEGER__MIN__VALUE = new BigInteger("1");
 
   /**
    * Validates the Min constraint of '<em>Positive Integer</em>'.
@@ -1061,7 +1066,7 @@ public class XMLTypeValidator extends EObjectValidator
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean validatePositiveInteger_Min(String positiveInteger, DiagnosticChain diagnostics, Map<Object, Object> context)
+  public boolean validatePositiveInteger_Min(BigInteger positiveInteger, DiagnosticChain diagnostics, Map<Object, Object> context)
   {
     boolean result = positiveInteger.compareTo(POSITIVE_INTEGER__MIN__VALUE) >= 0;
     if (!result && diagnostics != null)
@@ -1276,7 +1281,7 @@ public class XMLTypeValidator extends EObjectValidator
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean validateUnsignedLong(String unsignedLong, DiagnosticChain diagnostics, Map<Object, Object> context)
+  public boolean validateUnsignedLong(BigInteger unsignedLong, DiagnosticChain diagnostics, Map<Object, Object> context)
   {
     boolean result = validateUnsignedLong_Min(unsignedLong, diagnostics, context);
     if (result || diagnostics != null) result &= validateUnsignedLong_Max(unsignedLong, diagnostics, context);
@@ -1289,7 +1294,7 @@ public class XMLTypeValidator extends EObjectValidator
    * @generated
    * @see #validateUnsignedLong_Min
    */
-  public static final String UNSIGNED_LONG__MIN__VALUE = "0";
+  public static final BigInteger UNSIGNED_LONG__MIN__VALUE = new BigInteger("0");
 
   /**
    * Validates the Min constraint of '<em>Unsigned Long</em>'.
@@ -1297,7 +1302,7 @@ public class XMLTypeValidator extends EObjectValidator
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean validateUnsignedLong_Min(String unsignedLong, DiagnosticChain diagnostics, Map<Object, Object> context)
+  public boolean validateUnsignedLong_Min(BigInteger unsignedLong, DiagnosticChain diagnostics, Map<Object, Object> context)
   {
     boolean result = unsignedLong.compareTo(UNSIGNED_LONG__MIN__VALUE) >= 0;
     if (!result && diagnostics != null)
@@ -1311,7 +1316,7 @@ public class XMLTypeValidator extends EObjectValidator
    * @generated
    * @see #validateUnsignedLong_Max
    */
-  public static final String UNSIGNED_LONG__MAX__VALUE = "18446744073709551615";
+  public static final BigInteger UNSIGNED_LONG__MAX__VALUE = new BigInteger("18446744073709551615");
 
   /**
    * Validates the Max constraint of '<em>Unsigned Long</em>'.
@@ -1319,7 +1324,7 @@ public class XMLTypeValidator extends EObjectValidator
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean validateUnsignedLong_Max(String unsignedLong, DiagnosticChain diagnostics, Map<Object, Object> context)
+  public boolean validateUnsignedLong_Max(BigInteger unsignedLong, DiagnosticChain diagnostics, Map<Object, Object> context)
   {
     boolean result = unsignedLong.compareTo(UNSIGNED_LONG__MAX__VALUE) <= 0;
     if (!result && diagnostics != null)

@@ -40,8 +40,8 @@ public class BasicFeatureMap
 {
   private static final long serialVersionUID = 1L;
 
-  protected Wrapper wrapper = this;  
-  protected transient FeatureMapUtil.Validator featureMapValidator;
+  protected Wrapper wrapper = this;
+  protected final FeatureMapUtil.Validator featureMapValidator;
 
   public BasicFeatureMap(InternalEObject owner, int featureID)
   {
@@ -2551,4 +2551,78 @@ public class BasicFeatureMap
     super.set(newValue instanceof FeatureMap ? newValue : ((FeatureMap.Internal.Wrapper)newValue).featureMap());
   }
 
+  @Override
+  protected Entry resolve(int index, Entry entry) 
+  {
+    EStructuralFeature feature = entry.getEStructuralFeature();
+    if (isResolveProxies(feature))
+    {
+      InternalEObject object = (InternalEObject)entry.getValue();
+      EObject resolved = resolveProxy(object);
+      if (resolved != object)
+      {
+        Entry newEntry = createEntry(feature, resolved);
+        assign(index, validate(index, newEntry));
+        didSet(index, newEntry, entry);
+
+        NotificationChain notifications = null;
+
+        // Produce a proxy resolve notification for the reference feature of the owner, if there is one.
+        //
+        if (isNotificationRequired())
+        {
+          EStructuralFeature affiliatedFeature = ExtendedMetaData.INSTANCE.getAffiliation(owner.eClass(), feature);
+          if (affiliatedFeature != getEStructuralFeature())
+          {
+            FeatureMapUtil.Validator validator = FeatureMapUtil.getValidator(owner.eClass(), feature);
+            int featureIndex = 0;
+            Entry [] entries = (Entry[])data;
+            for (int i = 0; i < index; ++i)
+            {
+              Entry affliatedEntry = entries[i];
+              if (validator.isValid(affliatedEntry.getEStructuralFeature()))
+              {
+                ++featureIndex;
+              }
+            }
+
+            notifications = 
+              createNotification
+                (Notification.RESOLVE, 
+                 affiliatedFeature,
+                 object,
+                 resolved,
+                 featureIndex,
+                 false);
+      
+            notifications.add(createNotification(Notification.RESOLVE, entry, newEntry, index, false));
+          }
+        }
+
+        EReference reference = (EReference)feature;
+        EReference opposite = reference.getEOpposite();
+        if (opposite != null)
+        {
+          notifications = object.eInverseRemove(owner, object.eClass().getFeatureID(opposite), null, notifications);
+          notifications = ((InternalEObject)resolved).eInverseAdd(owner, resolved.eClass().getFeatureID(opposite), null, notifications);
+        }
+        else if (reference.isContainment())
+        {
+          int inverseFeatureID = InternalEObject.EOPPOSITE_FEATURE_BASE - owner.eClass().getFeatureID(reference);
+          notifications = object.eInverseRemove(owner, inverseFeatureID, null, null);
+          if (((InternalEObject)resolved).eInternalContainer() == null)
+          {
+            notifications = ((InternalEObject)resolved).eInverseAdd(owner, inverseFeatureID, null, notifications);
+          }
+        }
+        if (notifications != null)
+        {
+          notifications.dispatch();
+        }
+
+        return newEntry;
+      }
+    }
+    return entry;
+  }
 }

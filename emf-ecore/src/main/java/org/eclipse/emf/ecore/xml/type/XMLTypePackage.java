@@ -357,7 +357,7 @@ public interface XMLTypePackage extends EPackage
    * The meta object id for the '<em>Decimal</em>' data type.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see java.lang.String
+   * @see java.math.BigDecimal
    * @see org.eclipse.emf.ecore.xml.type.impl.XMLTypePackageImpl#getDecimal()
    * @generated
    */
@@ -367,7 +367,7 @@ public interface XMLTypePackage extends EPackage
    * The meta object id for the '<em>Integer</em>' data type.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see java.lang.String
+   * @see java.math.BigInteger
    * @see org.eclipse.emf.ecore.xml.type.impl.XMLTypePackageImpl#getInteger()
    * @generated
    */
@@ -710,7 +710,7 @@ public interface XMLTypePackage extends EPackage
    * The meta object id for the '<em>Non Positive Integer</em>' data type.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see java.lang.String
+   * @see java.math.BigInteger
    * @see org.eclipse.emf.ecore.xml.type.impl.XMLTypePackageImpl#getNonPositiveInteger()
    * @generated
    */
@@ -720,7 +720,7 @@ public interface XMLTypePackage extends EPackage
    * The meta object id for the '<em>Negative Integer</em>' data type.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see java.lang.String
+   * @see java.math.BigInteger
    * @see org.eclipse.emf.ecore.xml.type.impl.XMLTypePackageImpl#getNegativeInteger()
    * @generated
    */
@@ -760,7 +760,7 @@ public interface XMLTypePackage extends EPackage
    * The meta object id for the '<em>Non Negative Integer</em>' data type.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see java.lang.String
+   * @see java.math.BigInteger
    * @see org.eclipse.emf.ecore.xml.type.impl.XMLTypePackageImpl#getNonNegativeInteger()
    * @generated
    */
@@ -780,7 +780,7 @@ public interface XMLTypePackage extends EPackage
    * The meta object id for the '<em>Positive Integer</em>' data type.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see java.lang.String
+   * @see java.math.BigInteger
    * @see org.eclipse.emf.ecore.xml.type.impl.XMLTypePackageImpl#getPositiveInteger()
    * @generated
    */
@@ -810,7 +810,7 @@ public interface XMLTypePackage extends EPackage
    * The meta object id for the '<em>Unsigned Long</em>' data type.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see java.lang.String
+   * @see java.math.BigInteger
    * @see org.eclipse.emf.ecore.xml.type.impl.XMLTypePackageImpl#getUnsignedLong()
    * @generated
    */
@@ -1139,24 +1139,24 @@ public interface XMLTypePackage extends EPackage
   EDataType getBooleanObject();
 
   /**
-   * Returns the meta object for data type '{@link java.lang.String <em>Decimal</em>}'.
+   * Returns the meta object for data type '{@link java.math.BigDecimal <em>Decimal</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for data type '<em>Decimal</em>'.
-   * @see java.lang.String
-   * @model instanceClass="java.lang.String"
+   * @see java.math.BigDecimal
+   * @model instanceClass="java.math.BigDecimal"
    *        extendedMetaData="name='decimal' whiteSpace='collapse'"
    * @generated
    */
   EDataType getDecimal();
 
   /**
-   * Returns the meta object for data type '{@link java.lang.String <em>Integer</em>}'.
+   * Returns the meta object for data type '{@link java.math.BigInteger <em>Integer</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for data type '<em>Integer</em>'.
-   * @see java.lang.String
-   * @model instanceClass="java.lang.String"
+   * @see java.math.BigInteger
+   * @model instanceClass="java.math.BigInteger"
    *        extendedMetaData="name='integer'"
    * @generated
    */
@@ -1564,24 +1564,24 @@ public interface XMLTypePackage extends EPackage
   EDataType getLanguage();
 
   /**
-   * Returns the meta object for data type '{@link java.lang.String <em>Non Positive Integer</em>}'.
+   * Returns the meta object for data type '{@link java.math.BigInteger <em>Non Positive Integer</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for data type '<em>Non Positive Integer</em>'.
-   * @see java.lang.String
-   * @model instanceClass="java.lang.String"
+   * @see java.math.BigInteger
+   * @model instanceClass="java.math.BigInteger"
    *        extendedMetaData="name='nonPositiveInteger' baseType='integer' maxInclusive='0'"
    * @generated
    */
   EDataType getNonPositiveInteger();
 
   /**
-   * Returns the meta object for data type '{@link java.lang.String <em>Negative Integer</em>}'.
+   * Returns the meta object for data type '{@link java.math.BigInteger <em>Negative Integer</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for data type '<em>Negative Integer</em>'.
-   * @see java.lang.String
-   * @model instanceClass="java.lang.String"
+   * @see java.math.BigInteger
+   * @model instanceClass="java.math.BigInteger"
    *        extendedMetaData="name='negativeInteger' baseType='nonPositiveInteger' maxInclusive='-1'"
    * @generated
    */
@@ -1624,12 +1624,12 @@ public interface XMLTypePackage extends EPackage
   EDataType getNMTOKENS();
 
   /**
-   * Returns the meta object for data type '{@link java.lang.String <em>Non Negative Integer</em>}'.
+   * Returns the meta object for data type '{@link java.math.BigInteger <em>Non Negative Integer</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for data type '<em>Non Negative Integer</em>'.
-   * @see java.lang.String
-   * @model instanceClass="java.lang.String"
+   * @see java.math.BigInteger
+   * @model instanceClass="java.math.BigInteger"
    *        extendedMetaData="name='nonNegativeInteger' baseType='integer' minInclusive='0'"
    * @generated
    */
@@ -1684,12 +1684,12 @@ public interface XMLTypePackage extends EPackage
   EDataType getTime();
 
   /**
-   * Returns the meta object for data type '{@link java.lang.String <em>Unsigned Long</em>}'.
+   * Returns the meta object for data type '{@link java.math.BigInteger <em>Unsigned Long</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for data type '<em>Unsigned Long</em>'.
-   * @see java.lang.String
-   * @model instanceClass="java.lang.String"
+   * @see java.math.BigInteger
+   * @model instanceClass="java.math.BigInteger"
    *        extendedMetaData="name='unsignedLong' baseType='nonNegativeInteger' maxInclusive='18446744073709551615' minInclusive='0'"
    * @generated
    */
@@ -2038,7 +2038,7 @@ public interface XMLTypePackage extends EPackage
      * The meta object literal for the '<em>Decimal</em>' data type.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see java.lang.String
+     * @see java.math.BigDecimal
      * @see org.eclipse.emf.ecore.xml.type.impl.XMLTypePackageImpl#getDecimal()
      * @generated
      */
@@ -2234,7 +2234,7 @@ public interface XMLTypePackage extends EPackage
      * The meta object literal for the '<em>Integer</em>' data type.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see java.lang.String
+     * @see java.math.BigInteger
      * @see org.eclipse.emf.ecore.xml.type.impl.XMLTypePackageImpl#getInteger()
      * @generated
      */
@@ -2303,7 +2303,7 @@ public interface XMLTypePackage extends EPackage
      * The meta object literal for the '<em>Negative Integer</em>' data type.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see java.lang.String
+     * @see java.math.BigInteger
      * @see org.eclipse.emf.ecore.xml.type.impl.XMLTypePackageImpl#getNegativeInteger()
      * @generated
      */
@@ -2343,7 +2343,7 @@ public interface XMLTypePackage extends EPackage
      * The meta object literal for the '<em>Non Negative Integer</em>' data type.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see java.lang.String
+     * @see java.math.BigInteger
      * @see org.eclipse.emf.ecore.xml.type.impl.XMLTypePackageImpl#getNonNegativeInteger()
      * @generated
      */
@@ -2353,7 +2353,7 @@ public interface XMLTypePackage extends EPackage
      * The meta object literal for the '<em>Non Positive Integer</em>' data type.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see java.lang.String
+     * @see java.math.BigInteger
      * @see org.eclipse.emf.ecore.xml.type.impl.XMLTypePackageImpl#getNonPositiveInteger()
      * @generated
      */
@@ -2490,7 +2490,7 @@ public interface XMLTypePackage extends EPackage
      * The meta object literal for the '<em>Unsigned Long</em>' data type.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see java.lang.String
+     * @see java.math.BigInteger
      * @see org.eclipse.emf.ecore.xml.type.impl.XMLTypePackageImpl#getUnsignedLong()
      * @generated
      */

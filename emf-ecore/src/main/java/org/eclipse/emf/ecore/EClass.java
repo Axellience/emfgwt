@@ -422,6 +422,21 @@ public interface EClass extends EClassifier
 
   /**
    * <!-- begin-user-doc -->
+   * Returns the generic type representing the effective {@link EcoreUtil#getReifiedType(EClass, EGenericType) reified type} of the feature in the context of this specific class.
+   * This will be different from the {@link ETypedElement#getEGenericType feature's actual type} 
+   * only if the {@link ETypedElement#getEGenericType feature's generic type} 
+   * is specified using {@link EGenericType#getETypeParameter type parameters}.
+   * In that case, if the type parameter is bound to a more specific type in the {@link #getEAllGenericSuperTypes() super types}, that more specific type is substituted.
+   * @return the generic type representing the effective type of the feature in the context of this specific class.
+   * @since 2.9
+   * <!-- end-user-doc -->
+   * @model
+   * @generated
+   */
+  EGenericType getFeatureType(EStructuralFeature feature);
+
+  /**
+   * <!-- begin-user-doc -->
    * Returns the ID of the feature relative to this class, or -1 if the feature is not in this class.
    * @return the ID of the feature relative to this class, or -1 if the feature is not in this class.
    * <!-- end-user-doc -->

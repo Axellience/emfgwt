@@ -285,13 +285,42 @@ public class EObjectValidator implements EValidator
 
   public boolean validate(EClass eClass, EObject eObject, DiagnosticChain diagnostics, Map<Object, Object> context)
   {
-    if (eClass.eContainer() == getEPackage())
+	if (eObject.eIsProxy())
+    {
+      if (context != null && context.get(ROOT_OBJECT) != null)
+      {
+        if (diagnostics != null)
+        {
+          diagnostics.add
+            (createDiagnostic
+              (Diagnostic.ERROR,
+               DIAGNOSTIC_SOURCE,
+               EOBJECT__EVERY_PROXY_RESOLVES,
+               "_UI_UnresolvedProxy_diagnostic",
+               new Object []
+               {
+                 getFeatureLabel(eObject.eContainmentFeature(), context),
+                 getObjectLabel(eObject.eContainer(), context),
+                 getObjectLabel(eObject, context)
+               },
+               new Object [] { eObject.eContainer(), eObject.eContainmentFeature(), eObject },
+               context));
+        }
+        return false;
+      }
+      else
+      {
+        return true;
+      }
+    }
+	else if (eClass.eContainer() == getEPackage())
     {
       return validate(eClass.getClassifierID(), eObject, diagnostics, context);
     }
     else
     {
-      return new DynamicEClassValidator()
+      return
+        new DynamicEClassValidator()
         {
           // Ensure that the class loader for this class will be used downstream.
           //
@@ -562,8 +591,14 @@ public class EObjectValidator implements EValidator
         int count = 0;
         for (int i = 0, size = featureMap.size(); i < size; ++i)
         {
-          int kind = ExtendedMetaData.INSTANCE.getFeatureKind(featureMap.getEStructuralFeature(i));
-          if (kind == ExtendedMetaData.ELEMENT_FEATURE && ++count > 1)
+          EStructuralFeature feature = featureMap.getEStructuralFeature(i);
+          int kind = ExtendedMetaData.INSTANCE.getFeatureKind(feature);
+          if (kind == ExtendedMetaData.ELEMENT_FEATURE && 
+                feature != XMLTypePackage.Literals.XML_TYPE_DOCUMENT_ROOT__CDATA &&
+                feature != XMLTypePackage.Literals.XML_TYPE_DOCUMENT_ROOT__COMMENT &&
+                feature != XMLTypePackage.Literals.XML_TYPE_DOCUMENT_ROOT__TEXT &&
+                feature != XMLTypePackage.Literals.XML_TYPE_DOCUMENT_ROOT__PROCESSING_INSTRUCTION &&
+                ++count > 1)
           {
             result = false;
             break;
@@ -1235,23 +1270,29 @@ public class EObjectValidator implements EValidator
         }
       }
 
-//      if (effectiveTotalDigits != -1)
-//      {
-//        if (value instanceof BigDecimal && ((BigDecimal)value).unscaledValue().abs().toString().length() > effectiveTotalDigits)
-//        {
-//          if (diagnostics != null) reportTotalDigitsViolation(eDataType, value, effectiveTotalDigits, diagnostics, context);
-//          result = false;
-//        }
-//      }
-//
-//      if (effectiveFractionDigits != -1)
-//      {
-//        if (value instanceof BigDecimal && ((BigDecimal)value).scale() > effectiveFractionDigits)
-//        {
-//          if (diagnostics != null) reportFractionDigitsViolation(eDataType, value, effectiveFractionDigits, diagnostics, context);
-//          result = false;
-//        }
-//      }
+      if (effectiveTotalDigits != -1)
+      {
+        if (value instanceof BigDecimal)
+        {
+          BigDecimal bigDecimal = (BigDecimal)value;
+          int scale = bigDecimal.scale();
+          int totalDigits = scale < 0 ? bigDecimal.precision() - scale : bigDecimal.precision();
+          if (totalDigits > effectiveTotalDigits)
+          {
+            if (diagnostics != null) reportTotalDigitsViolation(eDataType, value, effectiveTotalDigits, diagnostics, context);
+            result = false;
+          }
+        }
+      }
+
+      if (effectiveFractionDigits != -1)
+      {
+        if (value instanceof BigDecimal && ((BigDecimal)value).scale() > effectiveFractionDigits)
+        {
+          if (diagnostics != null) reportFractionDigitsViolation(eDataType, value, effectiveFractionDigits, diagnostics, context);
+          result = false;
+        }
+      }
       
       if (builtinType != null)
       {
@@ -1632,8 +1673,8 @@ public class EObjectValidator implements EValidator
         (severity,
          source,
          code,
-         getString("_UI_ConstraintDelegateException_diagnostic", new Object[] { constraint, getValueLabel(eDataType, value, context), throwable.getLocalizedMessage() }),
-         new Object [] { value }));
+         getString("_UI_ConstraintDelegateException_diagnostic", new Object[] { constraint, getValueLabel(eDataType, value, context), throwable.getClass().getName() + ": " + throwable.getLocalizedMessage() }),
+         new Object [] { value, throwable }));
   }
 
   /**
@@ -1674,8 +1715,8 @@ public class EObjectValidator implements EValidator
         (severity,
          source,
          code,
-         getString("_UI_ConstraintDelegateException_diagnostic", new Object[] { constraint, getObjectLabel(eObject, context), throwable.getLocalizedMessage() }),
-         new Object [] { eObject }));
+         getString("_UI_ConstraintDelegateException_diagnostic", new Object[] { constraint, getObjectLabel(eObject, context), throwable.getClass().getName() + ": " + throwable.getLocalizedMessage() }),
+         new Object [] { eObject, throwable }));
   }
 
   /**
@@ -1716,8 +1757,8 @@ public class EObjectValidator implements EValidator
         (severity,
          source,
          code,
-         EcorePlugin.INSTANCE.getString("_UI_InvariantDelegateException_diagnostic", new Object[] { invariant.getName(), getObjectLabel(eObject, context), throwable.getLocalizedMessage() }),
-         new Object [] { eObject }));
+         EcorePlugin.INSTANCE.getString("_UI_InvariantDelegateException_diagnostic", new Object[] { invariant.getName(), getObjectLabel(eObject, context), throwable.getClass().getName() + ": " + throwable.getLocalizedMessage() }),
+         new Object [] { eObject, throwable }));
   }
 
   /**
@@ -1754,21 +1795,24 @@ public class EObjectValidator implements EValidator
         EObject otherEObject = resource.getEObject(id);
         if (eObject != otherEObject && otherEObject != null)
         {
-          // ...
-          diagnostics.add
-            (createDiagnostic
-              (Diagnostic.ERROR,
-               DIAGNOSTIC_SOURCE,
-               EOBJECT__UNIQUE_ID,
-               "_UI_DuplicateID_diagnostic",
-               new Object []
-               {
-                 id,
-                 getObjectLabel(eObject, context),
-                 getObjectLabel(otherEObject, context)
-               },
-               new Object [] { eObject, otherEObject, id },
-               context));
+          result = false;
+          if (diagnostics != null)
+          {
+            diagnostics.add
+              (createDiagnostic
+                (Diagnostic.ERROR,
+                 DIAGNOSTIC_SOURCE,
+                 EOBJECT__UNIQUE_ID,
+                 "_UI_DuplicateID_diagnostic",
+                 new Object []
+                 {
+                   id,
+                   getObjectLabel(eObject, context),
+                   getObjectLabel(otherEObject, context)
+                 },
+                 new Object [] { eObject, otherEObject, id },
+                 context));
+          }
         }
       }
     }
