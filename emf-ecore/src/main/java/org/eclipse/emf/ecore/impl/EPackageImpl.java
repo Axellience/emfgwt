@@ -204,6 +204,10 @@ public class EPackageImpl extends ENamedElementImpl implements EPackage, BasicEx
         freeze(eSubpackages.get(i));
       }
     }
+
+    // Bug 433108: Lock in the shared extended metadata for this package
+    ExtendedMetaData.INSTANCE.getNamespace(this);
+
     super.freeze();
   }
   
@@ -445,7 +449,12 @@ public class EPackageImpl extends ENamedElementImpl implements EPackage, BasicEx
       Map<String, EClassifier> result = new HashMap<String, EClassifier>(eClassifiers.size());
       for (EClassifier eClassifier : eClassifiers)
       {
-        result.put(eClassifier.getName(), eClassifier);
+        String key = eClassifier.getName();
+        EClassifier duplicate = result.put(key, eClassifier);
+        if (duplicate != null)
+        {
+          result.put(key, duplicate);
+        }
       }
       eNameToEClassifierMap = result;
     }
@@ -1672,6 +1681,46 @@ public class EPackageImpl extends ENamedElementImpl implements EPackage, BasicEx
     }
   }
 
+  /**
+   * @since 2.10
+   */
+  protected void addAnnotation(ENamedElement eNamedElement, boolean [] path, String source, String [] details)
+  {
+    addAnnotation(eNamedElement, path, source, details, null);
+  }
+
+  /**
+   * @since 2.10
+   */
+  protected void addAnnotation(ENamedElement eNamedElement, boolean path[], String source, String [] details, URI [] references)
+  {
+    EAnnotation eAnnotation = ecoreFactory.createEAnnotation();
+    eAnnotation.setSource(source);
+    EMap<String, String> theDetails = eAnnotation.getDetails();
+    for (int i = 1; i < details.length; i += 2)
+    {
+      theDetails.put(details[i - 1], details[i]);
+    }
+    EList<EAnnotation> annotations = eNamedElement.getEAnnotations();
+    for (boolean isNonContent : path)
+    {
+      EAnnotation childAnnotation = annotations.get(annotations.size() - 1);
+      @SuppressWarnings("unchecked") EList<EAnnotation> childAnnotations = isNonContent ? childAnnotation.getEAnnotations() : (EList<EAnnotation>)(EList<?>)childAnnotation.getContents();
+      annotations = childAnnotations;
+    }
+    annotations.add(eAnnotation);
+    if (references != null)
+    {
+      InternalEList<EObject> eAnnotationReferences = (InternalEList<EObject>)eAnnotation.getReferences();
+      for (URI reference : references)
+      {
+        InternalEObject internalEObject = (InternalEObject)ecoreFactory.createEObject();
+        internalEObject.eSetProxyURI(reference);
+        eAnnotationReferences.addUnique(internalEObject);
+      }
+    }
+  }
+
   protected void initializeFromLoadedEPackage(EPackage target, EPackage source)
   {
     target.setName(source.getName());
@@ -1833,12 +1882,11 @@ public class EPackageImpl extends ENamedElementImpl implements EPackage, BasicEx
   }
 
   /**
-   * This interface is provided to support single sourcing GWT runtime and regular runtime applications.
-   * Generated WhiteList classes in generated packages will implement this and this extends the {@link URIService.WhiteList white list used in URI service}.
-   * This avoids having generated classes depend on classes not available in the regular runtime.
+   * This interface is provided as a place holder for single sourcing GWT runtime and regular runtime applications.
+   * Generated WhiteList classes in generated packages will implement this, but that's pointless in the regular runtime, though we want it to compile correctly.
    * @since 2.7
    */
-  protected static interface EBasicWhiteList extends URIService.WhiteList
+  protected static interface EBasicWhiteList
   {
     // This is a dummy placeholder class.
   }

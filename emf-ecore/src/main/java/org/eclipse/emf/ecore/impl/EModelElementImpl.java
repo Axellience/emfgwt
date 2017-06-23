@@ -11,8 +11,8 @@
 package org.eclipse.emf.ecore.impl;
 
 
-import com.google.gwt.user.client.rpc.GwtTransient;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.BasicEList;
@@ -31,6 +31,8 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource.Internal;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.InternalEList;
+
+import com.google.gwt.user.client.rpc.GwtTransient;
 
 
 /**
@@ -131,7 +133,8 @@ public abstract class EModelElementImpl extends MinimalEObjectImpl.Container imp
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<EAnnotation> getEAnnotations()
+  @Override
+public EList<EAnnotation> getEAnnotations()
   {
     if (eAnnotations == null)
     {
@@ -145,7 +148,8 @@ public abstract class EModelElementImpl extends MinimalEObjectImpl.Container imp
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public EAnnotation getEAnnotation(String source)
+  @Override
+public EAnnotation getEAnnotation(String source)
   {
     if (eAnnotations != null)
     {
@@ -154,12 +158,12 @@ public abstract class EModelElementImpl extends MinimalEObjectImpl.Container imp
         int size = eAnnotations.size();
         if (size > 0)
         {
-          Object [] eAnnotationArray = ((BasicEList<?>)eAnnotations).data();
+          EAnnotation [] eAnnotationArray = (EAnnotation[])((BasicEList<?>)eAnnotations).data();
           if (source == null)
           {
             for (int i = 0; i < size; ++i)
             {
-              EAnnotation eAnnotation = (EAnnotation) eAnnotationArray[i];
+              EAnnotation eAnnotation = eAnnotationArray[i];
               if (eAnnotation.getSource() == null)
               {
                 return eAnnotation;
@@ -170,7 +174,7 @@ public abstract class EModelElementImpl extends MinimalEObjectImpl.Container imp
           {
             for (int i = 0; i < size; ++i)
             {
-              EAnnotation eAnnotation = (EAnnotation) eAnnotationArray[i];
+              EAnnotation eAnnotation = eAnnotationArray[i];
               if (source.equals(eAnnotation.getSource()))
               {
                 return eAnnotation;
@@ -331,65 +335,63 @@ public abstract class EModelElementImpl extends MinimalEObjectImpl.Container imp
     {
       ENamedElement eNamedElement = (ENamedElement)eObject;
       String name = eNamedElement.getName();
-      if (name != null)
+      int count = 0;
+      for (Iterator<? extends Object> i = ((InternalEList<EObject>)eContents()).basicIterator(); i.hasNext(); )
       {
-        int count = 0;
-        for (Object otherEObject : eContents())
+        Object otherEObject = i.next();
+        if (otherEObject == eObject)
         {
-          if (otherEObject == eObject)
+          break;
+        }
+        if (otherEObject instanceof ENamedElement)
+        {
+          ENamedElement otherENamedElement = (ENamedElement)otherEObject;
+          String otherName = otherENamedElement.getName();
+          if (name == null ? otherName == null : name.equals(otherName))
           {
-            break;
-          }
-          if (otherEObject instanceof ENamedElement)
-          {
-            ENamedElement otherENamedElement = (ENamedElement)otherEObject;
-            if (name.equals(otherENamedElement.getName()))
-            {
-              ++count;
-            }
+            ++count;
           }
         }
-        name = eEncodeValue(name);
-        return 
-          count > 0 ?
-            name + "." + count : 
-            name;
       }
+      name = name == null ? "%" : eEncodeValue(name);
+      return 
+        count > 0 ?
+          name + "." + count : 
+          name;
     }
     else if (eObject instanceof EAnnotation)
     {
       EAnnotation eAnnotation = (EAnnotation)eObject;
       String source = eAnnotation.getSource();
-      if (source != null)
+      int count = 0;
+      for (Iterator<? extends Object> i = ((InternalEList<EObject>)eContents()).basicIterator(); i.hasNext(); )
       {
-        int count = 0;
-        for (Object otherEObject : eContents())
+        Object otherEObject = i.next();
+        if (otherEObject == eObject)
         {
-          if (otherEObject == eObject)
+          break;
+        }
+        if (otherEObject instanceof EAnnotation)
+        {
+          EAnnotation otherEAnnotation = (EAnnotation)otherEObject;
+          String otherSource = otherEAnnotation.getSource();
+          if (source == null ? otherSource == null : source.equals(otherSource))
           {
-            break;
-          }
-          if (otherEObject instanceof EAnnotation)
-          {
-            EAnnotation otherEAnnotation = (EAnnotation)otherEObject;
-            if (source.equals(otherEAnnotation.getSource()))
-            {
-              ++count;
-            }
+            ++count;
           }
         }
-        
-        StringBuffer result = new StringBuffer(source.length() + 5);
-        result.append('%');
-        result.append(URI.encodeSegment(source,  false));
-        result.append('%');
-        if (count > 0)
-        {
-          result.append('.');
-          result.append(count);
-        }
-        return result.toString();
       }
+
+      StringBuffer result = new StringBuffer(source == null ? 6 : source.length() + 5);
+      result.append('%');
+      result.append(source == null ? "%" : URI.encodeSegment(source,  false));
+      result.append('%');
+      if (count > 0)
+      {
+        result.append('.');
+        result.append(count);
+      }
+      return result.toString();
     }
     return super.eURIFragmentSegment(eStructuralFeature, eObject);
   }
@@ -409,15 +411,16 @@ public abstract class EModelElementImpl extends MinimalEObjectImpl.Container imp
         //
         if (firstCharacter == '%')
         {
-          // Find the closing '%'
+          // Find the closing '%' and make sure it's not just the opening '%'
           //
           int index = uriFragmentSegment.lastIndexOf("%");
           boolean hasCount = false;
-          if (index == length - 1 || (hasCount = uriFragmentSegment.charAt(index + 1) == '.'))
+          if (index != 0 && (index == length - 1 || (hasCount = uriFragmentSegment.charAt(index + 1) == '.')))
           {
             // Decode all encoded characters.
             //
-            String source = URI.decode(uriFragmentSegment.substring(1, index));
+            String encodedSource = uriFragmentSegment.substring(1, index);
+            String source = "%".equals(encodedSource) ? null : URI.decode(encodedSource);
             
             // Check for a count, i.e., a '.' followed by a number.
             //
@@ -441,7 +444,8 @@ public abstract class EModelElementImpl extends MinimalEObjectImpl.Container imp
               if (object instanceof EAnnotation)
               {
                 EAnnotation eAnnotation = (EAnnotation)object;
-                if (source.equals(eAnnotation.getSource()) && count-- == 0)
+                String otherSource = eAnnotation.getSource();
+                if ((source == null ? otherSource == null : source.equals(otherSource)) && count-- == 0)
                 {
                   return eAnnotation;
                 }
@@ -470,7 +474,7 @@ public abstract class EModelElementImpl extends MinimalEObjectImpl.Container imp
           }
         }
 
-        name = URI.decode(name);
+        name = "%".equals(name) ? null : URI.decode(name);
     
         // Look for a matching named element.
         //
@@ -479,7 +483,8 @@ public abstract class EModelElementImpl extends MinimalEObjectImpl.Container imp
           if (object instanceof ENamedElement)
           {
             ENamedElement eNamedElement = (ENamedElement)object;
-            if (name.equals(eNamedElement.getName()) && count-- == 0)
+            String otherName = eNamedElement.getName();
+            if ((name == null ? otherName == null : name.equals(otherName)) && count-- == 0)
             {
               return eNamedElement;
             }

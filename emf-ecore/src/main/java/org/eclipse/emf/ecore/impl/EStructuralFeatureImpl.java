@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcorePackage;
@@ -104,7 +105,15 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
     return EcorePackage.Literals.ESTRUCTURAL_FEATURE;
   }
 
-  @GwtTransient
+  @Override
+  protected void freeze()
+  {
+    // Bug 433108: Lock in the shared extended metadata for this feature
+    ExtendedMetaData.INSTANCE.getName(this);
+
+    super.freeze();
+  }
+
   protected Object defaultValue = null;
   @GwtTransient
   protected EFactory defaultValueFactory = null;
@@ -114,7 +123,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
    * <!-- end-user-doc -->
    * @generated modifiable
    */
-  public Object getDefaultValue()
+  @Override
+public Object getDefaultValue()
   {
     EClassifier eType = getEType();
     String literal = getDefaultValueLiteral();
@@ -125,31 +135,36 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
     }
     else if (eType instanceof EDataType)
     {
-      EFactory factory = eType.getEPackage().getEFactoryInstance();
-      if (factory != defaultValueFactory)
+      EPackage ePackage = eType.getEPackage();
+      if (ePackage != null)
       {
-        EDataType eDataType = (EDataType)eType;
-        if (eDataType.isSerializable())
+        EFactory factory = ePackage.getEFactoryInstance();
+        if (factory != defaultValueFactory)
         {
-          try
+          EDataType eDataType = (EDataType)eType;
+          if (eDataType.isSerializable())
           {
-            defaultValue = factory.createFromString(eDataType, literal);
+            try
+            {
+              defaultValue = factory.createFromString(eDataType, literal);
+            }
+            catch (Throwable e)
+            {
+              // At development time, the real factory may not be available. Just return null.
+              //
+              defaultValue = null;
+            }
           }
-          catch (Throwable e)
-          {
-            // At development time, the real factory may not be available. Just return null.
-            //
-            defaultValue = null;
-          }
+          defaultValueFactory = factory;
         }
-        defaultValueFactory = factory;
       }
       return defaultValue;
     }
     return null;
   }
 
-  public void setDefaultValue(Object newDefaultValue)
+  @Override
+public void setDefaultValue(Object newDefaultValue)
   {
     EClassifier eType = getEType();
     if (eType instanceof EDataType)
@@ -163,7 +178,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
     throw new IllegalStateException("Cannot serialize value to object without an EDataType eType");
   }
 
-  public void setDefaultValueLiteral(String newDefaultValueLiteral)
+  @Override
+public void setDefaultValueLiteral(String newDefaultValueLiteral)
   {
     defaultValueFactory = null;
     setDefaultValueLiteralGen(newDefaultValueLiteral);
@@ -187,7 +203,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isUnsettable()
+  @Override
+public boolean isUnsettable()
   {
     return (eFlags & UNSETTABLE_EFLAG) != 0;
   }
@@ -197,7 +214,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setUnsettable(boolean newUnsettable)
+  @Override
+public void setUnsettable(boolean newUnsettable)
   {
     boolean oldUnsettable = (eFlags & UNSETTABLE_EFLAG) != 0;
     if (newUnsettable) eFlags |= UNSETTABLE_EFLAG; else eFlags &= ~UNSETTABLE_EFLAG;
@@ -210,7 +228,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isDerived()
+  @Override
+public boolean isDerived()
   {
     return (eFlags & DERIVED_EFLAG) != 0;
   }
@@ -220,7 +239,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setDerived(boolean newDerived)
+  @Override
+public void setDerived(boolean newDerived)
   {
     boolean oldDerived = (eFlags & DERIVED_EFLAG) != 0;
     if (newDerived) eFlags |= DERIVED_EFLAG; else eFlags &= ~DERIVED_EFLAG;
@@ -233,10 +253,11 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getEContainingClass()
+  @Override
+public EClass getEContainingClass()
   {
     if (eContainerFeatureID() != EcorePackage.ESTRUCTURAL_FEATURE__ECONTAINING_CLASS) return null;
-    return (EClass)eContainer();
+    return (EClass)eInternalContainer();
   }
 
   /**
@@ -375,7 +396,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isTransient()
+  @Override
+public boolean isTransient()
   {
     return (eFlags & TRANSIENT_EFLAG) != 0;
   }
@@ -385,7 +407,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setTransient(boolean newTransient)
+  @Override
+public void setTransient(boolean newTransient)
   {
     boolean oldTransient = (eFlags & TRANSIENT_EFLAG) != 0;
     if (newTransient) eFlags |= TRANSIENT_EFLAG; else eFlags &= ~TRANSIENT_EFLAG;
@@ -398,7 +421,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isVolatile()
+  @Override
+public boolean isVolatile()
   {
     return (eFlags & VOLATILE_EFLAG) != 0;
   }
@@ -408,7 +432,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setVolatile(boolean newVolatile)
+  @Override
+public void setVolatile(boolean newVolatile)
   {
     boolean oldVolatile = (eFlags & VOLATILE_EFLAG) != 0;
     if (newVolatile) eFlags |= VOLATILE_EFLAG; else eFlags &= ~VOLATILE_EFLAG;
@@ -421,7 +446,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isChangeable()
+  @Override
+public boolean isChangeable()
   {
     return (eFlags & CHANGEABLE_EFLAG) != 0;
   }
@@ -431,7 +457,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setChangeable(boolean newChangeable)
+  @Override
+public void setChangeable(boolean newChangeable)
   {
     boolean oldChangeable = (eFlags & CHANGEABLE_EFLAG) != 0;
     if (newChangeable) eFlags |= CHANGEABLE_EFLAG; else eFlags &= ~CHANGEABLE_EFLAG;
@@ -444,7 +471,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getDefaultValueLiteral()
+  @Override
+public String getDefaultValueLiteral()
   {
     return defaultValueLiteral;
   }
@@ -479,7 +507,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
   /**
    * @generated modifiable
    */
-  public int getFeatureID()
+  @Override
+public int getFeatureID()
   {
     return featureID;
   }
@@ -492,7 +521,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
   /**
    * @generated modifiable
    */
-  public Class<?> getContainerClass()
+  @Override
+public Class<?> getContainerClass()
   {
     return containerClass;
   }
@@ -794,27 +824,32 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
     this.containerClass = containerClass;
   }
 
-  public boolean isResolveProxies()
+  @Override
+public boolean isResolveProxies()
   {
     return false;
   }
 
-  public boolean isContainer()
+  @Override
+public boolean isContainer()
   {
     return false;
   }
 
-  public boolean isContainment()
+  @Override
+public boolean isContainment()
   {
     return false;
   }
 
-  public EReference getEOpposite()
+  @Override
+public EReference getEOpposite()
   {
     return null;
   }
   
-  public boolean isID()
+  @Override
+public boolean isID()
   {
     return false;
   }
@@ -822,7 +857,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
   @GwtTransient
   protected EStructuralFeature.Internal.SettingDelegate settingDelegate;
 
-  public EStructuralFeature.Internal.SettingDelegate getSettingDelegate()
+  @Override
+public EStructuralFeature.Internal.SettingDelegate getSettingDelegate()
   {
     if (settingDelegate == null)
     {
@@ -1444,7 +1480,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
     return new InternalSettingDelegateMany(InternalSettingDelegateMany.FEATURE_MAP, this);
   }
 
-  public void setSettingDelegate(EStructuralFeature.Internal.SettingDelegate settingDelegate)
+  @Override
+public void setSettingDelegate(EStructuralFeature.Internal.SettingDelegate settingDelegate)
   {
     this.settingDelegate = settingDelegate;
   }
@@ -1465,35 +1502,41 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       return ((FeatureMap.Internal)owner.eGet(featureMapFeature)).setting(feature);
     }
 
+    @Override
     public EStructuralFeature.Setting dynamicSetting(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index)
     {
       return createDynamicSetting(owner);
     }
 
+    @Override
     public Object dynamicGet(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index, boolean resolve, boolean coreType)
     {
       FeatureMap.Internal featureMap = (FeatureMap.Internal)owner.eGet(featureMapFeature);
       return featureMap.setting(feature).get(resolve);
     }
 
+    @Override
     public void dynamicSet(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index, Object newValue)
     {
       FeatureMap.Internal featureMap = (FeatureMap.Internal)owner.eGet(featureMapFeature);
       featureMap.setting(feature).set(newValue);
     }
 
+    @Override
     public void dynamicUnset(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index)
     {
       FeatureMap.Internal featureMap = (FeatureMap.Internal)owner.eGet(featureMapFeature);
       featureMap.setting(feature).unset();
     }
 
+    @Override
     public boolean dynamicIsSet(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index)
     {
       FeatureMap.Internal featureMap = (FeatureMap.Internal)owner.eGet(featureMapFeature);
       return featureMap.setting(feature).isSet();
     }
 
+    @Override
     public NotificationChain dynamicInverseAdd
       (InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index, InternalEObject otherEnd, NotificationChain notifications)
     {
@@ -1501,6 +1544,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       return featureMap.basicAdd(feature, otherEnd, notifications);
     }
 
+    @Override
     public NotificationChain dynamicInverseRemove
       (InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index, InternalEObject otherEnd, NotificationChain notifications)
     {
@@ -1689,6 +1733,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       }
     }
 
+    @Override
     public EStructuralFeature.Setting dynamicSetting(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index)
     {
       Object setting = settings.dynamicGet(index);
@@ -1708,6 +1753,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       }
     }
 
+    @Override
     public Object dynamicGet(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index, boolean resolve, boolean coreType)
     {
       Object result = settings.dynamicGet(index);
@@ -1727,6 +1773,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       return result;
     }
 
+    @Override
     public void dynamicSet(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index, Object newValue)
     {
       EStructuralFeature.Setting setting = (EStructuralFeature.Setting)settings.dynamicGet(index);
@@ -1737,6 +1784,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       setting.set(newValue);
     }
 
+    @Override
     public void dynamicUnset(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index)
     {
       EStructuralFeature.Setting setting = (EStructuralFeature.Setting)settings.dynamicGet(index);
@@ -1747,6 +1795,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       setting.unset();
     }
 
+    @Override
     public boolean dynamicIsSet(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index)
     {
       Object setting = settings.dynamicGet(index);
@@ -1760,6 +1809,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       }
     }
 
+    @Override
     public NotificationChain dynamicInverseAdd
       (InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index, InternalEObject otherEnd, NotificationChain notifications)
     {
@@ -1772,6 +1822,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       return result;
     }
 
+    @Override
     public NotificationChain dynamicInverseRemove
       (InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index, InternalEObject otherEnd, NotificationChain notifications)
     {
@@ -1795,49 +1846,58 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       this.feature = feature;
     }
 
+    @Override
     public EStructuralFeature.Setting dynamicSetting(final InternalEObject owner, final EStructuralFeature.Internal.DynamicValueHolder settings, final int index)
     {
       return
         new EStructuralFeature.Setting()
         {
-          public EObject getEObject()
+          @Override
+        public EObject getEObject()
           {
             return owner;
           }
 
-          public EStructuralFeature getEStructuralFeature()
+          @Override
+        public EStructuralFeature getEStructuralFeature()
           {
             return feature;
           }
 
-          public Object get(boolean resolve)
+          @Override
+        public Object get(boolean resolve)
           {
             return dynamicGet(owner, settings, index, resolve, true);
           }
 
-          public void set(Object newValue)
+          @Override
+        public void set(Object newValue)
           {
             dynamicSet(owner, settings, index, newValue);
           }
 
-          public boolean isSet()
+          @Override
+        public boolean isSet()
           {
             return dynamicIsSet(owner, settings, index);
           }
 
-          public void unset()
+          @Override
+        public void unset()
           {
             dynamicUnset(owner, settings, index);
           }
         };
     }
 
+    @Override
     public NotificationChain dynamicInverseAdd
       (InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index, InternalEObject otherEnd, NotificationChain notifications)
     {
       throw new UnsupportedOperationException();
     }
 
+    @Override
     public NotificationChain dynamicInverseRemove
       (InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index, InternalEObject otherEnd, NotificationChain notifications)
     {
@@ -1857,6 +1917,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       this.inverseFeature = inverseFeature;
     }
 
+    @Override
     public Object dynamicGet(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index, boolean resolve, boolean coreType)
     {
       return owner.eContainmentFeature() == inverseFeature ? isResolveProxies() && resolve ? owner.eContainer() : owner.eInternalContainer() : null;
@@ -1867,6 +1928,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       return false;
     }
 
+    @Override
     public void dynamicSet(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index, Object newValue)
     {
       if (newValue != null && !eClass.isInstance(newValue))
@@ -1909,6 +1971,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       }
     }
 
+    @Override
     public void dynamicUnset(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index)
     {
       EObject eContainer = owner.eInternalContainer();
@@ -1926,6 +1989,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       }
     }
 
+    @Override
     public boolean dynamicIsSet(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index)
     {
       int featureID = owner.eClass().getFeatureID(feature);
@@ -2187,6 +2251,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       throw new ClassCastException();
     }
 
+    @Override
     public Object dynamicGet(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index, boolean resolve, boolean coreType)
     {
       Object result = settings.dynamicGet(index);
@@ -2204,6 +2269,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       }
     }
 
+    @Override
     public void dynamicSet(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index, Object newValue)
     {
       if (owner.eNotificationRequired())
@@ -2265,6 +2331,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       }
     }
 
+    @Override
     public void dynamicUnset(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index)
     {
       if (owner.eNotificationRequired())
@@ -2281,6 +2348,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       }
     }
 
+    @Override
     public boolean dynamicIsSet(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index)
     {
       Object setting = settings.dynamicGet(index);
@@ -2581,6 +2649,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       return false;
     }
 
+    @Override
     public Object dynamicGet(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index, boolean resolve, boolean coreType)
     {
       Object result = settings.dynamicGet(index);
@@ -2647,8 +2716,18 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
     }
 
 
+    @Override
     public void dynamicSet(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index, Object newValue)
     {
+      if (newValue != null && !eClass.isInstance(newValue))
+      {
+        throw 
+          new ClassCastException
+            ("The value of type '" + 
+               (newValue instanceof EObject ? ((EObject)newValue).eClass().toString() : newValue.getClass().toString()) + 
+               "' must be of type '" + eClass + "'");
+      }
+
       Object oldValue = settings.dynamicGet(index);
       boolean oldIsSet = oldValue != null;
       if (isUnsettable() && oldValue == NIL)
@@ -2743,6 +2822,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       }
     }
 
+    @Override
     public void dynamicUnset(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index)
     {
       Object oldValue = settings.dynamicGet(index);
@@ -2804,6 +2884,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       }
     }
 
+    @Override
     public boolean dynamicIsSet(InternalEObject owner, EStructuralFeature.Internal.DynamicValueHolder settings, int index)
     {
       Object setting = settings.dynamicGet(index);
@@ -3122,27 +3203,32 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       this.list = list;
     }
 
+    @Override
     public EObject getEObject()
     {
       return owner;
     }
 
+    @Override
     public EStructuralFeature getEStructuralFeature()
     {
       return eStructuralFeature;
     }
 
+    @Override
     public Object get(boolean resolve)
     {
       return list;
     }
 
+    @Override
     public void set(Object newValue)
     {
       list.clear();
       list.addAll((List<?>)newValue);
     }
 
+    @Override
     public boolean isSet()
     {
       return 
@@ -3151,6 +3237,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
           !list.isEmpty();
     }
 
+    @Override
     public void unset()
     {
       if (list instanceof InternalEList.Unsettable<?>)
@@ -3169,7 +3256,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
   @GwtTransient
   protected boolean cachedIsFeatureMap;
 
-  public boolean isFeatureMap()
+  @Override
+public boolean isFeatureMap()
   {
     if (cachedEType != eType)
     {
@@ -3189,11 +3277,13 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       this.eStructuralFeature = eStructuralFeature;
     }
 
+    @Override
     final public EStructuralFeature getEStructuralFeature()
     {
       return eStructuralFeature;
     }
 
+    @Override
     public void validate(Object value)
     {
       if (value != null && !eStructuralFeature.getEType().isInstance(value))
@@ -3206,11 +3296,13 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       }
     }
 
+    @Override
     public Internal createEntry(Object value)
     {
       return createEntry((InternalEObject)value);
     }
 
+    @Override
     public Internal createEntry(InternalEObject value)
     {
       return createEntry((Object)value);
@@ -3273,6 +3365,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       this.value = value;
     }
 
+    @Override
     public final Object getValue()
     {
       return value;
@@ -3284,21 +3377,25 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       return new SimpleFeatureMapEntry(eStructuralFeature, value);
     }
 
+    @Override
     public final NotificationChain inverseAdd(InternalEObject owner, int featureID, NotificationChain notifications)
     {
       return notifications;
     }
 
+    @Override
     public final NotificationChain inverseRemove(InternalEObject owner, int featureID, NotificationChain notifications)
     {
       return notifications;
     }
 
+    @Override
     public final NotificationChain inverseAdd(InternalEObject owner, Object otherEnd, int featureID, NotificationChain notifications)
     {
       return notifications;
     }
 
+    @Override
     public final NotificationChain inverseRemove(InternalEObject owner, Object otherEnd, int featureID, NotificationChain notifications)
     {
       return notifications;
@@ -3317,6 +3414,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       eFactory = eDataType.getEPackage().getEFactoryInstance();
     }
 
+    @Override
     public final Object getValue()
     {
       return null;
@@ -3331,21 +3429,25 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
            eFactory.convertToString(eDataType, value));
     }
 
+    @Override
     public final NotificationChain inverseAdd(InternalEObject owner, int featureID, NotificationChain notifications)
     {
       return notifications;
     }
 
+    @Override
     public final NotificationChain inverseRemove(InternalEObject owner, int featureID, NotificationChain notifications)
     {
       return notifications;
     }
 
+    @Override
     public final NotificationChain inverseAdd(InternalEObject owner, Object otherEnd, int featureID, NotificationChain notifications)
     {
       return notifications;
     }
 
+    @Override
     public final NotificationChain inverseRemove(InternalEObject owner, Object otherEnd, int featureID, NotificationChain notifications)
     {
       return notifications;
@@ -3363,6 +3465,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       this.value = value;
     }
 
+    @Override
     final public Object getValue()
     {
       return value;
@@ -3374,21 +3477,25 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       return new InverseUpdatingFeatureMapEntry(eStructuralFeature, value);
     }
 
+    @Override
     public final NotificationChain inverseAdd(InternalEObject owner, int featureID, NotificationChain notifications)
     {
       return inverseAdd(owner, value, featureID, notifications);
     }
 
+    @Override
     public final NotificationChain inverseRemove(InternalEObject owner, int featureID, NotificationChain notifications)
     {
       return inverseRemove(owner, value, featureID, notifications);
     }
 
+    @Override
     public final NotificationChain inverseAdd(InternalEObject owner, Object otherEnd, int featureID, NotificationChain notifications)
     {
       return inverseAdd(owner, value, featureID, notifications);
     }
 
+    @Override
     public final NotificationChain inverseRemove(InternalEObject owner, Object otherEnd, int featureID, NotificationChain notifications)
     {
       return inverseRemove(owner, value, featureID, notifications);
@@ -3434,6 +3541,7 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       this.value = value;
     }
 
+    @Override
     public final Object getValue()
     {
       return value;
@@ -3445,21 +3553,25 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
       return new ContainmentUpdatingFeatureMapEntry(eStructuralFeature, value);
     }
 
+    @Override
     public final NotificationChain inverseAdd(InternalEObject owner, int featureID, NotificationChain notifications)
     {
       return inverseAdd(owner, value, featureID, notifications);
     }
 
+    @Override
     public final NotificationChain inverseRemove(InternalEObject owner, int featureID, NotificationChain notifications)
     {
       return inverseRemove(owner, value, featureID, notifications);
     }
 
+    @Override
     public final NotificationChain inverseAdd(InternalEObject owner, Object otherEnd, int featureID, NotificationChain notifications)
     {
       return inverseAdd(owner, (InternalEObject)otherEnd, featureID, notifications);
     }
 
+    @Override
     public final NotificationChain inverseRemove(InternalEObject owner, Object otherEnd, int featureID, NotificationChain notifications)
     {
       return inverseRemove(owner, (InternalEObject)otherEnd, featureID, notifications);
@@ -3501,7 +3613,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
   @GwtTransient
   protected FeatureMap.Entry.Internal prototypeFeatureMapEntry;
 
-  public FeatureMap.Entry.Internal getFeatureMapEntryPrototype()
+  @Override
+public FeatureMap.Entry.Internal getFeatureMapEntryPrototype()
   {
     if (prototypeFeatureMapEntry == null)
     {
@@ -3527,7 +3640,8 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
     return prototypeFeatureMapEntry;
   }
 
-  public void setFeatureMapEntryPrototype(FeatureMap.Entry.Internal prototype)
+  @Override
+public void setFeatureMapEntryPrototype(FeatureMap.Entry.Internal prototype)
   {
     prototypeFeatureMapEntry = prototype;
   }
@@ -3535,12 +3649,14 @@ public abstract class EStructuralFeatureImpl extends ETypedElementImpl implement
   @GwtTransient
   protected BasicExtendedMetaData.EStructuralFeatureExtendedMetaData eStructuralFeatureExtendedMetaData;
 
-  public BasicExtendedMetaData.EStructuralFeatureExtendedMetaData getExtendedMetaData()
+  @Override
+public BasicExtendedMetaData.EStructuralFeatureExtendedMetaData getExtendedMetaData()
   {
     return eStructuralFeatureExtendedMetaData;
   }
 
-  public void setExtendedMetaData(BasicExtendedMetaData.EStructuralFeatureExtendedMetaData eStructuralFeatureExtendedMetaData)
+  @Override
+public void setExtendedMetaData(BasicExtendedMetaData.EStructuralFeatureExtendedMetaData eStructuralFeatureExtendedMetaData)
   {
     this.eStructuralFeatureExtendedMetaData = eStructuralFeatureExtendedMetaData;
   }

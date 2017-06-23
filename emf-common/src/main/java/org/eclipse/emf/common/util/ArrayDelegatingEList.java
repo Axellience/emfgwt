@@ -12,6 +12,7 @@ package org.eclipse.emf.common.util;
 
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -628,12 +629,20 @@ public abstract class ArrayDelegatingEList<E> extends AbstractEList<E> implement
 
     @SuppressWarnings("unchecked") E oldObject = (E)data[index];
 
-    Object[] newData = newData(size - 1);
-    System.arraycopy(data, 0, newData, 0, index);
-    int shifted = size - index - 1;
-    if (shifted > 0)
+    Object[] newData;
+    if (size == 1)
     {
-      System.arraycopy(data, index+1, newData, index, shifted);
+      newData = null;
+    }
+    else
+    {
+      newData = newData(size - 1);
+      System.arraycopy(data, 0, newData, 0, index);
+      int shifted = size - index - 1;
+      if (shifted > 0)
+      {
+        System.arraycopy(data, index+1, newData, index, shifted);
+      }
     }
 
     setData(newData);
@@ -794,6 +803,13 @@ public abstract class ArrayDelegatingEList<E> extends AbstractEList<E> implement
         throw new ConcurrentModificationException();
       }
     }
+
+    @Override
+    public void remove()
+    {
+      super.remove();
+      expectedData = data();
+    }
   }
 
   /**
@@ -899,6 +915,20 @@ public abstract class ArrayDelegatingEList<E> extends AbstractEList<E> implement
       {
         throw new ConcurrentModificationException();
       }
+    }
+
+    @Override
+    public void remove()
+    {
+      super.remove();
+      expectedData = data();
+    }
+
+    @Override
+    protected void doSet(E object)
+    {
+      super.doSet(object);
+      expectedData = data();
     }
   }
 

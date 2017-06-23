@@ -12,12 +12,16 @@ package org.eclipse.emf.common.util;
 
 
 import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 
 /**
@@ -528,7 +532,8 @@ public abstract class AbstractEList<E> extends AbstractList<E> implements EList<
    * @param object the object to be moved.
    * @exception IndexOutOfBoundsException if the index isn't within the size range or the object isn't contained by the list.
    */
-  public void move(int index, E object)
+  @Override
+public void move(int index, E object)
   {
     move(index, indexOf(object));
   }
@@ -542,7 +547,8 @@ public abstract class AbstractEList<E> extends AbstractList<E> implements EList<
    * @return the moved object.
    * @exception IndexOutOfBoundsException if either index isn't within the size range.
    */
-  public abstract E move(int targetIndex, int sourceIndex);
+  @Override
+public abstract E move(int targetIndex, int sourceIndex);
 
 
   /**
@@ -668,6 +674,7 @@ public abstract class AbstractEList<E> extends AbstractList<E> implements EList<
      * Returns whether there are more objects.
      * @return whether there are more objects.
      */
+    @Override
     public boolean hasNext()
     {
       return cursor != size();
@@ -679,6 +686,7 @@ public abstract class AbstractEList<E> extends AbstractList<E> implements EList<
      * @return the next object.
      * @exception NoSuchElementException if the iterator is done.
      */
+    @Override
     @SuppressWarnings("unchecked")
     public E1 next()
     {
@@ -716,6 +724,7 @@ public abstract class AbstractEList<E> extends AbstractList<E> implements EList<
      * if <code>next</code> has not yet been called,
      * or <code>remove</code> has already been called after the last call to <code>next</code>.
      */
+    @Override
     public void remove()
     {
       if (lastCursor == -1)
@@ -854,6 +863,7 @@ public abstract class AbstractEList<E> extends AbstractList<E> implements EList<
      * Returns whether there are more objects for {@link #previous}.
      * Returns whether there are more objects.
      */
+    @Override
     public boolean hasPrevious()
     {
       return cursor != 0;
@@ -865,6 +875,7 @@ public abstract class AbstractEList<E> extends AbstractList<E> implements EList<
      * @return the previous object.
      * @exception NoSuchElementException if the iterator is done.
      */
+    @Override
     @SuppressWarnings("unchecked")
     public E1 previous()
     {
@@ -897,6 +908,7 @@ public abstract class AbstractEList<E> extends AbstractList<E> implements EList<
      * Returns the index of the object that would be returned by calling {@link #next() next}.
      * @return the index of the object that would be returned by calling <code>next</code>.
      */
+    @Override
     public int nextIndex()
     {
       return cursor;
@@ -906,6 +918,7 @@ public abstract class AbstractEList<E> extends AbstractList<E> implements EList<
      * Returns the index of the object that would be returned by calling {@link #previous previous}.
      * @return the index of the object that would be returned by calling <code>previous</code>.
      */
+    @Override
     public int previousIndex()
     {
       return cursor - 1;
@@ -920,6 +933,7 @@ public abstract class AbstractEList<E> extends AbstractList<E> implements EList<
      * or {@link #remove(Object) remove} or {@link #add add} have already been called
      * after the last call to <code>next</code> or <code>previous</code>.
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void set(E1 object)
     {
@@ -958,6 +972,7 @@ public abstract class AbstractEList<E> extends AbstractList<E> implements EList<
      * This implementation delegates to {@link #doAdd(Object) doAdd(E)}.
      * @param object the object to add.
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void add(E1 object)
     {
@@ -1129,7 +1144,40 @@ public abstract class AbstractEList<E> extends AbstractList<E> implements EList<
     }
     else
     {
-      Collection<E> filteredResult = useEquals() ? new BasicEList<E>(collection.size()) : new BasicEList.FastCompare<E>(collection.size());
+      Collection<E> filteredResult =
+        new BasicEList<E>(collection.size())
+        {
+          private static final long serialVersionUID = 1L;
+
+          private int expectedModCount;
+
+          private Set<E> set;
+
+          @Override
+          public boolean contains(Object object)
+          {
+            if (size > 10)
+            {
+              if (set == null || AbstractEList.this.modCount != expectedModCount)
+              {
+                set = new HashSet<E>(this);
+                expectedModCount = modCount;
+              }
+              return set.contains(object);
+            }
+            else
+            {
+              return super.contains(object);
+            }
+          }
+
+          @Override
+          protected boolean useEquals()
+          {
+            return AbstractEList.this.useEquals();
+          }
+        };
+
       for (E object : this)
       {
         if (collection.contains(object))
@@ -1148,14 +1196,8 @@ public abstract class AbstractEList<E> extends AbstractList<E> implements EList<
    */
   protected Collection<E> getNonDuplicates(Collection<? extends E> collection)
   {
-    Collection<E> result = useEquals() ?  new UniqueEList<E>(collection.size()) : new UniqueEList.FastCompare<E>(collection.size());
-    for (E object : collection)
-    {
-      if (!contains(object))
-      {
-        result.add(object);
-      }
-    }
-    return result;
+    Collection<E> result = new LinkedHashSet<E>(collection);
+    result.removeAll(this);
+    return new ArrayList<E>(result);
   }
 }

@@ -16,6 +16,7 @@ import java.util.Map;
 /**
  * A utility class for helping implement reflective capabilities not available with Google Widget Toolkit,
  * i.e., specifically the ability to {@link Class#isInstance(Object) instance test} and to {@link Array#newInstance(Class, int) create typed arrays}.
+ * This is provided in the regular core runtime only to support single sourcing of generated client models that are also targeting the EMF GWT runtime.
  * @since 2.7
  */
 public final class Reflect

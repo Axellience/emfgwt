@@ -12,11 +12,28 @@
 package org.eclipse.emf.ecore.impl;
 
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.WrappedException;
-import org.eclipse.emf.ecore.*;
+import org.eclipse.emf.ecore.EAnnotation;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EEnumLiteral;
+import org.eclipse.emf.ecore.EFactory;
+import org.eclipse.emf.ecore.EGenericType;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EOperation;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EParameter;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.ETypeParameter;
+import org.eclipse.emf.ecore.EcoreFactory;
+import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 //import org.eclipse.emf.ecore.xml.type.XMLTypeFactory;
@@ -40,7 +57,7 @@ public class EcoreFactoryImpl extends EFactoryImpl implements EcoreFactory
   {
     try
     {
-      EcoreFactory theEcoreFactory = (EcoreFactory)EPackage.Registry.INSTANCE.getEFactory("http://www.eclipse.org/emf/2002/Ecore"); 
+      EcoreFactory theEcoreFactory = (EcoreFactory)EPackage.Registry.INSTANCE.getEFactory(EcorePackage.eNS_URI);
       if (theEcoreFactory != null)
       {
         return theEcoreFactory;
@@ -104,6 +121,10 @@ public class EcoreFactoryImpl extends EFactoryImpl implements EcoreFactory
   {
     switch (eDataType.getClassifierID())
     {
+      case EcorePackage.EBIG_DECIMAL:
+        return createEBigDecimalFromString(eDataType, initialValue);
+      case EcorePackage.EBIG_INTEGER:
+        return createEBigIntegerFromString(eDataType, initialValue);
       case EcorePackage.EBOOLEAN:
         return createEBooleanFromString(eDataType, initialValue);
       case EcorePackage.EBOOLEAN_OBJECT:
@@ -161,6 +182,10 @@ public class EcoreFactoryImpl extends EFactoryImpl implements EcoreFactory
   {
     switch (eDataType.getClassifierID())
     {
+      case EcorePackage.EBIG_DECIMAL:
+        return convertEBigDecimalToString(eDataType, instanceValue);
+      case EcorePackage.EBIG_INTEGER:
+        return convertEBigIntegerToString(eDataType, instanceValue);
       case EcorePackage.EBOOLEAN:
         return convertEBooleanToString(eDataType, instanceValue);
       case EcorePackage.EBOOLEAN_OBJECT:
@@ -213,7 +238,8 @@ public class EcoreFactoryImpl extends EFactoryImpl implements EcoreFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public EObject createEObject()
+  @Override
+public EObject createEObject()
   {
     EObjectImpl eObject = new EObjectImpl();
     return eObject;
@@ -224,7 +250,8 @@ public class EcoreFactoryImpl extends EFactoryImpl implements EcoreFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute createEAttribute()
+  @Override
+public EAttribute createEAttribute()
   {
     EAttributeImpl eAttribute = new EAttributeImpl();
     return eAttribute;
@@ -235,7 +262,8 @@ public class EcoreFactoryImpl extends EFactoryImpl implements EcoreFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAnnotation createEAnnotation()
+  @Override
+public EAnnotation createEAnnotation()
   {
     EAnnotationImpl eAnnotation = new EAnnotationImpl();
     return eAnnotation;
@@ -246,7 +274,8 @@ public class EcoreFactoryImpl extends EFactoryImpl implements EcoreFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass createEClass()
+  @Override
+public EClass createEClass()
   {
     EClassImpl eClass = new EClassImpl();
     return eClass;
@@ -257,7 +286,8 @@ public class EcoreFactoryImpl extends EFactoryImpl implements EcoreFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public EDataType createEDataType()
+  @Override
+public EDataType createEDataType()
   {
     EDataTypeImpl eDataType = new EDataTypeImpl();
     return eDataType;
@@ -268,7 +298,8 @@ public class EcoreFactoryImpl extends EFactoryImpl implements EcoreFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public EParameter createEParameter()
+  @Override
+public EParameter createEParameter()
   {
     EParameterImpl eParameter = new EParameterImpl();
     return eParameter;
@@ -279,7 +310,8 @@ public class EcoreFactoryImpl extends EFactoryImpl implements EcoreFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public EOperation createEOperation()
+  @Override
+public EOperation createEOperation()
   {
     EOperationImpl eOperation = new EOperationImpl();
     return eOperation;
@@ -290,7 +322,8 @@ public class EcoreFactoryImpl extends EFactoryImpl implements EcoreFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public EPackage createEPackage()
+  @Override
+public EPackage createEPackage()
   {
     EPackageImpl ePackage = new EPackageImpl();
     return ePackage;
@@ -301,7 +334,8 @@ public class EcoreFactoryImpl extends EFactoryImpl implements EcoreFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public EFactory createEFactory()
+  @Override
+public EFactory createEFactory()
   {
     EFactoryImpl eFactory = new EFactoryImpl();
     return eFactory;
@@ -312,7 +346,8 @@ public class EcoreFactoryImpl extends EFactoryImpl implements EcoreFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public EEnumLiteral createEEnumLiteral()
+  @Override
+public EEnumLiteral createEEnumLiteral()
   {
     EEnumLiteralImpl eEnumLiteral = new EEnumLiteralImpl();
     return eEnumLiteral;
@@ -323,7 +358,8 @@ public class EcoreFactoryImpl extends EFactoryImpl implements EcoreFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public EEnum createEEnum()
+  @Override
+public EEnum createEEnum()
   {
     EEnumImpl eEnum = new EEnumImpl();
     return eEnum;
@@ -514,7 +550,8 @@ public class EcoreFactoryImpl extends EFactoryImpl implements EcoreFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference createEReference()
+  @Override
+public EReference createEReference()
   {
     EReferenceImpl eReference = new EReferenceImpl();
     return eReference;
@@ -536,7 +573,8 @@ public class EcoreFactoryImpl extends EFactoryImpl implements EcoreFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public EGenericType createEGenericType()
+  @Override
+public EGenericType createEGenericType()
   {
     EGenericTypeImpl eGenericType = new EGenericTypeImpl();
     return eGenericType;
@@ -547,7 +585,8 @@ public class EcoreFactoryImpl extends EFactoryImpl implements EcoreFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public ETypeParameter createETypeParameter()
+  @Override
+public ETypeParameter createETypeParameter()
   {
     ETypeParameterImpl eTypeParameter = new ETypeParameterImpl();
     return eTypeParameter;
@@ -556,9 +595,50 @@ public class EcoreFactoryImpl extends EFactoryImpl implements EcoreFactory
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
+   * @generated NOT
+   */
+  public BigDecimal createEBigDecimalFromString(EDataType eDataType, String initialValue)
+  {
+    return initialValue == null ? null : new BigDecimal(initialValue);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated NOT
+   */
+  public String convertEBigDecimalToString(EDataType eDataType, Object instanceValue)
+  {
+    return instanceValue == null ? null : instanceValue.toString();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated NOT
+   */
+  public BigInteger createEBigIntegerFromString(EDataType eDataType, String initialValue)
+  {
+    return initialValue == null ? null : new BigInteger(initialValue);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated NOT
+   */
+  public String convertEBigIntegerToString(EDataType eDataType, Object instanceValue)
+  {
+    return instanceValue == null ? null : instanceValue.toString();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
-  public EcorePackage getEcorePackage()
+  @Override
+public EcorePackage getEcorePackage()
   {
     return (EcorePackage)getEPackage();
   }

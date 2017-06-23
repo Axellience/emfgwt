@@ -11,7 +11,6 @@
 package org.eclipse.emf.ecore.impl;
 
 
-import com.google.gwt.user.client.rpc.GwtTransient;
 import java.util.AbstractSequentialList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -52,6 +51,8 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.ExtendedMetaData;
 import org.eclipse.emf.ecore.util.FeatureMapUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
+
+import com.google.gwt.user.client.rpc.GwtTransient;
 
 
 /**
@@ -121,6 +122,11 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
   protected ESuperAdapter eSuperAdapter;
 
   /**
+   * @since 2.9
+   */
+  protected EGenericType[] eAllStructuralFeatureTypes;
+
+  /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -157,6 +163,10 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
         freeze(eOperations.get(i));
       }
     }
+
+    // Bug 433108: Lock in the shared extended metadata for this class
+    ExtendedMetaData.INSTANCE.getName(this);
+
     super.freeze();
   }
   
@@ -182,7 +192,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public EAttribute getEIDAttribute()
+  @Override
+public EAttribute getEIDAttribute()
   {
     getEAllAttributes();
     return eIDAttribute;
@@ -193,7 +204,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<EStructuralFeature> getEStructuralFeatures()
+  @Override
+public EList<EStructuralFeature> getEStructuralFeatures()
   {
     if (eStructuralFeatures == null)
     {
@@ -207,7 +219,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public EList<EGenericType> getEGenericSuperTypes()
+  @Override
+public EList<EGenericType> getEGenericSuperTypes()
   {
     if (eGenericSuperTypes == null)
     {
@@ -232,7 +245,7 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
           
           protected EClass unwrap(EGenericType eGenericType)
           {
-            EClassifier result = eGenericType.getERawType();
+            EClassifier result = ((EGenericTypeImpl)eGenericType).basicGetERawType();
             if (result instanceof EClass)
             {
               return (EClass)result;
@@ -384,6 +397,10 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
     {
       return this;
     }
+    
+    public void remove() {
+        // Nothing to do
+    }
   }
   
   private static final MyHashSet COMPUTATION_IN_PROGRESS = new MyHashSet();
@@ -393,7 +410,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public EList<EGenericType> getEAllGenericSuperTypes()
+  @Override
+public EList<EGenericType> getEAllGenericSuperTypes()
   {
     if (eAllGenericSuperTypes == null)
     {
@@ -526,6 +544,10 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
           result.add(eGenericSuperType);
         }
         computationInProgress.remove(this);
+        if (computationInProgress.isEmpty())
+        {
+          COMPUTATION_IN_PROGRESS.remove();
+        }
       }
 
       result.eliminateEquivalentDuplicates();
@@ -540,7 +562,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
     return eAllGenericSuperTypes;
   }
 
-  public EList<EAttribute> getEAllAttributes()
+  @Override
+public EList<EAttribute> getEAllAttributes()
   {
     if (eAllAttributes == null)
     {
@@ -599,6 +622,10 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
           result.addAll(eSuperType.getEAllAttributes());
         }
         computationInProgress.remove(this);
+        if (computationInProgress.isEmpty())
+        {
+          COMPUTATION_IN_PROGRESS.remove();
+        }
       }
       for (EStructuralFeature eStructuralFeature : getEStructuralFeatures())
       {
@@ -641,7 +668,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
     return eAllAttributes;
   }
 
-  public EList<EReference> getEAllReferences()
+  @Override
+public EList<EReference> getEAllReferences()
   {
     if (eAllReferences == null)
     {
@@ -677,6 +705,10 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
           result.addAll(eSuperType.getEAllReferences());
         }
         computationInProgress.remove(this);
+        if (computationInProgress.isEmpty())
+        {
+          COMPUTATION_IN_PROGRESS.remove();
+        }
       }
       for (EStructuralFeature eStructuralFeature : getEStructuralFeatures())
       {
@@ -724,7 +756,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public EList<EReference> getEReferences()
+  @Override
+public EList<EReference> getEReferences()
   {
     getEAllReferences();
     return eReferences;
@@ -735,7 +768,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public EList<EAttribute> getEAttributes()
+  @Override
+public EList<EAttribute> getEAttributes()
   {
     getEAllAttributes();
     return eAttributes;
@@ -746,7 +780,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated modifiable
    */
-  public EList<EStructuralFeature> getEAllStructuralFeatures() 
+  @Override
+public EList<EStructuralFeature> getEAllStructuralFeatures() 
   {
     // The algorithm for the order of the features in this list should never change.
     // Also, the fact that a new list is created whenever the contents change 
@@ -784,6 +819,10 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
           result.addAll(eSuperType.getEAllStructuralFeatures());
         }
         computationInProgress.remove(this);
+        if (computationInProgress.isEmpty())
+        {
+          COMPUTATION_IN_PROGRESS.remove();
+        }
       }
       int featureID = result.size();
       for (Iterator<EStructuralFeature> i = getEStructuralFeatures().iterator(); i.hasNext(); ++featureID)
@@ -796,8 +835,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
       {
         private static final long serialVersionUID = 1L;
 
-        protected EStructuralFeature [] containments;
-        protected EStructuralFeature [] crossReferences;
+        protected EStructuralFeature [] containments = NO_EALL_STRUCTURE_FEATURES_DATA;
+        protected EStructuralFeature [] crossReferences = NO_EALL_STRUCTURE_FEATURES_DATA;
 
         public EAllStructuralFeaturesList(BasicEList<EStructuralFeature> eAllStructuralFeatures)
         {
@@ -857,24 +896,27 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
           crossReferences = (EStructuralFeature [])crossReferencesList.data();
         }
 
+        @Override
         public EStructuralFeature [] containments()
         {
-          if (containments == null)
+          if (containments == NO_EALL_STRUCTURE_FEATURES_DATA)
           {
             init();
           }
           return containments;
         }
 
+        @Override
         public EStructuralFeature [] crossReferences()
         {
-          if (crossReferences == null)
+          if (crossReferences == NO_EALL_STRUCTURE_FEATURES_DATA)
           {
             init();
           }
           return crossReferences;
         }
 
+        @Override
         public EStructuralFeature [] features()
         {
           return (EStructuralFeature [])data;
@@ -925,7 +967,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated modifiable
    */
-  public EList<EOperation> getEAllOperations()
+  @Override
+public EList<EOperation> getEAllOperations()
   {
     if (eAllOperations == null)
     {
@@ -955,6 +998,10 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
           result.addAll(eSuperType.getEAllOperations());
         }
         computationInProgress.remove(this);
+        if (computationInProgress.isEmpty())
+        {
+          COMPUTATION_IN_PROGRESS.remove();
+        }
       }
       int operationID = result.size();
       for (Iterator<EOperation> i = getEOperations().iterator(); i.hasNext(); ++operationID)
@@ -1242,11 +1289,14 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
         return getOperationID((EOperation)arguments.get(0));
       case EcorePackage.ECLASS___GET_OVERRIDE__EOPERATION:
         return getOverride((EOperation)arguments.get(0));
+      case EcorePackage.ECLASS___GET_FEATURE_TYPE__ESTRUCTURALFEATURE:
+        return getFeatureType((EStructuralFeature)arguments.get(0));
     }
     return eDynamicInvoke(operationID, arguments);
   }
 
-  public EList<EReference> getEAllContainments()
+  @Override
+public EList<EReference> getEAllContainments()
   {
     if (eAllContainments == null)
     {
@@ -1286,7 +1336,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
     return eAllContainments;
   }
 
-  public EStructuralFeature getEStructuralFeature(String name)
+  @Override
+public EStructuralFeature getEStructuralFeature(String name)
   {
     getFeatureCount();
     if (eNameToFeatureMap == null)
@@ -1294,7 +1345,12 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
       Map<String, EStructuralFeature> result = new HashMap<String, EStructuralFeature>(3 * eAllStructuralFeatures.size() / 2 + 1);
       for (EStructuralFeature eStructuralFeature : eAllStructuralFeatures)
       {
-        result.put(eStructuralFeature.getName(), eStructuralFeature);
+        String key = eStructuralFeature.getName();
+        EStructuralFeature duplicate = result.put(key, eStructuralFeature);
+        if (duplicate != null)
+        {
+          result.put(key, duplicate);
+        }
       }
       eNameToFeatureMap = result;
     }
@@ -1315,7 +1371,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public int getOperationCount()
+  @Override
+public int getOperationCount()
   {
     return getEAllOperationsData().length;
   }
@@ -1325,7 +1382,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public EOperation getEOperation(int operationID)
+  @Override
+public EOperation getEOperation(int operationID)
   {
     EOperation [] eAllOperationsData  = getEAllOperationsData();
     return 
@@ -1339,7 +1397,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public int getOperationID(EOperation operation)
+  @Override
+public int getOperationID(EOperation operation)
   {
     EOperation [] eAllOperationsData  = getEAllOperationsData();
     int index = operation.getOperationID();
@@ -1361,7 +1420,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public EOperation getOverride(EOperation operation)
+  @Override
+public EOperation getOverride(EOperation operation)
   {
     EOperation [] eAllOperationsData  = getEAllOperationsData();
     if (eOperationToOverrideMap == null)
@@ -1449,7 +1509,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public int getFeatureCount()
+  @Override
+public int getFeatureCount()
   {
     return getEAllStructuralFeaturesData().length;
   }
@@ -1459,7 +1520,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public EStructuralFeature getEStructuralFeature(int featureID) 
+  @Override
+public EStructuralFeature getEStructuralFeature(int featureID) 
   {
     EStructuralFeature [] eAllStructuralFeaturesData  = getEAllStructuralFeaturesData();
     return 
@@ -1473,7 +1535,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated NOT
    */
-  public int getFeatureID(EStructuralFeature feature)
+  @Override
+public int getFeatureID(EStructuralFeature feature)
   {
     EStructuralFeature [] eAllStructuralFeaturesData  = getEAllStructuralFeaturesData();
     int index = feature.getFeatureID();
@@ -1488,6 +1551,38 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
       }
     }
     return -1;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated NOT
+   */
+  @Override
+public EGenericType getFeatureType(EStructuralFeature feature)
+  {
+    int featureID = getFeatureID(feature);
+    if (featureID != -1)
+    {
+      if (eAllStructuralFeatureTypes == null)
+      {
+        EGenericType[] result = new EGenericType[eAllStructuralFeaturesData.length];
+        for (int i = 0; i < eAllStructuralFeaturesData.length; ++i)
+        {
+          EGenericType eGenericType = eAllStructuralFeaturesData[i].getEGenericType();
+          if (eGenericType != null)
+          {
+            result[i] = EcoreUtil.getReifiedType(this, eGenericType);
+          }
+        }
+        eAllStructuralFeatureTypes = result;
+      }
+      return eAllStructuralFeatureTypes[featureID];
+    }
+    else
+    {
+      return feature.getEGenericType();
+    }
   }
 
   /**
@@ -1601,7 +1696,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isAbstract()
+  @Override
+public boolean isAbstract()
   {
     return (eFlags & ABSTRACT_EFLAG) != 0;
   }
@@ -1611,7 +1707,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setAbstract(boolean newAbstract)
+  @Override
+public void setAbstract(boolean newAbstract)
   {
     boolean oldAbstract = (eFlags & ABSTRACT_EFLAG) != 0;
     if (newAbstract) eFlags |= ABSTRACT_EFLAG; else eFlags &= ~ABSTRACT_EFLAG;
@@ -1624,7 +1721,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isInterface()
+  @Override
+public boolean isInterface()
   {
     return (eFlags & INTERFACE_EFLAG) != 0;
   }
@@ -1634,7 +1732,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setInterface(boolean newInterface)
+  @Override
+public void setInterface(boolean newInterface)
   {
     boolean oldInterface = (eFlags & INTERFACE_EFLAG) != 0;
     if (newInterface) eFlags |= INTERFACE_EFLAG; else eFlags &= ~INTERFACE_EFLAG;
@@ -1661,7 +1760,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
     return result.toString();
   }
 
-  public EList<EClass> getESuperTypes()
+  @Override
+public EList<EClass> getESuperTypes()
   {
     if (eSuperTypes == null)
     {
@@ -2063,7 +2163,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<EOperation> getEOperations()
+  @Override
+public EList<EOperation> getEOperations()
   {
     if (eOperations == null)
     {
@@ -2078,7 +2179,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
    * represented by the specified someClass parameter.  Semantics are the same as
    * java.lang.Class#isAssignableFrom
    */
-  public boolean isSuperTypeOf(EClass someClass)
+  @Override
+public boolean isSuperTypeOf(EClass someClass)
   {
     return someClass == this || someClass.getEAllSuperTypes().contains(this);
   }
@@ -2086,7 +2188,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
   /**
    * Returns all the super types in the hierarchy.
    */
-  public EList<EClass> getEAllSuperTypes()
+  @Override
+public EList<EClass> getEAllSuperTypes()
   {
     if (eAllSuperTypes == null)
     {
@@ -2136,7 +2239,8 @@ public class EClassImpl extends EClassifierImpl implements EClass, ESuperAdapter
     return isSuperTypeOf(eObject.eClass());
   }
 
-  public ESuperAdapter getESuperAdapter()
+  @Override
+public ESuperAdapter getESuperAdapter()
   {
     if (eSuperAdapter == null)
     {

@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Adapter;
@@ -32,6 +33,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EContentsEList.FeatureIterator;
 
 
 /**
@@ -89,7 +91,8 @@ public class ECrossReferenceAdapter implements Adapter.Internal
     {
       return new EContentsEList.FeatureFilter()
         {
-          public boolean isIncluded(EStructuralFeature eStructuralFeature)
+          @Override
+        public boolean isIncluded(EStructuralFeature eStructuralFeature)
           {
             return FeatureMapUtil.isFeatureMap(eStructuralFeature) || ECrossReferenceAdapter.this.isIncluded((EReference)eStructuralFeature);
           }
@@ -121,7 +124,8 @@ public class ECrossReferenceAdapter implements Adapter.Internal
 
           private EStructuralFeature feature;
 
-          public boolean hasNext()
+          @Override
+        public boolean hasNext()
           {
             if (!prepared)
             {
@@ -140,7 +144,8 @@ public class ECrossReferenceAdapter implements Adapter.Internal
             return prepared;
           }
 
-          public EObject next()
+          @Override
+        public EObject next()
           {
             if (!prepared && !hasNext())
             {
@@ -152,13 +157,15 @@ public class ECrossReferenceAdapter implements Adapter.Internal
             return preparedNext;
           }
 
-          public void remove()
+          @Override
+        public void remove()
           {
             // Must not attempt to remove cross-references in indexing them
             throw new UnsupportedOperationException();
           }
 
-          public EStructuralFeature feature()
+          @Override
+        public EStructuralFeature feature()
           {
             return feature;
           }
@@ -494,7 +501,8 @@ public class ECrossReferenceAdapter implements Adapter.Internal
   /**
    * Handles a notification by calling {@link #selfAdapt selfAdapter}.
    */
-  public void notifyChanged(Notification notification)
+  @Override
+public void notifyChanged(Notification notification)
   {
     selfAdapt(notification);
   }
@@ -742,7 +750,8 @@ public class ECrossReferenceAdapter implements Adapter.Internal
    * Handles installation of the adapter
    * by adding the adapter to each of the directly contained objects.
    */
-  public void setTarget(Notifier target)
+  @Override
+public void setTarget(Notifier target)
   {
     if (target instanceof EObject)
     {
@@ -812,7 +821,8 @@ public class ECrossReferenceAdapter implements Adapter.Internal
    * Handles undoing the installation of the adapter
    * by removing the adapter to each of the directly contained objects.
    */
-  public void unsetTarget(Notifier target)
+  @Override
+public void unsetTarget(Notifier target)
   {
     if (target instanceof EObject)
     {
@@ -915,12 +925,14 @@ public class ECrossReferenceAdapter implements Adapter.Internal
     EcoreUtil.CrossReferencer.print(System.out, inverseCrossReferencer);
   }
 
-  public Notifier getTarget()
+  @Override
+public Notifier getTarget()
   {
     return null;
   }
 
-  public boolean isAdapterForType(Object type)
+  @Override
+public boolean isAdapterForType(Object type)
   {
     return false;
   }

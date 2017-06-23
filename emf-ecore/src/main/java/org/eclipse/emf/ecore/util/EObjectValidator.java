@@ -11,6 +11,7 @@
 package org.eclipse.emf.ecore.util;
 
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -278,12 +279,14 @@ public class EObjectValidator implements EValidator
    * @param context a place to cache information, if it's <code>null</code>, no cache is supported.
    * @return whether the object is valid.
    */
-  public boolean validate(EObject eObject, DiagnosticChain diagnostics, Map<Object, Object> context)
+  @Override
+public boolean validate(EObject eObject, DiagnosticChain diagnostics, Map<Object, Object> context)
   {
     return validate(eObject.eClass(), eObject, diagnostics, context);
   }
 
-  public boolean validate(EClass eClass, EObject eObject, DiagnosticChain diagnostics, Map<Object, Object> context)
+  @Override
+public boolean validate(EClass eClass, EObject eObject, DiagnosticChain diagnostics, Map<Object, Object> context)
   {
 	if (eObject.eIsProxy())
     {
@@ -1428,7 +1431,8 @@ public class EObjectValidator implements EValidator
     }
   }
 
-  public boolean validate(EDataType eDataType, Object value, DiagnosticChain diagnostics, Map<Object, Object> context)
+  @Override
+public boolean validate(EDataType eDataType, Object value, DiagnosticChain diagnostics, Map<Object, Object> context)
   {
     if (!eDataType.isInstance(value))
     {
