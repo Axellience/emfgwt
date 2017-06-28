@@ -3781,7 +3781,8 @@ public class EcoreValidator extends EObjectValidator
             if (eBoundClass != null)
             {
               Class<?> eClassifierClass = eClassifier.getInstanceClass();
-              if (eClassifierClass != null && !eBoundClass.isAssignableFrom(eClassifierClass))
+//              if (eClassifierClass != null && !eBoundClass.isAssignableFrom(eClassifierClass))
+              if (eClassifierClass != null && !EcoreUtil.isAssignableFrom(eClassifierClass, eBoundClass))
               {
                 return false;
               }

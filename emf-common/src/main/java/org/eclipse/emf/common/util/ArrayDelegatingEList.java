@@ -12,7 +12,6 @@ package org.eclipse.emf.common.util;
 
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;

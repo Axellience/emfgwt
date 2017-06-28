@@ -813,7 +813,8 @@ public boolean isInstance(Object object)
            Class<?> instanceTypeArgumentInstanceClass = eGenericTypeEClassifier.getInstanceClass();
            if (instanceClass != null && instanceTypeArgumentInstanceClass != null)
            {
-             if (!instanceClass.isAssignableFrom(instanceTypeArgumentInstanceClass))
+//             if (!instanceClass.isAssignableFrom(instanceTypeArgumentInstanceClass))
+               if (!EcoreUtil.isAssignableFrom(instanceTypeArgumentInstanceClass, instanceClass))
              {
                return false;
              }
@@ -980,7 +981,8 @@ public boolean isInstance(Object object)
             {
               // The arguments must be equal.
               //
-              return instanceClass.isAssignableFrom(instanceTypeArgumentInstanceClass) && isEqualArguments(instanceETypeArgument.getETypeArguments(), eTypeArgument.getETypeArguments());
+              //return instanceClass.isAssignableFrom(instanceTypeArgumentInstanceClass) && isEqualArguments(instanceETypeArgument.getETypeArguments(), eTypeArgument.getETypeArguments());
+              return EcoreUtil.isAssignableFrom(instanceTypeArgumentInstanceClass, instanceClass) && isEqualArguments(instanceETypeArgument.getETypeArguments(), eTypeArgument.getETypeArguments());
             }
             // If their both EClasses, check Ecore super types.
             //

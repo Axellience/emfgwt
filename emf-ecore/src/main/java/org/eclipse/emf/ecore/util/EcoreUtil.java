@@ -4939,6 +4939,31 @@ public class EcoreUtil
     }
     return null;
   }
+  
+  /**
+   * Provides a not great implementation of Class.isAssignableFrom
+   * @param cls
+   * @param this_
+   * @return
+   */
+  public static boolean isAssignableFrom(Class<?> cls, Class<?> this_) {
+      if (cls == null) {
+          return false;
+      }
+
+      if (cls.equals(this_)) {
+          return true;
+      }
+
+      Class<?> currentSuperClass = cls.getSuperclass();
+      while (currentSuperClass != null) {
+          if (currentSuperClass.equals(cls)) {
+              return true;
+          }
+          currentSuperClass = currentSuperClass.getSuperclass();
+      }
+      return false;
+  }
 
   /*
    static 

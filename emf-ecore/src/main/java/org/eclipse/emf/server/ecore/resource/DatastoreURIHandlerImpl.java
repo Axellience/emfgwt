@@ -10,7 +10,6 @@
  */
 package org.eclipse.emf.server.ecore.resource;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,8 +17,10 @@ import java.io.OutputStream;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.URIConverter;
 
+import com.google.gwt.core.shared.GwtIncompatible;
+
+@GwtIncompatible
 public class DatastoreURIHandlerImpl extends URIHandlerImpl
 {
   @Override
