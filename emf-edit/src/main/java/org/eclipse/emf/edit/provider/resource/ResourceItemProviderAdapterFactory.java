@@ -174,7 +174,7 @@ public class ResourceItemProviderAdapterFactory
     {
       Object adapter = super.adapt(object, type);
       // TODO
-      if (!(type instanceof Class<?>) /*|| (((Class<?>)type).isInstance(adapter))*/)
+      if (!(type instanceof Class<?>) || Reflect.isInstance(((Class<?>)type), adapter))
       {
         return adapter;
       }

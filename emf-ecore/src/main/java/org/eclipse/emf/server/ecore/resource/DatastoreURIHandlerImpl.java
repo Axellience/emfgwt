@@ -18,9 +18,6 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 
-import com.google.gwt.core.shared.GwtIncompatible;
-
-@GwtIncompatible
 public class DatastoreURIHandlerImpl extends URIHandlerImpl
 {
   @Override

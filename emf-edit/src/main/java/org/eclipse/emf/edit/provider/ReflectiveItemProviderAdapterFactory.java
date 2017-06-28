@@ -18,6 +18,7 @@ import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
+import org.eclipse.emf.common.util.Reflect;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -71,7 +72,8 @@ public class ReflectiveItemProviderAdapterFactory
   /**
    * This returns the root adapter factory that contains this factory.
    */
-  public ComposeableAdapterFactory getRootAdapterFactory()
+  @Override
+public ComposeableAdapterFactory getRootAdapterFactory()
   {
     return parentAdapterFactory == null ? this : parentAdapterFactory.getRootAdapterFactory();
   }
@@ -79,7 +81,8 @@ public class ReflectiveItemProviderAdapterFactory
   /**
    * This sets the composed adapter factory that contains this factory.
    */
-  public void setParentAdapterFactory(ComposedAdapterFactory parentAdapterFactory)
+  @Override
+public void setParentAdapterFactory(ComposedAdapterFactory parentAdapterFactory)
   {
     this.parentAdapterFactory = parentAdapterFactory;
   }
@@ -111,8 +114,7 @@ public class ReflectiveItemProviderAdapterFactory
     if (isFactoryForType(type))
     {
       Object adapter = super.adapt(object, type);
-      // TODO
-      if (!(type instanceof Class<?>) /*|| (((Class<?>)type).isInstance(adapter))*/)
+      if (!(type instanceof Class<?>) || Reflect.isInstance((Class<?>)type, adapter))
       {
         return adapter;
       }
@@ -124,7 +126,8 @@ public class ReflectiveItemProviderAdapterFactory
   /**
    * This adds a listener.
    */
-  public void addListener(INotifyChangedListener notifyChangedListener)
+  @Override
+public void addListener(INotifyChangedListener notifyChangedListener)
   {
     changeNotifier.addListener(notifyChangedListener);
   }
@@ -132,7 +135,8 @@ public class ReflectiveItemProviderAdapterFactory
   /**
    * This removes a listener.
    */
-  public void removeListener(INotifyChangedListener notifyChangedListener)
+  @Override
+public void removeListener(INotifyChangedListener notifyChangedListener)
   {
     changeNotifier.removeListener(notifyChangedListener);
   }
@@ -140,7 +144,8 @@ public class ReflectiveItemProviderAdapterFactory
   /**
    * This delegates to {@link #changeNotifier} and to {@link #parentAdapterFactory}.
    */
-  public void fireNotifyChanged(Notification notification)
+  @Override
+public void fireNotifyChanged(Notification notification)
   {
     changeNotifier.fireNotifyChanged(notification);
 
@@ -150,7 +155,8 @@ public class ReflectiveItemProviderAdapterFactory
     }
   }
 
-  public void dispose()
+  @Override
+public void dispose()
   {
     if (reflectiveItemProviderAdapter != null)
     {

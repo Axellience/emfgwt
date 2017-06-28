@@ -24,7 +24,7 @@ import org.eclipse.emf.common.command.StrictCompoundCommand;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -135,7 +135,7 @@ public class SetCommand extends AbstractOverrideableCommand
               
               // Determine the values that will remain and move them into the right order, if necessary.
               //
-              List<Object> remainingValues = new BasicEList.FastCompare<Object>(oldValues);
+              EList<Object> remainingValues = new BasicEList.FastCompare<Object>(oldValues);
               remainingValues.removeAll(removedValues);
               int count = -1;
               for (Object object : values)
@@ -144,6 +144,7 @@ public class SetCommand extends AbstractOverrideableCommand
                 if (position != -1 && position != ++count)
                 {
                   compound.append(MoveCommand.create(domain, owner, feature, object, count));
+                  remainingValues.move(count, position);
                 }
               }
               
@@ -151,17 +152,20 @@ public class SetCommand extends AbstractOverrideableCommand
               //
               List<Object> addedValues = new BasicEList.FastCompare<Object>(values);
               addedValues.removeAll(remainingValues);
-              int addIndex = remainingValues.size();
-              for (ListIterator<?> i = values.listIterator(values.size()); i.hasPrevious(); )
+              if (!addedValues.isEmpty())
               {
-                Object object = i.previous();
-                if (addedValues.contains(object))
+                int addIndex = remainingValues.size();
+                for (ListIterator<?> i = values.listIterator(values.size()); i.hasPrevious(); )
                 {
-                  compound.append(AddCommand.create(domain, owner, feature, object, addIndex));
-                }
-                else
-                {
-                  --addIndex;
+                  Object object = i.previous();
+                  if (addedValues.contains(object))
+                  {
+                    compound.append(AddCommand.create(domain, owner, feature, object, addIndex));
+                  }
+                  else
+                  {
+                    --addIndex;
+                  }
                 }
               }
               return compound;
@@ -178,6 +182,10 @@ public class SetCommand extends AbstractOverrideableCommand
         else if (value == UNSET_VALUE && eReference.isUnsettable())
         {
           compound.append(domain.createCommand(SetCommand.class, new CommandParameter(owner, feature, value)));
+        }
+        else if (eReference.isUnsettable() && compound.getCommandList().isEmpty())
+        {
+          return domain.createCommand(SetCommand.class, new CommandParameter(owner, feature, value));
         }
         else if (compound.getCommandList().isEmpty())
         {
@@ -506,17 +514,17 @@ public class SetCommand extends AbstractOverrideableCommand
 
       // Get the owner's meta object.
       //
-      EClass eMetaObject = owner.eClass();
+      EClass eClass = owner.eClass();
 
       // Is the feature an attribute of the owner...
       //
-      EList<EStructuralFeature> eAllStructuralFeatures = eMetaObject.getEAllStructuralFeatures();
+      EList<EStructuralFeature> eAllStructuralFeatures = eClass.getEAllStructuralFeatures();
       if (eAllStructuralFeatures.contains(feature) ||
-            feature != null && eAllStructuralFeatures.contains(ExtendedMetaData.INSTANCE.getAffiliation(eMetaObject, feature)))
+            feature != null && eAllStructuralFeatures.contains(ExtendedMetaData.INSTANCE.getAffiliation(eClass, feature)))
       {
         // If must be of this type then.
         //
-        EClassifier eType = feature.getEType();
+        EGenericType eType = eClass.getFeatureType(feature);
 
         if (ownerList != null)
         {
