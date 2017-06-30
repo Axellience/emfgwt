@@ -30,11 +30,14 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.URIHandler;
 
+import com.google.gwt.core.shared.GwtIncompatible;
+
 
 /**
  * An implementation of a {@link URIHandler URI handler}.
  *
  */
+@GwtIncompatible
 public class URIHandlerImpl implements URIHandler
 {
   /**

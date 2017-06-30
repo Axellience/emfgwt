@@ -20,8 +20,10 @@ import java.util.Map;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.resource.URIService;
 
+import com.google.gwt.core.shared.GwtIncompatible;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+@GwtIncompatible
 public class URIServiceImpl extends RemoteServiceServlet implements URIService
 {
     private static final long serialVersionUID = 1L;
