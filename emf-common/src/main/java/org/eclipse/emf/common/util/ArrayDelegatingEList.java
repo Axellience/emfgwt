@@ -293,7 +293,7 @@ public abstract class ArrayDelegatingEList<E> extends AbstractEList<E> implement
    */
   public void setData(Object [] data)
   {
-    // Do nothing.
+    ++modCount;
   }
 
   /**
@@ -444,6 +444,7 @@ public abstract class ArrayDelegatingEList<E> extends AbstractEList<E> implement
     }
     else
     {
+      ++modCount;
       return false;
     }
   }
@@ -494,6 +495,7 @@ public abstract class ArrayDelegatingEList<E> extends AbstractEList<E> implement
     }
     else
     {
+      ++modCount;
       return false;
     }
   }
@@ -535,6 +537,7 @@ public abstract class ArrayDelegatingEList<E> extends AbstractEList<E> implement
     }
     else
     {
+      ++modCount;
       return false;
     }
   }
@@ -584,6 +587,7 @@ public abstract class ArrayDelegatingEList<E> extends AbstractEList<E> implement
     }
     else
     {
+      ++modCount;
       return false;
     }
   }
@@ -684,6 +688,8 @@ public abstract class ArrayDelegatingEList<E> extends AbstractEList<E> implement
   @Override
   public void clear()
   {
+    ++modCount;
+
     Object[] oldData = data();
     int oldSize = oldData == null ? 0 : oldData.length;
 
@@ -797,7 +803,7 @@ public abstract class ArrayDelegatingEList<E> extends AbstractEList<E> implement
     @Override
     protected void checkModCount()
     {
-      if (data() != expectedData)
+      if (modCount != expectedModCount || data() != expectedData)
       {
         throw new ConcurrentModificationException();
       }
@@ -839,7 +845,7 @@ public abstract class ArrayDelegatingEList<E> extends AbstractEList<E> implement
     @Override
     protected void checkModCount()
     {
-      if (data() != expectedData)
+      if (modCount != expectedModCount || data() != expectedData)
       {
         throw new ConcurrentModificationException();
       }
@@ -910,7 +916,7 @@ public abstract class ArrayDelegatingEList<E> extends AbstractEList<E> implement
     @Override
     protected void checkModCount()
     {
-      if (data() != expectedData)
+      if (modCount != expectedModCount || data() != expectedData)
       {
         throw new ConcurrentModificationException();
       }
@@ -993,7 +999,7 @@ public abstract class ArrayDelegatingEList<E> extends AbstractEList<E> implement
     @Override
     protected void checkModCount()
     {
-      if (data() != expectedData)
+      if (modCount != expectedModCount || data() != expectedData)
       {
         throw new ConcurrentModificationException();
       }

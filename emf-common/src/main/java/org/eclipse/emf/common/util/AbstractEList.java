@@ -671,6 +671,11 @@ public abstract E move(int targetIndex, int sourceIndex);
     protected int lastCursor = -1;
 
     /**
+     * The modification count of the containing list.
+     */
+    protected int expectedModCount = modCount;
+
+    /**
      * Returns whether there are more objects.
      * @return whether there are more objects.
      */
@@ -736,6 +741,7 @@ public abstract E move(int targetIndex, int sourceIndex);
       try
       {
         AbstractEList.this.remove(lastCursor);
+        expectedModCount = modCount;
         if (lastCursor < cursor)
         {
           --cursor;
@@ -754,7 +760,10 @@ public abstract E move(int targetIndex, int sourceIndex);
      */
     protected void checkModCount()
     {
-      // Unsupported.
+      if (modCount != expectedModCount)
+      {
+        throw new ConcurrentModificationException();
+      }
     }
   }
 
@@ -960,6 +969,7 @@ public abstract E move(int targetIndex, int sourceIndex);
       try
       {
         AbstractEList.this.set(lastCursor, object);
+        expectedModCount = modCount;
       }
       catch (IndexOutOfBoundsException exception)
       {
@@ -991,6 +1001,7 @@ public abstract E move(int targetIndex, int sourceIndex);
       try
       {
         AbstractEList.this.add(cursor++, object);
+        expectedModCount = modCount;
         lastCursor = -1;
       }
       catch (IndexOutOfBoundsException exception)

@@ -81,6 +81,8 @@ public class BasicFeatureMap
   @Override
   protected Entry validate(int index, Entry object)
   {
+    if (modCount == 0) return object;
+
     Entry result = super.validate(index, object);
     EStructuralFeature eStructuralFeature = object.getEStructuralFeature();
     if (!eStructuralFeature.isChangeable() || !featureMapValidator.isValid(eStructuralFeature))
@@ -199,7 +201,7 @@ public class BasicFeatureMap
 
   public int getModCount()
   {
-    return 0;
+    return modCount;
   }
 
   public EStructuralFeature getEStructuralFeature(int index)
@@ -1549,11 +1551,13 @@ public class BasicFeatureMap
 
   public void addUnique(EStructuralFeature feature, Object object)
   {
+    modCount = -1;
     addUnique(createRawEntry(feature, object));
   }
 
   public void addUnique(EStructuralFeature feature, int index, Object object)
   {
+    modCount = -1;
     addUnique(entryIndex(feature, index), createRawEntry(feature, object));
   }
 
@@ -1561,6 +1565,7 @@ public class BasicFeatureMap
   public void addUnique(Entry object)
   {
     // Validate now since the call we make after will skip validating.
+    ++modCount;
     validate(size, object);
 
     addUnique((FeatureMap.Entry.Internal)object);
@@ -1568,6 +1573,7 @@ public class BasicFeatureMap
 
   public void addUnique(Entry.Internal entry)
   {
+    modCount = -1;
     if (isNotificationRequired())
     {
       int index = size;
@@ -1605,6 +1611,7 @@ public class BasicFeatureMap
   @Override
   public boolean addAllUnique(Collection<? extends Entry> collection)
   {
+    modCount = -1;
     return super.addAllUnique(collection);
   }
 
@@ -1615,6 +1622,8 @@ public class BasicFeatureMap
 
   public boolean addAllUnique(int index, FeatureMap.Entry.Internal [] entries, int start, int end)
   {
+    modCount = -1;
+
     int collectionSize = end - start;
     if (collectionSize == 0)
     {

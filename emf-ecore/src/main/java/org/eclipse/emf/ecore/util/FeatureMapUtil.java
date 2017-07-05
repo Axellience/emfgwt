@@ -775,17 +775,20 @@ public final class FeatureMapUtil
     @SuppressWarnings("unchecked")
     public boolean addAllUnique(Collection<? extends E> collection)
     {
+      modCount = -1;
       return featureMap.addAllUnique((Collection<? extends Entry>)collection);
     }
 
     @SuppressWarnings("unchecked")
     public boolean addAllUnique(int index, Collection<? extends E> collection)
     {
+      modCount = -1;
       return featureMap.addAllUnique(index, (Collection<? extends Entry>)collection);
     }
     
     public void addUnique(Entry.Internal entry)
     {
+      modCount = -1;
       featureMap.addUnique(entry);
     }
 
@@ -796,6 +799,7 @@ public final class FeatureMapUtil
 
     public boolean addAllUnique(int index, Entry.Internal [] entries, int start, int end)
     {
+      modCount = -1;
       BasicEList<Entry.Internal> collection = new BasicEList<Entry.Internal>();
       if (start == 0)
       {

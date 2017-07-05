@@ -36,10 +36,11 @@ public class ChangeNotifier extends ArrayList<INotifyChangedListener> implements
     int size = size();
     INotifyChangedListener [] listeners = new INotifyChangedListener[size];
     toArray(listeners);
+    int expectedModCount = modCount;
     for (int i = 0; i < size; ++i)
     {
       INotifyChangedListener notifyChangedListener = listeners[i];
-      if (this.contains(notifyChangedListener))
+      if (expectedModCount == modCount || this.contains(notifyChangedListener))
       {
         notifyChangedListener.notifyChanged(notification);
       }
