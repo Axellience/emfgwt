@@ -25,6 +25,8 @@ public final class Reflect
    * A global registry of helper instances.
    */
   static final Map<Class<?>, Helper> HELPER_REGISTRY = new HashMap<Class<?>, Reflect.Helper>();
+  
+  public static boolean STRICT = false;
 
   /**
    * An interface implemented by reflective helpers.
@@ -60,9 +62,13 @@ public final class Reflect
     {
       return helper.isInstance(instance);
     }
-    else
+    else if (STRICT)
     {
       throw new UnsupportedOperationException();
+    }
+    else
+    {
+        return true;
     }
   }
 }
