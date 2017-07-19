@@ -26,14 +26,14 @@ public final class Reflect
    */
   static final Map<Class<?>, Helper> HELPER_REGISTRY = new HashMap<Class<?>, Reflect.Helper>();
   
-  protected static boolean STRICT = false;
+  protected static boolean strict = false;
   
   public static boolean isStrict() {
-      return STRICT;
+      return strict;
   }
   
   public static void setStrict(boolean enable) {
-      STRICT = enable;
+      strict = enable;
   }
   
   /**
