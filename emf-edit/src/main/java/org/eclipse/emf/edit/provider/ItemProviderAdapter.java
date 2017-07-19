@@ -35,11 +35,16 @@ import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.Reflect;
 import org.eclipse.emf.common.util.ResourceLocator;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.UniqueEList;
 import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMapUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -184,7 +189,8 @@ public class ItemProviderAdapter
     return adapterFactory;
   }
 
-  public void addListener(INotifyChangedListener listener)
+  @Override
+public void addListener(INotifyChangedListener listener)
   {
     if (changeNotifier == null)
     {
@@ -193,7 +199,8 @@ public class ItemProviderAdapter
     changeNotifier.addListener(listener);
   }
 
-  public void removeListener(INotifyChangedListener listener)
+  @Override
+public void removeListener(INotifyChangedListener listener)
   {
     if (changeNotifier != null)
     {
@@ -205,7 +212,8 @@ public class ItemProviderAdapter
    * This convenience method converts the arguments into an appropriate update call on the viewer.
    * The event type is a value from the static constants in {@link org.eclipse.emf.common.notify.Notifier}.
    */
-  public void fireNotifyChanged(Notification notification)
+  @Override
+public void fireNotifyChanged(Notification notification)
   {
 /*
     System.out.println("ItemProviderAdapterFactory.fireNotifyChanged");
@@ -733,6 +741,17 @@ public class ItemProviderAdapter
   }
 
   /**
+   * This implements {@link IItemStyledLabelProvider#getStyledText IItemStyledLabelProvider.getStyledText} by simply creating
+   * an {@link IStyledString IStyledString} from the value returned {@link #getText getText}.
+   * 
+   * @since 2.10
+   */
+  public Object getStyledText(Object object)
+  {
+    return new StyledString(getText(object));
+  }
+
+  /**
    * This implements {@link IUpdateableItemText#getUpdateableText IUpdateableItemText.getUpdateableText} 
    * by simply calling {@link #getText}.
    * This will often be correct as is.
@@ -785,7 +804,7 @@ public class ItemProviderAdapter
 
     // Build the collection of new child descriptors.
     //
-    Collection<Object> newChildDescriptors = new ArrayList<Object>();
+    ArrayList<Object> newChildDescriptors = new ArrayList<Object>();
     collectNewChildDescriptors(newChildDescriptors, object);
 
     // Add child descriptors contributed by extenders.
@@ -793,6 +812,40 @@ public class ItemProviderAdapter
     if (adapterFactory instanceof IChildCreationExtender)
     {
       newChildDescriptors.addAll(((IChildCreationExtender)adapterFactory).getNewChildDescriptors(object, editingDomain));
+    }
+
+    // Visit all the child descriptors...
+    //
+    EClass eClass = eObject.eClass();
+    for (int i = newChildDescriptors.size(); --i >= 0; )
+    {
+      Object descriptor = newChildDescriptors.get(i);
+      if (descriptor instanceof CommandParameter)
+      {
+        // Check that it's a command parameter and has a child value.
+        //
+        CommandParameter parameter = (CommandParameter)descriptor;
+        EStructuralFeature childFeature = parameter.getEStructuralFeature();
+        Object child = parameter.getValue();
+        if (childFeature != null && child != null)
+        {
+          // If that child is properly an instance of the feature's type...
+          //
+          EClassifier eType = childFeature.getEType();
+          if (eType.isInstance(child))
+          {
+            // Check that it's also properly an instance of the feature's reified type.
+            //
+            EGenericType reifiedType = eClass.getFeatureType(childFeature);
+            if (reifiedType != null && !reifiedType.isInstance(child))
+            {
+              // If not, remove it.
+              //
+              newChildDescriptors.remove(i);
+            }
+          }
+        }
+      }
     }
 
     // If a sibling has been specified, add the best index possible to each CommandParameter.
@@ -1012,6 +1065,26 @@ public class ItemProviderAdapter
     else if (commandClass == DragAndDropCommand.class)
     {
       DragAndDropCommand.Detail detail = (DragAndDropCommand.Detail)commandParameter.getFeature();
+      Collection<?> collection = commandParameter.getCollection();
+      if (domain != null && !collection.isEmpty() && commandParameter.getOwner() != domain.getResourceSet())
+      {
+        List<URI> uris = null;
+        for (Object element : collection)
+        {
+          if (element instanceof URI)
+          {
+            if (uris == null)
+            {
+              uris = new ArrayList<URI>();
+            }
+            uris.add((URI)element);
+          }
+        }
+        if (uris != null && uris.size() == collection.size())
+        {
+          return createDragAndDropCommand(domain, domain.getResourceSet(), detail.location, detail.operations, detail.operation, uris);
+        }
+      }
       result = 
         createDragAndDropCommand
           (domain, commandParameter.getOwner(), detail.location, detail.operations, detail.operation, commandParameter.getCollection());
@@ -1110,7 +1183,22 @@ public class ItemProviderAdapter
 
   /**
    * This creates a primitive {@link org.eclipse.emf.edit.command.ReplaceCommand}.
+   * @since 2.10
    */
+  protected Command createReplaceCommand(EditingDomain domain, EObject owner, EStructuralFeature feature, Object value, Collection<?> collection) 
+  {
+    if (value instanceof EObject)
+    {
+      return createReplaceCommand(domain, owner, feature, (EObject)value, collection);
+    }
+    return new ReplaceCommand(domain, owner, feature, value, collection);
+  }
+
+  /**
+   * This creates a primitive {@link org.eclipse.emf.edit.command.ReplaceCommand}.
+   * @deprecated As of EMF 2.10, replaced by {@link #createReplaceCommand(EditingDomain, EObject, EStructuralFeature, Object, Collection)}.
+   */
+  @Deprecated
   protected Command createReplaceCommand(EditingDomain domain, EObject owner, EStructuralFeature feature, EObject value, Collection<?> collection) 
   {
     if (feature instanceof EReference)
@@ -1190,6 +1278,16 @@ public class ItemProviderAdapter
     (EditingDomain domain, Object owner, float location, int operations, int operation, Collection<?> collection)
   {
     return new DragAndDropCommand(domain, owner, location, operations, operation, collection);
+  }
+
+  /**
+   * Delegates command creation to the resource set of the editing domain for the case of a drag and drop command for a collection containing only URIs.
+   * @since 2.9
+   */
+  protected Command createDragAndDropCommand
+    (EditingDomain domain, ResourceSet resourceSet, float location, int operations, int operation, Collection<URI> collection)
+  {
+    return DragAndDropCommand.create(domain, resourceSet, location, operations, operation, collection);
   }
 
   /**
@@ -1605,7 +1703,8 @@ public class ItemProviderAdapter
    * This will remove this adapter from all its the targets and dispose any
    * remaining children wrappers in the children store.
    */
-  public void dispose()
+  @Override
+public void dispose()
   {
     Notifier oldTarget = target;
     target = null;
@@ -1646,7 +1745,8 @@ public class ItemProviderAdapter
   /**
    * This returns the result collection for {@link CreateChildCommand}.
    */
-  public Collection<?> getCreateChildResult(Object child)
+  @Override
+public Collection<?> getCreateChildResult(Object child)
   {
     return Collections.singletonList(child);
   }
@@ -1654,7 +1754,8 @@ public class ItemProviderAdapter
   /**
    * This returns the label for {@link CreateChildCommand}.
    */
-  public String getCreateChildText(Object owner, Object feature, Object child, Collection<?> selection)
+  @Override
+public String getCreateChildText(Object owner, Object feature, Object child, Collection<?> selection)
   {
     if (feature instanceof EStructuralFeature && FeatureMapUtil.isFeatureMap((EStructuralFeature)feature))
     {
@@ -1688,7 +1789,8 @@ public class ItemProviderAdapter
   /**
    * This returns the description for {@link CreateChildCommand}.
    */
-  public String getCreateChildDescription(Object owner, Object feature, Object child, Collection<?> selection)
+  @Override
+public String getCreateChildDescription(Object owner, Object feature, Object child, Collection<?> selection)
   {
     if (feature instanceof EStructuralFeature && FeatureMapUtil.isFeatureMap((EStructuralFeature)feature))
     {
@@ -1728,7 +1830,8 @@ public class ItemProviderAdapter
   /**
    * This returns the tool tip text for {@link CreateChildCommand}.
    */
-  public String getCreateChildToolTipText(Object owner, Object feature, Object child, Collection<?> selection)
+  @Override
+public String getCreateChildToolTipText(Object owner, Object feature, Object child, Collection<?> selection)
   {
     if (feature instanceof EStructuralFeature && FeatureMapUtil.isFeatureMap((EStructuralFeature)feature))
     {
@@ -1747,7 +1850,8 @@ public class ItemProviderAdapter
   /**
    * This returns the icon image for {@link org.eclipse.emf.edit.command.CreateChildCommand}.
    */
-  public Object getCreateChildImage(Object owner, Object feature, Object child, Collection<?> selection)
+  @Override
+public Object getCreateChildImage(Object owner, Object feature, Object child, Collection<?> selection)
   {
     if (feature instanceof EStructuralFeature && FeatureMapUtil.isFeatureMap((EStructuralFeature)feature))
     {
@@ -1783,19 +1887,25 @@ public class ItemProviderAdapter
         (IItemLabelProvider)((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory().adapt(child, IItemLabelProvider.class);
       images.add(itemLabelProvider.getImage(child));
       images.add(EMFEditPlugin.INSTANCE.getImage("full/ovr16/CreateChild"));
-      return
-        new ComposedImage(images)
-        {
-          @Override
-          public List<Point> getDrawPoints(Size size)
-          {
-            List<Point> result = super.getDrawPoints(size);
-            result.get(1).x = size.width - 7;
-            return result;
-          }
-        };
+      return new ChildCreationComposedImage(images);
     }
     return EMFEditPlugin.INSTANCE.getImage("full/ctool16/CreateChild");
+  }
+
+  private static final class ChildCreationComposedImage extends ComposedImage
+  {
+    private ChildCreationComposedImage(Collection<?> images)
+    {
+      super(images);
+    }
+
+    @Override
+    public List<Point> getDrawPoints(Size size)
+    {
+      List<Point> result = super.getDrawPoints(size);
+      result.get(1).x = size.width - 7;
+      return result;
+    }
   }
 
   /**
@@ -1922,7 +2032,8 @@ public class ItemProviderAdapter
   /**
    * Get an image from the resource locator.
    */
-  public Object getImage(String key)
+  @Override
+public Object getImage(String key)
   {
     return getResourceLocator().getImage(key);
   }
@@ -1940,7 +2051,8 @@ public class ItemProviderAdapter
   /**
    * Get a translated string from the resource locator.
    */
-  public String getString(String key)
+  @Override
+public String getString(String key)
   {
     return getString(key, shouldTranslate());
   }
@@ -1948,7 +2060,8 @@ public class ItemProviderAdapter
   /**
    * Get a translated string from the resource locator.
    */
-  public String getString(String key, boolean translate)
+  @Override
+public String getString(String key, boolean translate)
   {
     return getResourceLocator().getString(key, translate);
   }
@@ -1956,7 +2069,8 @@ public class ItemProviderAdapter
   /**
    * Get a translated string from the resource locator, with substitutions.
    */
-  public String getString(String key, Object [] substitutions)
+  @Override
+public String getString(String key, Object [] substitutions)
   {
     return getString(key, substitutions, shouldTranslate());
   }
@@ -1964,7 +2078,8 @@ public class ItemProviderAdapter
   /**
    * Get a translated string from the resource locator, with substitutions.
    */
-  public String getString(String key, Object [] substitutions, boolean translate)
+  @Override
+public String getString(String key, Object [] substitutions, boolean translate)
   {
     return getResourceLocator().getString(key, substitutions, translate);
   }
@@ -2360,6 +2475,7 @@ public class ItemProviderAdapter
       return o == null ? singleElement == null : o.equals(singleElement);
     }
 
+    @Override
     public void move(int index, E o)
     {
       if (index != 0 || !contains(o))
@@ -2368,6 +2484,7 @@ public class ItemProviderAdapter
       }
     }
 
+    @Override
     public E move(int targetIndex, int sourceIndex)
     {
       if (targetIndex != 0)
@@ -3129,11 +3246,13 @@ public class ItemProviderAdapter
       commandActionDelegate = command;
     }
 
+    @Override
     public Object getImage()
     {
       return commandActionDelegate.getImage();
     }
 
+    @Override
     public String getText()
     {
       return commandActionDelegate.getText();
@@ -3145,6 +3264,7 @@ public class ItemProviderAdapter
       return commandActionDelegate.getDescription();
     }
 
+    @Override
     public String getToolTipText()
     {
       return commandActionDelegate.getToolTipText();
@@ -3157,11 +3277,13 @@ public class ItemProviderAdapter
      (IEditingDomainItemProvider.class, 
       new Reflect.Helper() 
       {
+        @Override
         public boolean isInstance(Object instance)
         {
           return instance instanceof IEditingDomainItemProvider;
         }
  
+        @Override
         public Object newArrayInstance(int size)
         {
           return new IEditingDomainItemProvider[size];
@@ -3171,11 +3293,13 @@ public class ItemProviderAdapter
      (IStructuredItemContentProvider.class, 
       new Reflect.Helper() 
       {
+        @Override
         public boolean isInstance(Object instance)
         {
           return instance instanceof IStructuredItemContentProvider;
         }
  
+        @Override
         public Object newArrayInstance(int size)
         {
           return new IStructuredItemContentProvider[size];
@@ -3185,11 +3309,13 @@ public class ItemProviderAdapter
      (ITreeItemContentProvider.class, 
       new Reflect.Helper() 
       {
+        @Override
         public boolean isInstance(Object instance)
         {
           return instance instanceof ITreeItemContentProvider;
         }
  
+        @Override
         public Object newArrayInstance(int size)
         {
           return new ITreeItemContentProvider[size];
@@ -3199,11 +3325,13 @@ public class ItemProviderAdapter
      (IItemLabelProvider.class, 
       new Reflect.Helper() 
       {
+        @Override
         public boolean isInstance(Object instance)
         {
           return instance instanceof IItemLabelProvider;
         }
  
+        @Override
         public Object newArrayInstance(int size)
         {
           return new IItemLabelProvider[size];
@@ -3213,11 +3341,13 @@ public class ItemProviderAdapter
      (IItemPropertySource.class, 
       new Reflect.Helper() 
       {
+        @Override
         public boolean isInstance(Object instance)
         {
           return instance instanceof IItemPropertySource;
         }
  
+        @Override
         public Object newArrayInstance(int size)
         {
           return new IItemPropertySource[size];

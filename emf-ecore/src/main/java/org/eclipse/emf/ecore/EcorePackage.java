@@ -1398,13 +1398,22 @@ public interface EcorePackage extends EPackage
   int ECLASS___GET_OVERRIDE__EOPERATION = ECLASSIFIER_OPERATION_COUNT + 8;
 
   /**
+   * The operation id for the '<em>Get Feature Type</em>' operation.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ECLASS___GET_FEATURE_TYPE__ESTRUCTURALFEATURE = ECLASSIFIER_OPERATION_COUNT + 9;
+
+  /**
    * The number of operations of the '<em>EClass</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ECLASS_OPERATION_COUNT = ECLASSIFIER_OPERATION_COUNT + 9;
+  int ECLASS_OPERATION_COUNT = ECLASSIFIER_OPERATION_COUNT + 10;
 
   /**
    * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
@@ -2795,13 +2804,22 @@ public interface EcorePackage extends EPackage
   int EGENERIC_TYPE_FEATURE_COUNT = 6;
 
   /**
+   * The operation id for the '<em>Is Instance</em>' operation.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int EGENERIC_TYPE___IS_INSTANCE__OBJECT = 0;
+
+  /**
    * The number of operations of the '<em>EGeneric Type</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int EGENERIC_TYPE_OPERATION_COUNT = 0;
+  int EGENERIC_TYPE_OPERATION_COUNT = 1;
 
   /**
    * The meta object id for the '{@link org.eclipse.emf.ecore.impl.ETypeParameterImpl <em>EType Parameter</em>}' class.
@@ -2868,6 +2886,26 @@ public interface EcorePackage extends EPackage
   int ETYPE_PARAMETER_OPERATION_COUNT = ENAMED_ELEMENT_OPERATION_COUNT + 0;
 
   /**
+   * The meta object id for the '<em>EBig Decimal</em>' data type.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see java.math.BigDecimal
+   * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEBigDecimal()
+   * @generated
+   */
+  int EBIG_DECIMAL = 20;
+
+  /**
+   * The meta object id for the '<em>EBig Integer</em>' data type.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see java.math.BigInteger
+   * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEBigInteger()
+   * @generated
+   */
+  int EBIG_INTEGER = 21;
+
+  /**
    * The meta object id for the '<em>EE List</em>' data type.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2875,7 +2913,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEEList()
    * @generated
    */
-  int EE_LIST = 31;
+  int EE_LIST = 33;
 
   /**
    * The meta object id for the '<em>EResource</em>' data type.
@@ -2885,7 +2923,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEResource()
    * @generated
    */
-  int ERESOURCE = 44;
+  int ERESOURCE = 46;
 
   /**
    * The meta object id for the '<em>EResource Set</em>' data type.
@@ -2895,7 +2933,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEResourceSet()
    * @generated
    */
-  int ERESOURCE_SET = 45;
+  int ERESOURCE_SET = 47;
 
   /**
    * The meta object id for the '<em>EBoolean Object</em>' data type.
@@ -2905,7 +2943,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEBooleanObject()
    * @generated
    */
-  int EBOOLEAN_OBJECT = 21;
+  int EBOOLEAN_OBJECT = 23;
 
   /**
    * The meta object id for the '<em>ECharacter Object</em>' data type.
@@ -2915,7 +2953,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getECharacterObject()
    * @generated
    */
-  int ECHARACTER_OBJECT = 26;
+  int ECHARACTER_OBJECT = 28;
 
   /**
    * The meta object id for the '<em>EDate</em>' data type.
@@ -2925,7 +2963,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEDate()
    * @generated
    */
-  int EDATE = 27;
+  int EDATE = 29;
 
   /**
    * The meta object id for the '<em>EDiagnostic Chain</em>' data type.
@@ -2935,7 +2973,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEDiagnosticChain()
    * @generated
    */
-  int EDIAGNOSTIC_CHAIN = 28;
+  int EDIAGNOSTIC_CHAIN = 30;
 
   /**
    * The meta object id for the '<em>EDouble Object</em>' data type.
@@ -2945,7 +2983,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEDoubleObject()
    * @generated
    */
-  int EDOUBLE_OBJECT = 30;
+  int EDOUBLE_OBJECT = 32;
 
   /**
    * The meta object id for the '<em>EFloat Object</em>' data type.
@@ -2955,7 +2993,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEFloatObject()
    * @generated
    */
-  int EFLOAT_OBJECT = 36;
+  int EFLOAT_OBJECT = 38;
 
   /**
    * The meta object id for the '<em>EInteger Object</em>' data type.
@@ -2965,7 +3003,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEIntegerObject()
    * @generated
    */
-  int EINTEGER_OBJECT = 38;
+  int EINTEGER_OBJECT = 40;
 
   /**
    * The meta object id for the '<em>EBoolean</em>' data type.
@@ -2974,7 +3012,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEBoolean()
    * @generated
    */
-  int EBOOLEAN = 20;
+  int EBOOLEAN = 22;
 
   /**
    * The meta object id for the '<em>EByte Object</em>' data type.
@@ -2984,7 +3022,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEByteObject()
    * @generated
    */
-  int EBYTE_OBJECT = 24;
+  int EBYTE_OBJECT = 26;
 
   /**
    * The meta object id for the '<em>EByte</em>' data type.
@@ -2993,7 +3031,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEByte()
    * @generated
    */
-  int EBYTE = 22;
+  int EBYTE = 24;
 
   /**
    * The meta object id for the '<em>EByte Array</em>' data type.
@@ -3002,7 +3040,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEByteArray()
    * @generated
    */
-  int EBYTE_ARRAY = 23;
+  int EBYTE_ARRAY = 25;
 
   /**
    * The meta object id for the '<em>EChar</em>' data type.
@@ -3011,7 +3049,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEChar()
    * @generated
    */
-  int ECHAR = 25;
+  int ECHAR = 27;
 
   /**
    * The meta object id for the '<em>EDouble</em>' data type.
@@ -3020,7 +3058,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEDouble()
    * @generated
    */
-  int EDOUBLE = 29;
+  int EDOUBLE = 31;
 
   /**
    * The meta object id for the '<em>EFloat</em>' data type.
@@ -3029,7 +3067,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEFloat()
    * @generated
    */
-  int EFLOAT = 35;
+  int EFLOAT = 37;
 
   /**
    * The meta object id for the '<em>EInt</em>' data type.
@@ -3038,7 +3076,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEInt()
    * @generated
    */
-  int EINT = 37;
+  int EINT = 39;
 
   /**
    * The meta object id for the '<em>EJava Class</em>' data type.
@@ -3048,7 +3086,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEJavaClass()
    * @generated
    */
-  int EJAVA_CLASS = 39;
+  int EJAVA_CLASS = 41;
 
   /**
    * The meta object id for the '<em>EJava Object</em>' data type.
@@ -3058,7 +3096,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEJavaObject()
    * @generated
    */
-  int EJAVA_OBJECT = 40;
+  int EJAVA_OBJECT = 42;
 
   /**
    * The meta object id for the '<em>ELong Object</em>' data type.
@@ -3068,7 +3106,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getELongObject()
    * @generated
    */
-  int ELONG_OBJECT = 42;
+  int ELONG_OBJECT = 44;
 
   /**
    * The meta object id for the '<em>EMap</em>' data type.
@@ -3078,7 +3116,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEMap()
    * @generated
    */
-  int EMAP = 43;
+  int EMAP = 45;
 
   /**
    * The meta object id for the '<em>EShort Object</em>' data type.
@@ -3088,7 +3126,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEShortObject()
    * @generated
    */
-  int ESHORT_OBJECT = 47;
+  int ESHORT_OBJECT = 49;
 
   /**
    * The meta object id for the '<em>ELong</em>' data type.
@@ -3097,7 +3135,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getELong()
    * @generated
    */
-  int ELONG = 41;
+  int ELONG = 43;
 
   /**
    * The meta object id for the '<em>EShort</em>' data type.
@@ -3106,7 +3144,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEShort()
    * @generated
    */
-  int ESHORT = 46;
+  int ESHORT = 48;
 
   /**
    * The meta object id for the '<em>ETree Iterator</em>' data type.
@@ -3116,18 +3154,18 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getETreeIterator()
    * @generated
    */
-  int ETREE_ITERATOR = 49;
+  int ETREE_ITERATOR = 51;
 
 
   /**
    * The meta object id for the '<em>EInvocation Target Exception</em>' data type.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see org.eclipse.emf.common.util.InvocationTargetException
+   * @see java.lang.reflect.InvocationTargetException
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEInvocationTargetException()
    * @generated
    */
-  int EINVOCATION_TARGET_EXCEPTION = 50;
+  int EINVOCATION_TARGET_EXCEPTION = 52;
 
   /**
    * The meta object id for the '<em>EFeature Map Entry</em>' data type.
@@ -3137,7 +3175,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEFeatureMapEntry()
    * @generated
    */
-  int EFEATURE_MAP_ENTRY = 34;
+  int EFEATURE_MAP_ENTRY = 36;
 
 
   /**
@@ -3148,7 +3186,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEEnumerator()
    * @generated
    */
-  int EENUMERATOR = 32;
+  int EENUMERATOR = 34;
 
 
   /**
@@ -3159,7 +3197,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEFeatureMap()
    * @generated
    */
-  int EFEATURE_MAP = 33;
+  int EFEATURE_MAP = 35;
 
   /**
    * The meta object id for the '<em>EString</em>' data type.
@@ -3169,7 +3207,7 @@ public interface EcorePackage extends EPackage
    * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEString()
    * @generated
    */
-  int ESTRING = 48;
+  int ESTRING = 50;
 
 
   /**
@@ -3544,6 +3582,16 @@ public interface EcorePackage extends EPackage
    * @generated
    */
   EOperation getEClass__GetOverride__EOperation();
+
+  /**
+   * Returns the meta object for the '{@link org.eclipse.emf.ecore.EClass#getFeatureType(org.eclipse.emf.ecore.EStructuralFeature) <em>Get Feature Type</em>}' operation.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the '<em>Get Feature Type</em>' operation.
+   * @see org.eclipse.emf.ecore.EClass#getFeatureType(org.eclipse.emf.ecore.EStructuralFeature)
+   * @generated
+   */
+  EOperation getEClass__GetFeatureType__EStructuralFeature();
 
   /**
    * Returns the meta object for class '{@link org.eclipse.emf.ecore.EDataType <em>EData Type</em>}'.
@@ -4660,6 +4708,16 @@ public interface EcorePackage extends EPackage
   EReference getEGenericType_EClassifier();
 
   /**
+   * Returns the meta object for the '{@link org.eclipse.emf.ecore.EGenericType#isInstance(java.lang.Object) <em>Is Instance</em>}' operation.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the '<em>Is Instance</em>' operation.
+   * @see org.eclipse.emf.ecore.EGenericType#isInstance(java.lang.Object)
+   * @generated
+   */
+  EOperation getEGenericType__IsInstance__Object();
+
+  /**
    * Returns the meta object for class '{@link org.eclipse.emf.ecore.ETypeParameter <em>EType Parameter</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4679,6 +4737,30 @@ public interface EcorePackage extends EPackage
    * @generated
    */
   EReference getETypeParameter_EBounds();
+
+  /**
+   * Returns the meta object for data type '{@link java.math.BigDecimal <em>EBig Decimal</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for data type '<em>EBig Decimal</em>'.
+   * @see java.math.BigDecimal
+   * @model instanceClass="java.math.BigDecimal"
+   *        extendedMetaData="baseType='http://www.w3.org/2001/XMLSchema#decimal'"
+   * @generated
+   */
+  EDataType getEBigDecimal();
+
+  /**
+   * Returns the meta object for data type '{@link java.math.BigInteger <em>EBig Integer</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for data type '<em>EBig Integer</em>'.
+   * @see java.math.BigInteger
+   * @model instanceClass="java.math.BigInteger"
+   *        extendedMetaData="baseType='http://www.w3.org/2001/XMLSchema#integer'"
+   * @generated
+   */
+  EDataType getEBigInteger();
 
   /**
    * Returns the meta object for data type '{@link org.eclipse.emf.common.util.EList <em>EE List</em>}'.
@@ -4974,12 +5056,12 @@ public interface EcorePackage extends EPackage
   EDataType getETreeIterator();
 
   /**
-   * Returns the meta object for data type '{@link org.eclipse.emf.common.util.InvocationTargetException <em>EInvocation Target Exception</em>}'.
+   * Returns the meta object for data type '{@link java.lang.reflect.InvocationTargetException <em>EInvocation Target Exception</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for data type '<em>EInvocation Target Exception</em>'.
-   * @see org.eclipse.emf.common.util.InvocationTargetException
-   * @model instanceClass="org.eclipse.emf.common.util.InvocationTargetException" serializeable="false"
+   * @see java.lang.reflect.InvocationTargetException
+   * @model instanceClass="java.lang.reflect.InvocationTargetException" serializeable="false"
    * @generated
    */
   EDataType getEInvocationTargetException();
@@ -5337,6 +5419,14 @@ public interface EcorePackage extends EPackage
      * @generated
      */
     EOperation ECLASS___GET_OVERRIDE__EOPERATION = eINSTANCE.getEClass__GetOverride__EOperation();
+
+    /**
+     * The meta object literal for the '<em><b>Get Feature Type</b></em>' operation.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EOperation ECLASS___GET_FEATURE_TYPE__ESTRUCTURALFEATURE = eINSTANCE.getEClass__GetFeatureType__EStructuralFeature();
 
     /**
      * The meta object literal for the '{@link org.eclipse.emf.ecore.impl.EClassifierImpl <em>EClassifier</em>}' class.
@@ -6187,6 +6277,14 @@ public interface EcorePackage extends EPackage
     EReference EGENERIC_TYPE__ECLASSIFIER = eINSTANCE.getEGenericType_EClassifier();
 
     /**
+     * The meta object literal for the '<em><b>Is Instance</b></em>' operation.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EOperation EGENERIC_TYPE___IS_INSTANCE__OBJECT = eINSTANCE.getEGenericType__IsInstance__Object();
+
+    /**
      * The meta object literal for the '{@link org.eclipse.emf.ecore.impl.ETypeParameterImpl <em>EType Parameter</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -6203,6 +6301,26 @@ public interface EcorePackage extends EPackage
      * @generated
      */
     EReference ETYPE_PARAMETER__EBOUNDS = eINSTANCE.getETypeParameter_EBounds();
+
+    /**
+     * The meta object literal for the '<em>EBig Decimal</em>' data type.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see java.math.BigDecimal
+     * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEBigDecimal()
+     * @generated
+     */
+    EDataType EBIG_DECIMAL = eINSTANCE.getEBigDecimal();
+
+    /**
+     * The meta object literal for the '<em>EBig Integer</em>' data type.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see java.math.BigInteger
+     * @see org.eclipse.emf.ecore.impl.EcorePackageImpl#getEBigInteger()
+     * @generated
+     */
+    EDataType EBIG_INTEGER = eINSTANCE.getEBigInteger();
 
     /**
      * The meta object literal for the '<em>EBoolean</em>' data type.

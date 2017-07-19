@@ -20,8 +20,10 @@ import java.util.Map;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.resource.URIService;
 
+import com.google.gwt.core.shared.GwtIncompatible;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+@GwtIncompatible
 public class URIServiceImpl extends RemoteServiceServlet implements URIService
 {
     private static final long serialVersionUID = 1L;
@@ -79,30 +81,35 @@ public class URIServiceImpl extends RemoteServiceServlet implements URIService
         super();
     }
     
+    @Override
     public Map<?, ?> fetch(String uri, Map<?, ?> options)
     {
         throw new UnsupportedOperationException();
         //return DatastoreUtil.fetch(uri, options);
     }
     
+    @Override
     public Map<?, ?> store(String uri, byte[] bytes, Map<?, ?> options)
     {
         throw new UnsupportedOperationException();
         //return DatastoreUtil.store(uri, bytes, options);
     }
     
+    @Override
     public Map<?, ?> delete(String uri, Map<?, ?> options)
     {
         throw new UnsupportedOperationException();
         //return DatastoreUtil.delete(uri, options);
     }
     
+    @Override
     public boolean exists(String uri, Map<?, ?> options)
     {
         throw new UnsupportedOperationException();
         //return DatastoreUtil.exists(uri, options);
     }
     
+    @Override
     public WhiteList whiteList(WhiteList whiteList)
     {
         return null;

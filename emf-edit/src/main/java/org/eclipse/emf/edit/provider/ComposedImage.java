@@ -18,6 +18,10 @@ import java.util.List;
 
 /**
  * This implements a wrapper that can be used to specify how a composed image should look.
+ * Be careful to avoid creating a non-static subclass because a composed image is often used as a key in a long-lived map, 
+ * for example, EMF's ExtendedImageRegistry,
+ * and as such, anonymous or non-static nested classes will tend to cause contextual cause leaks,
+ * e.g., <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=419364">419364</a>.
  */
 public class ComposedImage 
 {
@@ -25,12 +29,24 @@ public class ComposedImage
   {
     public int x;
     public int y;
+    
+    @Override
+    public String toString()
+    {
+      return "(" + x + ", " + y +")";
+    }
   }
 
   public static class Size
   {
     public int width;
     public int height;
+
+    @Override
+    public String toString()
+    {
+      return "(" + width+ ", " + height +")";
+    }
   }
 
   protected List<Object> images;
@@ -76,7 +92,7 @@ public class ComposedImage
   public List<Point> getDrawPoints(Size size)
   {
     List<Point> results = new ArrayList<Point>();
-    for (int i = imageSizes.size(); i > 0; --i)
+    for (int i = images.size(); i > 0; --i)
     {
       Point result = new Point();
       results.add(result);

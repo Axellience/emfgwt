@@ -56,6 +56,11 @@ public class ChildCreationExtenderManager extends DelegatingResourceLocator
     protected ResourceLocator [] delegateResourceLocators = NO_RESOURCE_LOCATORS;
 
     /**
+     * The modCount the last time the delegateResourceLocators were computed.
+     */
+    protected int expectedModCount = modCount;
+
+    /**
      * Creates an empty new instance.
      */
     public ChildCreationExtenderList()
@@ -86,17 +91,21 @@ public class ChildCreationExtenderManager extends DelegatingResourceLocator
      */
     protected ResourceLocator[] getDelegateResourceLocators()
     {
-      if (size == 0)
+      if (expectedModCount != modCount)
       {
-        delegateResourceLocators = NO_RESOURCE_LOCATORS;
-      }
-      else
-      {
-        IChildCreationExtender [] childCreationExtenders = (IChildCreationExtender[])data;
-        delegateResourceLocators = new ResourceLocator[size];
-        for (int i = 0; i < size; ++i)
+        expectedModCount = modCount;
+        if (size == 0)
         {
-          delegateResourceLocators[i] = childCreationExtenders[i].getResourceLocator();
+          delegateResourceLocators = NO_RESOURCE_LOCATORS;
+        }
+        else
+        {
+          IChildCreationExtender [] childCreationExtenders = (IChildCreationExtender[])data;
+          delegateResourceLocators = new ResourceLocator[size];
+          for (int i = 0; i < size; ++i)
+          {
+            delegateResourceLocators[i] = childCreationExtenders[i].getResourceLocator();
+          }
         }
       }
       return delegateResourceLocators;

@@ -4,9 +4,9 @@
 	<inherits name="com.google.gwt.user.User" />
 	<inherits name="org.eclipse.emf.common.Common" />
 	<source path=""/>
-	<source path="impl"/>
-	<source path="plugin"/>
-	<source path="resource"/>
+	<source path="impl" />
+	<source path="plugin" />
+	<source path="resource" />
 	<source path="resource.impl"/>
 	<source path="util"/>
 </module>

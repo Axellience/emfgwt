@@ -80,6 +80,8 @@ public abstract class DelegatingFeatureMap extends DelegatingEcoreEList<FeatureM
   @Override
   protected Entry validate(int index, Entry object)
   {
+    if (modCount == 0) return object;
+
     Entry result = super.validate(index, object);
     EStructuralFeature eStructuralFeature = object.getEStructuralFeature();
     if (!eStructuralFeature.isChangeable() || !featureMapValidator.isValid(eStructuralFeature))
@@ -228,7 +230,7 @@ public abstract class DelegatingFeatureMap extends DelegatingEcoreEList<FeatureM
 
   public int getModCount()
   {
-    return 0;
+    return modCount;
   }
 
   public EStructuralFeature getEStructuralFeature(int index)
@@ -1490,11 +1492,13 @@ public abstract class DelegatingFeatureMap extends DelegatingEcoreEList<FeatureM
 
   public void addUnique(EStructuralFeature feature, Object object)
   {
+    modCount = -1;
     addUnique(createRawEntry(feature, object));
   }
 
   public void addUnique(EStructuralFeature feature, int index, Object object)
   {
+    modCount = -1;
     addUnique(entryIndex(feature, index), createRawEntry(feature, object));
   }
 
@@ -1502,6 +1506,7 @@ public abstract class DelegatingFeatureMap extends DelegatingEcoreEList<FeatureM
   public void addUnique(Entry object)
   {
     // Validate now since the call we make after will skip validating.
+    ++modCount;
     validate(delegateSize(), object);
 
     super.addUnique(object);
@@ -1509,22 +1514,26 @@ public abstract class DelegatingFeatureMap extends DelegatingEcoreEList<FeatureM
 
   public void addUnique(Entry.Internal entry)
   {
+    modCount = -1;
     super.addUnique(entry);
   }
 
   @Override
   public boolean addAllUnique(Collection<? extends Entry> collection)
   {
+    modCount = -1;
     return super.addAllUnique(collection);
   }
 
   public boolean addAllUnique(Entry.Internal [] entries, int start, int end)
   {
+    modCount = -1;
     return super.addAllUnique(size(), entries, start, end);
   }
 
   public boolean addAllUnique(int index, Entry.Internal [] entries, int start, int end)
   {
+    modCount = -1;
     return super.addAllUnique(index, entries, start, end);
   }
 
@@ -2375,4 +2384,78 @@ public abstract class DelegatingFeatureMap extends DelegatingEcoreEList<FeatureM
    {
      super.set(newValue instanceof FeatureMap ? newValue : ((FeatureMap.Internal.Wrapper)newValue).featureMap());
    }
+
+  @Override
+  protected Entry resolve(int index, Entry entry) 
+  {
+    EStructuralFeature feature = entry.getEStructuralFeature();
+    if (isResolveProxies(feature))
+   {
+     InternalEObject object = (InternalEObject)entry.getValue();
+     EObject resolved = resolveProxy(object);
+     if (resolved != object)
+     {
+       Entry newEntry = createEntry(feature, resolved);
+       delegateSet(index, validate(index, newEntry));
+       didSet(index, newEntry, entry);
+
+       NotificationChain notifications = null;
+
+       // Produce a proxy resolve notification for the reference feature of the owner, if there is one.
+       //
+       if (isNotificationRequired())
+       {
+         EStructuralFeature affiliatedFeature = ExtendedMetaData.INSTANCE.getAffiliation(owner.eClass(), feature);
+         if (affiliatedFeature != getEStructuralFeature())
+         {
+           FeatureMapUtil.Validator validator = FeatureMapUtil.getValidator(owner.eClass(), feature);
+           int featureIndex = 0;
+           for (int i = 0; i < index; ++i)
+           {
+             Entry affliatedEntry = delegateGet(i);
+             if (validator.isValid(affliatedEntry.getEStructuralFeature()))
+             {
+               ++featureIndex;
+             }
+           }
+
+           notifications = 
+             createNotification
+               (Notification.RESOLVE, 
+                affiliatedFeature,
+                object,
+                resolved,
+                featureIndex,
+                false);
+        
+           notifications.add(createNotification(Notification.RESOLVE, entry, newEntry, index, false));
+         }
+       }
+
+       EReference reference = (EReference)feature;
+       EReference opposite = reference.getEOpposite();
+       if (opposite != null)
+       {
+         notifications = object.eInverseRemove(owner, object.eClass().getFeatureID(opposite), null, notifications);
+         notifications = ((InternalEObject)resolved).eInverseAdd(owner, resolved.eClass().getFeatureID(opposite), null, notifications);
+       }
+       else if (reference.isContainment())
+       {
+         int inverseFeatureID = InternalEObject.EOPPOSITE_FEATURE_BASE - owner.eClass().getFeatureID(reference);
+         notifications = object.eInverseRemove(owner, inverseFeatureID, null, null);
+         if (((InternalEObject)resolved).eInternalContainer() == null)
+         {
+           notifications = ((InternalEObject)resolved).eInverseAdd(owner, inverseFeatureID, null, notifications);
+         }
+       }
+       if (notifications != null)
+       {
+         notifications.dispatch();
+       }
+
+       return newEntry;
+     }
+    }
+    return entry;
+  }
 }

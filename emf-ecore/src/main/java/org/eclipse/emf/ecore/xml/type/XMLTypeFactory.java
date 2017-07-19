@@ -10,6 +10,8 @@
  */
 package org.eclipse.emf.ecore.xml.type;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -258,7 +260,7 @@ public interface XMLTypeFactory extends EFactory
    * @return a new instance value of the data type.
    * @generated
    */
-  String createDecimal(String literal);
+  BigDecimal createDecimal(String literal);
 
   /**
    * Returns a literal representation of an instance of data type '<em>Decimal</em>'.
@@ -268,7 +270,7 @@ public interface XMLTypeFactory extends EFactory
    * @return a literal representation of the instance value.
    * @generated
    */
-  String convertDecimal(String instanceValue);
+  String convertDecimal(BigDecimal instanceValue);
 
   /**
    * Returns an instance of data type '<em>Double</em>' corresponding the given literal.
@@ -658,7 +660,7 @@ public interface XMLTypeFactory extends EFactory
    * @return a new instance value of the data type.
    * @generated
    */
-  String createInteger(String literal);
+  BigInteger createInteger(String literal);
 
   /**
    * Returns a literal representation of an instance of data type '<em>Integer</em>'.
@@ -668,7 +670,7 @@ public interface XMLTypeFactory extends EFactory
    * @return a literal representation of the instance value.
    * @generated
    */
-  String convertInteger(String instanceValue);
+  String convertInteger(BigInteger instanceValue);
 
   /**
    * Returns an instance of data type '<em>Int Object</em>' corresponding the given literal.
@@ -798,7 +800,7 @@ public interface XMLTypeFactory extends EFactory
    * @return a new instance value of the data type.
    * @generated
    */
-  String createNegativeInteger(String literal);
+  BigInteger createNegativeInteger(String literal);
 
   /**
    * Returns a literal representation of an instance of data type '<em>Negative Integer</em>'.
@@ -808,7 +810,7 @@ public interface XMLTypeFactory extends EFactory
    * @return a literal representation of the instance value.
    * @generated
    */
-  String convertNegativeInteger(String instanceValue);
+  String convertNegativeInteger(BigInteger instanceValue);
 
   /**
    * Returns an instance of data type '<em>NMTOKEN</em>' corresponding the given literal.
@@ -878,7 +880,7 @@ public interface XMLTypeFactory extends EFactory
    * @return a new instance value of the data type.
    * @generated
    */
-  String createNonNegativeInteger(String literal);
+  BigInteger createNonNegativeInteger(String literal);
 
   /**
    * Returns a literal representation of an instance of data type '<em>Non Negative Integer</em>'.
@@ -888,7 +890,7 @@ public interface XMLTypeFactory extends EFactory
    * @return a literal representation of the instance value.
    * @generated
    */
-  String convertNonNegativeInteger(String instanceValue);
+  String convertNonNegativeInteger(BigInteger instanceValue);
 
   /**
    * Returns an instance of data type '<em>Non Positive Integer</em>' corresponding the given literal.
@@ -898,7 +900,7 @@ public interface XMLTypeFactory extends EFactory
    * @return a new instance value of the data type.
    * @generated
    */
-  String createNonPositiveInteger(String literal);
+  BigInteger createNonPositiveInteger(String literal);
 
   /**
    * Returns a literal representation of an instance of data type '<em>Non Positive Integer</em>'.
@@ -908,7 +910,7 @@ public interface XMLTypeFactory extends EFactory
    * @return a literal representation of the instance value.
    * @generated
    */
-  String convertNonPositiveInteger(String instanceValue);
+  String convertNonPositiveInteger(BigInteger instanceValue);
 
   /**
    * Returns an instance of data type '<em>Normalized String</em>' corresponding the given literal.
@@ -958,7 +960,7 @@ public interface XMLTypeFactory extends EFactory
    * @return a new instance value of the data type.
    * @generated
    */
-  String createPositiveInteger(String literal);
+  BigInteger createPositiveInteger(String literal);
 
   /**
    * Returns a literal representation of an instance of data type '<em>Positive Integer</em>'.
@@ -968,7 +970,7 @@ public interface XMLTypeFactory extends EFactory
    * @return a literal representation of the instance value.
    * @generated
    */
-  String convertPositiveInteger(String instanceValue);
+  String convertPositiveInteger(BigInteger instanceValue);
 
   /**
    * Returns an instance of data type '<em>QName</em>' corresponding the given literal.
@@ -1181,7 +1183,7 @@ public interface XMLTypeFactory extends EFactory
    * @return a new instance value of the data type.
    * @generated
    */
-  String createUnsignedLong(String literal);
+  BigInteger createUnsignedLong(String literal);
 
   /**
    * Returns a literal representation of an instance of data type '<em>Unsigned Long</em>'.
@@ -1191,7 +1193,7 @@ public interface XMLTypeFactory extends EFactory
    * @return a literal representation of the instance value.
    * @generated
    */
-  String convertUnsignedLong(String instanceValue);
+  String convertUnsignedLong(BigInteger instanceValue);
 
   /**
    * Returns an instance of data type '<em>Unsigned Short</em>' corresponding the given literal.

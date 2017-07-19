@@ -14,10 +14,12 @@ package org.eclipse.emf.edit.provider;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.MissingResourceException;
 
 import org.eclipse.emf.common.command.Command;
@@ -33,6 +35,7 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
+import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -714,7 +717,8 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
   /**
    * This returns the group of properties into which this one should be placed.
    */
-  public String getCategory(Object object) 
+  @Override
+public String getCategory(Object object) 
   {
     return category;
   }
@@ -722,7 +726,8 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
   /**
    * This returns the description to be displayed in the property sheet when this property is selected.
    */
-  public String getDescription(Object object) 
+  @Override
+public String getDescription(Object object) 
   {
     return description;
   }
@@ -730,7 +735,8 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
   /**
    * This returns the name of the property to be displayed in the property sheet.
    */
-  public String getDisplayName(Object object) 
+  @Override
+public String getDisplayName(Object object) 
   {
     return displayName;
   }
@@ -738,7 +744,8 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
   /**
    * This returns the flags used as filters in the property sheet.
    */
-  public String[] getFilterFlags(Object object) 
+  @Override
+public String[] getFilterFlags(Object object) 
   {
     return filterFlags;
   }
@@ -750,7 +757,8 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
    * This key that must uniquely identify this descriptor 
    * among the other descriptors from the same {@link IItemPropertySource#getPropertyDescriptor(Object, Object) property source}.
    */
-  public String getId(Object object) 
+  @Override
+public String getId(Object object) 
   {
     if (feature != null)
     {
@@ -772,7 +780,8 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
     }
   }
 
-  public Object getHelpContextIds(Object object)
+  @Override
+public Object getHelpContextIds(Object object)
   {
     return null;
   }
@@ -788,65 +797,72 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
   {
     if (object instanceof EObject)
     {
+      EObject eObject = (EObject)object;
+      EClass eClass = eObject.eClass();
       if (parentReferences != null)
       {
         Collection<Object> result = new UniqueEList<Object>();
         for (int i = 0; i < parentReferences.length; ++i)
         {
-          result.addAll(getReachableObjectsOfType((EObject)object, parentReferences[i].getEType()));
+          result.addAll(getReachableObjectsOfType(eObject, eClass.getFeatureType(parentReferences[i])));
         }
         return result;
       }
       else if (feature != null)
       {
+        EGenericType eGenericType = eClass.getFeatureType(feature);
         if (feature instanceof EReference)
         {
-          Collection<EObject> result = getReachableObjectsOfType((EObject)object, feature.getEType());
+          Collection<EObject> result = getReachableObjectsOfType(eObject, eGenericType);
           if (!feature.isMany() && !result.contains(null))
           {
             result.add(null);
           }
           return result;
         }
-        else if (feature.getEType() instanceof EEnum)
+        else
         {
-          EEnum eEnum = (EEnum)feature.getEType();
-          List<Enumerator> enumerators = new ArrayList<Enumerator>();
-          for (EEnumLiteral eEnumLiteral :  eEnum.getELiterals())
+          EClassifier eType = eGenericType.getERawType();
+          if (eType instanceof EEnum)
           {
-            enumerators.add(eEnumLiteral.getInstance());
-          }
-          return enumerators;
-        }
-        else 
-        {
-          EDataType eDataType = (EDataType)feature.getEType();
-          List<String> enumeration = ExtendedMetaData.INSTANCE.getEnumerationFacet(eDataType);
-          if (!enumeration.isEmpty())
-          {
-            List<Object> enumerators = new ArrayList<Object>();
-            for (String enumerator : enumeration)
+            EEnum eEnum = (EEnum)eType;
+            List<Enumerator> enumerators = new ArrayList<Enumerator>();
+            for (EEnumLiteral eEnumLiteral :  eEnum.getELiterals())
             {
-              enumerators.add(EcoreUtil.createFromString(eDataType, enumerator));
+              enumerators.add(eEnumLiteral.getInstance());
             }
             return enumerators;
           }
-          else
+          else 
           {
-            for (EDataType baseType = ExtendedMetaData.INSTANCE.getBaseType(eDataType);
-                 baseType != null;
-                 baseType = ExtendedMetaData.INSTANCE.getBaseType(baseType))
+            EDataType eDataType = (EDataType)eType;
+            List<String> enumeration = ExtendedMetaData.INSTANCE.getEnumerationFacet(eDataType);
+            if (!enumeration.isEmpty())
             {
-              if (baseType instanceof EEnum)
+              List<Object> enumerators = new ArrayList<Object>();
+              for (String enumerator : enumeration)
               {
-                EEnum eEnum = (EEnum)baseType;
-                List<Enumerator> enumerators = new ArrayList<Enumerator>();
-                enumerators.add(null);
-                for (EEnumLiteral eEnumLiteral :  eEnum.getELiterals())
+                enumerators.add(EcoreUtil.createFromString(eDataType, enumerator));
+              }
+              return enumerators;
+            }
+            else
+            {
+              for (EDataType baseType = ExtendedMetaData.INSTANCE.getBaseType(eDataType);
+                   baseType != null;
+                   baseType = ExtendedMetaData.INSTANCE.getBaseType(baseType))
+              {
+                if (baseType instanceof EEnum)
                 {
-                  enumerators.add(eEnumLiteral.getInstance());
+                  EEnum eEnum = (EEnum)baseType;
+                  List<Enumerator> enumerators = new ArrayList<Enumerator>();
+                  enumerators.add(null);
+                  for (EEnumLiteral eEnumLiteral :  eEnum.getELiterals())
+                  {
+                    enumerators.add(eEnumLiteral.getInstance());
+                  }
+                  return enumerators;
                 }
-                return enumerators;
               }
             }
           }
@@ -985,11 +1001,152 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
     }
   }
 
+
+  /**
+   * This yields all reachable references from object with a meta object which indicates that it is a subtype of type.
+   * @since 2.9
+   */
+  static public Collection<EObject> getReachableObjectsOfType(EObject object, EGenericType type)
+  {
+    LinkedList<EObject> itemQueue = new LinkedList<EObject>();
+    Collection<EObject> visited  = new HashSet<EObject>();
+    Collection<EObject> result = new ArrayList<EObject>();
+    Map<EClass, Boolean> subtypes = new HashMap<EClass, Boolean>();
+    Resource resource = object.eResource();
+    if (resource != null)
+    {
+      ResourceSet resourceSet = resource.getResourceSet();
+      if (resourceSet != null)
+      {
+        for (TreeIterator<?> i = resourceSet.getAllContents(); i.hasNext(); )
+        {
+          Object child = i.next();
+          if (child instanceof EObject)
+          {
+            collectReachableObjectsOfType(visited, itemQueue, subtypes, result, (EObject)child, type);
+            i.prune();
+          }
+        }
+      }
+      else
+      {
+        for (EObject eObject : resource.getContents())
+        {
+          collectReachableObjectsOfType(visited, itemQueue, subtypes, result, eObject, type);
+        }
+      }
+    }
+    else
+    {
+      collectReachableObjectsOfType(visited, itemQueue, subtypes, result, EcoreUtil.getRootContainer(object), type);
+    }
+
+    while (!itemQueue.isEmpty()) 
+    {
+      EObject nextItem = itemQueue.removeFirst();
+      collectReachableObjectsOfType(visited, itemQueue, subtypes, result, nextItem, type);
+    } 
+
+    return result;
+  }
+ 
+  /**
+   * This will visit all reachable references from object except those in visited;
+   * it updates visited and adds to result any object with a meta object that indicates that it is a subtype of type.
+   * @since 2.9
+   */
+  static public void collectReachableObjectsOfType(Collection<EObject> visited, Collection<EObject> result, EObject object, EGenericType type)
+  {
+    LinkedList<EObject> itemQueue = new LinkedList<EObject>();
+    Map<EClass, Boolean> subtypes = new HashMap<EClass, Boolean>();
+    collectReachableObjectsOfType(visited, itemQueue, subtypes, result, object, type);
+    while (!itemQueue.isEmpty()) 
+    {
+      EObject nextItem = itemQueue.removeFirst();
+      collectReachableObjectsOfType(visited, itemQueue, subtypes, result, nextItem, type);
+    } 
+  }
+
+  /**
+   * This will visit all reachable references from object except those in visited and add them to the queue.
+   * The queue is processed outside this recursive traversal to avoid stack overflows.
+   * It updates visited and adds to result any object with a meta object that indicates that it is a subtype of type.
+   * @since 2.9
+   */
+  static private void collectReachableObjectsOfType
+    (Collection<EObject> visited,  LinkedList<EObject> itemQueue, Map<EClass, Boolean> subtypes, Collection<EObject> result,  EObject object,  EGenericType type)
+  {
+    if (visited.add(object))
+    {
+      EClass eClass = object.eClass();
+      Boolean isInstance = subtypes.get(eClass);
+      if (isInstance == null)
+      {
+        isInstance = type.isInstance(object) ? Boolean.TRUE : Boolean.FALSE;
+        subtypes.put(eClass, isInstance);
+      }
+      if (isInstance == Boolean.TRUE)
+      {
+        result.add(object);
+      }
+
+      // Don't traverse the structure of the EcorePackage's EObject EClass instance.
+      // This avoids pulling in all the EcorePackage's meta data simply because EObject was used.
+      //
+      if (object != EcorePackage.Literals.EOBJECT)
+      {
+        for (EStructuralFeature eStructuralFeature : eClass.getEAllStructuralFeatures())
+        {
+          if (!eStructuralFeature.isDerived())
+          {
+            if (eStructuralFeature instanceof EReference)
+            {
+              EReference eReference = (EReference)eStructuralFeature;
+              if (eReference.isMany())
+              {
+                @SuppressWarnings("unchecked")
+                List<EObject> list = ((List<EObject>)object.eGet(eReference));
+                itemQueue.addAll(list);
+              }
+              else
+              {
+                EObject eObject = (EObject)object.eGet(eReference);
+  
+                // Explicitly exclude walking up the container reference for EClassifiers of the EcorePackage instance
+                // except for EClass instances (other than EObject which was excluded above already).
+                // This avoids pulling in all the EcorePackage's meta data simply because an EDataType was used.
+                //
+                if (eObject != null && 
+                      (eObject != EcorePackage.eINSTANCE ||
+                         eStructuralFeature != EcorePackage.Literals.ECLASSIFIER__EPACKAGE ||
+                         object instanceof EClass))
+                {
+                  itemQueue.addLast(eObject);
+                }
+              }
+            }
+            else if (FeatureMapUtil.isFeatureMap(eStructuralFeature))
+            {
+              for (FeatureMap.Entry entry : (FeatureMap)object.eGet(eStructuralFeature))
+              {
+                if (entry.getEStructuralFeature() instanceof EReference && entry.getValue() != null)
+                {
+                  itemQueue.addLast((EObject)entry.getValue());
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   /**
    * This returns the label provider that will be used to render the value of this property.
    * The implementation here just creates an {@link AdapterFactoryItemDelegator}.
    */
-  public IItemLabelProvider getLabelProvider(Object object) 
+  @Override
+public IItemLabelProvider getLabelProvider(Object object) 
   {
     return itemDelegator;
   }
@@ -999,7 +1156,8 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
    * It's not really clear to me how this is meant to be used, 
    * but it's a little bit like an equals test.
    */
-  public boolean isCompatibleWith(Object object, Object anotherObject, IItemPropertyDescriptor anotherItemPropertyDescriptor) 
+  @Override
+public boolean isCompatibleWith(Object object, Object anotherObject, IItemPropertyDescriptor anotherItemPropertyDescriptor) 
   {
 /*
     if (propertyDescriptor == this)
@@ -1036,16 +1194,19 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
       this.itemDelegator = new AdapterFactoryItemDelegator(adapterFactory);
     }
 
+    @Override
     public String getText(Object thisObject)
     {
       return itemDelegator.getText(propertyValue);
     }
 
+    @Override
     public Object getImage(Object thisObject)
     {
       return itemDelegator.getImage(propertyValue);
     }
 
+    @Override
     public List<IItemPropertyDescriptor> getPropertyDescriptors(Object thisObject)
     {
       // This guards the switch.
@@ -1064,12 +1225,14 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
       return Collections.emptyList();
     }
 
+    @Override
     public IItemPropertyDescriptor getPropertyDescriptor(Object thisObject, Object propertyId)
     {
       return 
         createPropertyDescriptorDecorator(nestedPropertySource, itemDelegator.getPropertyDescriptor(nestedPropertySource, propertyId));
     }
 
+    @Override
     public Object getEditableValue(Object thisObject)
     {
       return propertyValue;
@@ -1176,7 +1339,8 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
    * and it sets object, which is necessary if {@link #getComboBoxObjects getComboBoxObjects} is called.
    * It is implemented in a generic way using the structural feature or parent references.
    */
-  public Object getPropertyValue(Object object)
+  @Override
+public Object getPropertyValue(Object object)
   {
     EObject eObject = (EObject)object;
     if (feature instanceof EAttribute)
@@ -1219,7 +1383,8 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
    * This does the delegated job of determine whether the property value from the given object is set.
    * It is implemented in a generic way using the structural feature.
    */
-  public boolean isPropertySet(Object object)
+  @Override
+public boolean isPropertySet(Object object)
   {
     // System.out.println("isPropertySet " + object);
     EObject eObject = (EObject)object;
@@ -1256,7 +1421,8 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
   /**
    * This determines whether this descriptor's property for the object supports set (and reset).
    */
-  public boolean canSetProperty(Object object)
+  @Override
+public boolean canSetProperty(Object object)
   {
     if (isSettable)
     {
@@ -1285,7 +1451,8 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
   /**
    * Sets the object to use as the owner of commands created to set the property's value.
    */
-  public void setCommandOwner(Object commandOwner)
+  @Override
+public void setCommandOwner(Object commandOwner)
   {
     this.commandOwner = commandOwner;
   }
@@ -1293,7 +1460,8 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
   /**
    * Returns the override command owner set via {@link #setCommandOwner setCommandOwner}.
    */
-  public Object getCommandOwner()
+  @Override
+public Object getCommandOwner()
   {
     return commandOwner;
   }
@@ -1310,7 +1478,8 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
   /**
    * This does the delegated job of resetting property value back to it's default value.
    */
-  public void resetPropertyValue(Object object)
+  @Override
+public void resetPropertyValue(Object object)
   {
     EObject eObject = (EObject)object;
     EditingDomain editingDomain = getEditingDomain(object);
@@ -1375,9 +1544,11 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
    * This does the delegated job of setting the property to the given value.
    * It is implemented in a generic way using the structural feature.
    */
-  public void setPropertyValue(Object object, Object value)
+  @Override
+public void setPropertyValue(Object object, Object value)
   {
     EObject eObject = (EObject)object;
+    EClass eClass = eObject.eClass();
     EditingDomain editingDomain = getEditingDomain(object);
 
     if (parentReferences != null)
@@ -1393,7 +1564,7 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
           {
             return;
           }
-          else if (parentReference.getEType().isInstance(value))
+          else if (eClass.getFeatureType(parentReference).isInstance(value))
           {
             if (editingDomain == null)
             {
@@ -1423,7 +1594,7 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
       for (int i = 0; i < parentReferences.length; ++i)
       {
         final EReference parentReference = parentReferences[i];
-        if (parentReference.getEType().isInstance(value))
+        if (eClass.getFeatureType(parentReference).isInstance(value))
         {
           if (editingDomain == null)
           {
@@ -1460,7 +1631,8 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
     }
   }
 
-  public Object getFeature(Object object)
+  @Override
+public Object getFeature(Object object)
   {
     if (feature != null)
     {
@@ -1480,22 +1652,26 @@ public class ItemPropertyDescriptor implements IItemPropertyDescriptor, Override
    * Returns whether this property represents multiple values.  This is true only if we're using a {@link #feature
    * structural feature} to provide the values for this property, and if that feature is multi-valued.
    */
-  public boolean isMany(Object object)
+  @Override
+public boolean isMany(Object object)
   {
     return parentReferences == null && feature != null && feature.isMany();
   }
 
-  public Collection<?> getChoiceOfValues(Object object)
+  @Override
+public Collection<?> getChoiceOfValues(Object object)
   {
     return getComboBoxObjects(object);
   }
   
-  public boolean isMultiLine(Object object)
+  @Override
+public boolean isMultiLine(Object object)
   {
     return multiLine;
   }
 
-  public boolean isSortChoices(Object object)
+  @Override
+public boolean isSortChoices(Object object)
   {
     return sortChoices;
   }

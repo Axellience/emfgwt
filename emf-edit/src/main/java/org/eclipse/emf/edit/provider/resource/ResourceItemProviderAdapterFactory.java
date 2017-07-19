@@ -18,6 +18,7 @@ import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
+import org.eclipse.emf.common.util.Reflect;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -119,7 +120,8 @@ public class ResourceItemProviderAdapterFactory
    * This returns the root adapter factory that contains this factory.
    * @generated
    */
-  public ComposeableAdapterFactory getRootAdapterFactory()
+  @Override
+public ComposeableAdapterFactory getRootAdapterFactory()
   {
     return parentAdapterFactory == null ? this : parentAdapterFactory.getRootAdapterFactory();
   }
@@ -128,7 +130,8 @@ public class ResourceItemProviderAdapterFactory
    * This sets the composed adapter factory that contains this factory.
    * @generated
    */
-  public void setParentAdapterFactory(ComposedAdapterFactory parentAdapterFactory)
+  @Override
+public void setParentAdapterFactory(ComposedAdapterFactory parentAdapterFactory)
   {
     this.parentAdapterFactory = parentAdapterFactory;
   }
@@ -174,7 +177,7 @@ public class ResourceItemProviderAdapterFactory
     {
       Object adapter = super.adapt(object, type);
       // TODO
-      if (!(type instanceof Class<?>) /*|| (((Class<?>)type).isInstance(adapter))*/)
+      if (!(type instanceof Class<?>) || Reflect.isInstance(((Class<?>)type), adapter))
       {
         return adapter;
       }
@@ -187,7 +190,8 @@ public class ResourceItemProviderAdapterFactory
    * This adds a listener.
    * @generated
    */
-  public void addListener(INotifyChangedListener notifyChangedListener)
+  @Override
+public void addListener(INotifyChangedListener notifyChangedListener)
   {
     changeNotifier.addListener(notifyChangedListener);
   }
@@ -196,7 +200,8 @@ public class ResourceItemProviderAdapterFactory
    * This removes a listener.
    * @generated
    */
-  public void removeListener(INotifyChangedListener notifyChangedListener)
+  @Override
+public void removeListener(INotifyChangedListener notifyChangedListener)
   {
     changeNotifier.removeListener(notifyChangedListener);
   }
@@ -205,7 +210,8 @@ public class ResourceItemProviderAdapterFactory
    * This delegates to {@link #changeNotifier} and to {@link #parentAdapterFactory}.
    * @generated
    */
-  public void fireNotifyChanged(Notification notification)
+  @Override
+public void fireNotifyChanged(Notification notification)
   {
     changeNotifier.fireNotifyChanged(notification);
 
@@ -225,7 +231,8 @@ public class ResourceItemProviderAdapterFactory
     }
   }
   
-  public void dispose()
+  @Override
+public void dispose()
   {
     disposable.dispose();
   }

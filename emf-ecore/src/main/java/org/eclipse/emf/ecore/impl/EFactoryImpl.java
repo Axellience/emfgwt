@@ -11,10 +11,6 @@
 package org.eclipse.emf.ecore.impl;
 
 
-import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.regexp.shared.SplitResult;
-import com.google.gwt.user.client.rpc.GwtTransient;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -39,6 +35,9 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.emf.ecore.xml.type.util.XMLTypeUtil;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.regexp.shared.SplitResult;
+import com.google.gwt.user.client.rpc.GwtTransient;
 
 
 /**
@@ -54,7 +53,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
  *
  * @generated
  */
-public class EFactoryImpl extends EModelElementImpl implements EFactory
+public class EFactoryImpl extends EModelElementImpl implements EFactory//, BinaryResourceImpl.DataConverter.Factory
 {
   /**
    * The cached value of the '{@link #getEPackage() <em>EPackage</em>}' reference.
@@ -93,7 +92,8 @@ public class EFactoryImpl extends EModelElementImpl implements EFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public EPackage getEPackage()
+  @Override
+public EPackage getEPackage()
   {
     return ePackage;
   }
@@ -103,7 +103,8 @@ public class EFactoryImpl extends EModelElementImpl implements EFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setEPackage(EPackage newEPackage)
+  @Override
+public void setEPackage(EPackage newEPackage)
   {
     if (newEPackage != ePackage)
     {
@@ -239,7 +240,8 @@ public class EFactoryImpl extends EModelElementImpl implements EFactory
   /**
    * @generated modifiable
    */
-  public EObject create(EClass eClass) 
+  @Override
+public EObject create(EClass eClass) 
   {
     if (getEPackage() != eClass.getEPackage() || eClass.isAbstract())
     {
@@ -269,10 +271,19 @@ public class EFactoryImpl extends EModelElementImpl implements EFactory
          new DynamicEObjectImpl(eClass);
   }
 
+//  /**
+//   * @since 2.9
+//   */
+//  public BinaryResourceImpl.DataConverter<?> create(EDataType eDataType)
+//  {
+//    return null;
+//  }
+
   /**
    * @generated NOT
    */
-  public Object createFromString(EDataType eDataType, String stringValue) 
+  @Override
+public Object createFromString(EDataType eDataType, String stringValue) 
   {
     if (stringValue == null)
     {
@@ -461,7 +472,8 @@ public class EFactoryImpl extends EModelElementImpl implements EFactory
   /**
    * @generated modifiable
    */
-  public String convertToString(EDataType eDataType, Object objectValue)
+  @Override
+public String convertToString(EDataType eDataType, Object objectValue)
   {
     if (getEPackage() != eDataType.getEPackage())
     {
@@ -775,10 +787,12 @@ public class EFactoryImpl extends EModelElementImpl implements EFactory
           this.dateTimeFormat = dateTimeFormat;
         }
 
+        @Override
         public Date parse(String value)
         {
           return dateTimeFormat.parse(value);
         }
+        @Override
         public String format(Date value)
         {
           return dateTimeFormat.format(value);

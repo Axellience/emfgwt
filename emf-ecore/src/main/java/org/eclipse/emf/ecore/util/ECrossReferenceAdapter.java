@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Adapter;
@@ -32,6 +33,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EContentsEList.FeatureIterator;
 
 
 /**
@@ -70,27 +72,102 @@ public class ECrossReferenceAdapter implements Adapter.Internal
 
     protected Map<URI, List<EObject>> proxyMap;
     
+    /**
+     * @since 2.10
+     */
+    protected EContentsEList.FeatureFilter crossReferenceFilter;
+
     protected InverseCrossReferencer()
     {
       super((Collection<Notifier>)null);
+
+      crossReferenceFilter = createCrossReferenceFilter();
+    }
+
+    /**
+     * @since 2.10
+     */
+    protected EContentsEList.FeatureFilter createCrossReferenceFilter()
+    {
+      return new EContentsEList.FeatureFilter()
+        {
+          @Override
+        public boolean isIncluded(EStructuralFeature eStructuralFeature)
+          {
+            return FeatureMapUtil.isFeatureMap(eStructuralFeature) || ECrossReferenceAdapter.this.isIncluded((EReference)eStructuralFeature);
+          }
+        };
     }
     
     @Override
     protected EContentsEList.FeatureIterator<EObject> getCrossReferences(EObject eObject)
     {
-      return
-        new ECrossReferenceEList.FeatureIteratorImpl<EObject>(eObject)
+      InternalEList<EObject> eCrossReferences = (InternalEList<EObject>)eObject.eCrossReferences();
+
+      final EContentsEList.FeatureIterator<EObject> underlyingIterator = (FeatureIterator<EObject>)(resolve() ? eCrossReferences.iterator() : eCrossReferences.basicIterator());
+
+      if (underlyingIterator instanceof EContentsEList.Filterable)
+      {
+        // Simply filter the model-provided iterator to skip the references that we don't need to index
+        ((EContentsEList.Filterable)underlyingIterator).filter(crossReferenceFilter);
+        return underlyingIterator;
+      }
+
+      // Otherwise, we'll post-filter the iterator, ourselves, but this does mean that we may compute derived features unnecessarily
+      return new EContentsEList.FeatureIterator<EObject>()
         {
+          private boolean prepared;
+
+          private EObject preparedNext;
+
+          private EStructuralFeature preparedFeature;
+
+          private EStructuralFeature feature;
+
           @Override
-          protected boolean isIncluded(EStructuralFeature eStructuralFeature)
+        public boolean hasNext()
           {
-            return FeatureMapUtil.isFeatureMap(eStructuralFeature) || ECrossReferenceAdapter.this.isIncluded((EReference)eStructuralFeature);
+            if (!prepared)
+            {
+              while (underlyingIterator.hasNext())
+              {
+                preparedNext = underlyingIterator.next();
+                preparedFeature = underlyingIterator.feature();
+                if (crossReferenceFilter.isIncluded(preparedFeature))
+                {
+                  prepared = true;
+                  break;
+                }
+              }
+            }
+
+            return prepared;
           }
 
           @Override
-          protected boolean resolve()
+        public EObject next()
           {
-            return InverseCrossReferencer.this.resolve();
+            if (!prepared && !hasNext())
+            {
+              throw new NoSuchElementException();
+            }
+
+            feature = preparedFeature;
+            prepared = false;
+            return preparedNext;
+          }
+
+          @Override
+        public void remove()
+          {
+            // Must not attempt to remove cross-references in indexing them
+            throw new UnsupportedOperationException();
+          }
+
+          @Override
+        public EStructuralFeature feature()
+          {
+            return feature;
           }
         };
     }
@@ -118,15 +195,18 @@ public class ECrossReferenceAdapter implements Adapter.Internal
           @Override
           public boolean add(EStructuralFeature.Setting setting)
           {
-            EObject eObject = setting.getEObject();
-            EStructuralFeature eStructuralFeature = setting.getEStructuralFeature();
-            EStructuralFeature.Setting [] settingData =  (EStructuralFeature.Setting[])data;
-            for (int i = 0; i < size; ++i)
+            if (!settingTargets || ECrossReferenceAdapter.this.resolve())
             {
-              EStructuralFeature.Setting containedSetting = settingData[i];
-              if (containedSetting.getEObject() == eObject && containedSetting.getEStructuralFeature() == eStructuralFeature)
+              EObject eObject = setting.getEObject();
+              EStructuralFeature eStructuralFeature = setting.getEStructuralFeature();
+              EStructuralFeature.Setting [] settingData =  (EStructuralFeature.Setting[])data;
+              for (int i = 0; i < size; ++i)
               {
-                return false;
+                EStructuralFeature.Setting containedSetting = settingData[i];
+                if (containedSetting.getEObject() == eObject && containedSetting.getEStructuralFeature() == eStructuralFeature)
+                {
+                  return false;
+                }
               }
             }
             addUnique(setting);
@@ -275,6 +355,8 @@ public class ECrossReferenceAdapter implements Adapter.Internal
   
   protected InverseCrossReferencer inverseCrossReferencer;
   
+  protected boolean settingTargets;
+
   public ECrossReferenceAdapter()
   {
     inverseCrossReferencer = createInverseCrossReferencer();
@@ -314,7 +396,7 @@ public class ECrossReferenceAdapter implements Adapter.Internal
       resolveAll(eObject);
     }
     
-    EObject eContainer = eObject.eContainer();
+    EObject eContainer = resolve ? eObject.eContainer() : ((InternalEObject)eObject).eInternalContainer();
     if (eContainer != null)
     {
       result.add(((InternalEObject)eContainer).eSetting(eObject.eContainmentFeature()));
@@ -373,7 +455,7 @@ public class ECrossReferenceAdapter implements Adapter.Internal
         }
         else
         {
-          URI.createHierarchicalURI(null, null, resource.getURIFragment(eObject));
+          uri = URI.createHierarchicalURI(null, null, resource.getURIFragment(eObject));
         }
         List<EObject> proxies = inverseCrossReferencer.removeProxies(uri);
         if (proxies != null)
@@ -419,7 +501,8 @@ public class ECrossReferenceAdapter implements Adapter.Internal
   /**
    * Handles a notification by calling {@link #selfAdapt selfAdapter}.
    */
-  public void notifyChanged(Notification notification)
+  @Override
+public void notifyChanged(Notification notification)
   {
     selfAdapt(notification);
   }
@@ -513,13 +596,16 @@ public class ECrossReferenceAdapter implements Adapter.Internal
               if (entry.getValue() == notifier)
               {
                 i.remove();
-                EObject eObject = entry.getKey();
-                Collection<EStructuralFeature.Setting> settings = inverseCrossReferencer.get(eObject);
-                if (settings != null)
+                if (!resolve())
                 {
-                  for (EStructuralFeature.Setting setting : settings)
+                  EObject eObject = entry.getKey();
+                  Collection<EStructuralFeature.Setting> settings = inverseCrossReferencer.get(eObject);
+                  if (settings != null)
                   {
-                    inverseCrossReferencer.addProxy(eObject, setting.getEObject());
+                    for (EStructuralFeature.Setting setting : settings)
+                    {
+                      inverseCrossReferencer.addProxy(eObject, setting.getEObject());
+                    }
                   }
                 }
               }
@@ -664,7 +750,8 @@ public class ECrossReferenceAdapter implements Adapter.Internal
    * Handles installation of the adapter
    * by adding the adapter to each of the directly contained objects.
    */
-  public void setTarget(Notifier target)
+  @Override
+public void setTarget(Notifier target)
   {
     if (target instanceof EObject)
     {
@@ -734,7 +821,8 @@ public class ECrossReferenceAdapter implements Adapter.Internal
    * Handles undoing the installation of the adapter
    * by removing the adapter to each of the directly contained objects.
    */
-  public void unsetTarget(Notifier target)
+  @Override
+public void unsetTarget(Notifier target)
   {
     if (target instanceof EObject)
     {
@@ -792,7 +880,7 @@ public class ECrossReferenceAdapter implements Adapter.Internal
       Notifier notifier = contents.get(i);
       removeAdapter(notifier);
     }
-    unloadedEObjects.remove(target);
+    unloadedResources.remove(target);
   }
 
   /**
@@ -814,7 +902,16 @@ public class ECrossReferenceAdapter implements Adapter.Internal
     List<Adapter> eAdapters = notifier.eAdapters();
     if (!eAdapters.contains(this))
     {
-      eAdapters.add(this);
+      boolean oldSettingTargets = settingTargets;
+      try
+      {
+        settingTargets = true;
+        eAdapters.add(this);
+      }
+      finally
+      {
+        settingTargets = oldSettingTargets;
+      }
     }
   }
   
@@ -828,12 +925,14 @@ public class ECrossReferenceAdapter implements Adapter.Internal
     EcoreUtil.CrossReferencer.print(System.out, inverseCrossReferencer);
   }
 
-  public Notifier getTarget()
+  @Override
+public Notifier getTarget()
   {
     return null;
   }
 
-  public boolean isAdapterForType(Object type)
+  @Override
+public boolean isAdapterForType(Object type)
   {
     return false;
   }

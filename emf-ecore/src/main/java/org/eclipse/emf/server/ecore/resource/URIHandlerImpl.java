@@ -30,11 +30,14 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.URIHandler;
 
+import com.google.gwt.core.shared.GwtIncompatible;
+
 
 /**
  * An implementation of a {@link URIHandler URI handler}.
  *
  */
+@GwtIncompatible
 public class URIHandlerImpl implements URIHandler
 {
   /**
@@ -48,7 +51,8 @@ public class URIHandlerImpl implements URIHandler
   /**
    * This implementation always returns true; clients are generally expected to override this.
    */
-  public boolean canHandle(URI uri)
+  @Override
+public boolean canHandle(URI uri)
   {
     return true;
   }
@@ -91,7 +95,8 @@ public class URIHandlerImpl implements URIHandler
    * @return an open output stream.
    * @exception IOException if there is a problem obtaining an open output stream.
    */
-  public OutputStream createOutputStream(URI uri, Map<?, ?> options) throws IOException
+  @Override
+public OutputStream createOutputStream(URI uri, Map<?, ?> options) throws IOException
   {
     try
     {
@@ -163,7 +168,8 @@ public class URIHandlerImpl implements URIHandler
    * @return an open input stream.
    * @exception IOException if there is a problem obtaining an open input stream.
    */
-  public InputStream createInputStream(URI uri, Map<?, ?> options) throws IOException
+  @Override
+public InputStream createInputStream(URI uri, Map<?, ?> options) throws IOException
   {
     try
     {
@@ -186,7 +192,8 @@ public class URIHandlerImpl implements URIHandler
   /**
    * Only HTTP connections support delete.
    */
-  public void delete(URI uri, Map<?, ?> options) throws IOException
+  @Override
+public void delete(URI uri, Map<?, ?> options) throws IOException
   {
     try
     {
@@ -226,7 +233,8 @@ public class URIHandlerImpl implements URIHandler
   /**
    * This implementation delegates to the {@link #getURIConverter(Map) URI converter}'s {@link URIConverter#getContentHandlers() content handlers}.
    */
-  public Map<String, ?> contentDescription(URI uri, Map<?, ?> options) throws IOException
+  @Override
+public Map<String, ?> contentDescription(URI uri, Map<?, ?> options) throws IOException
   {
     URIConverter uriConverter = (URIConverter)options.get(URIConverter.OPTION_URI_CONVERTER);
     InputStream inputStream = null;
@@ -297,7 +305,8 @@ public class URIHandlerImpl implements URIHandler
    * If a stream can be created the file exists.
    * Specialized support is provided for HTTP connections to avoid fetching the whole stream in that case.
    */
-  public boolean exists(URI uri, Map<?, ?> options)
+  @Override
+public boolean exists(URI uri, Map<?, ?> options)
   {
     try
     {
@@ -327,7 +336,8 @@ public class URIHandlerImpl implements URIHandler
     }
   }
 
-  public Map<String, ?> getAttributes(URI uri, Map<?, ?> options)
+  @Override
+public Map<String, ?> getAttributes(URI uri, Map<?, ?> options)
   {
     Map<String, Object> result = new HashMap<String, Object>();
     Set<String> requestedAttributes = getRequestedAttributes(options);
@@ -399,27 +409,32 @@ public class URIHandlerImpl implements URIHandler
     return result;
   }
 
-  public void setAttributes(URI uri, Map<String, ?> attributes, Map<?, ?> options) throws IOException
+  @Override
+public void setAttributes(URI uri, Map<String, ?> attributes, Map<?, ?> options) throws IOException
   {
     // We can't update any properties via just a URL connection.
   }
   
-  public void createInputStream(URI uri, Map<?, ?> options, Callback<Map<?, ?>> callback)
+  @Override
+public void createInputStream(URI uri, Map<?, ?> options, Callback<Map<?, ?>> callback)
   {
     throw new UnsupportedOperationException();
   }
 
-  public void store(URI uri, byte[] bytes, Map<?, ?> options, Callback<Map<?, ?>> callback)
+  @Override
+public void store(URI uri, byte[] bytes, Map<?, ?> options, Callback<Map<?, ?>> callback)
   {
     throw new UnsupportedOperationException();
   }
 
-  public void delete(URI uri, Map<?, ?> options, Callback<Map<?, ?>> callback)
+  @Override
+public void delete(URI uri, Map<?, ?> options, Callback<Map<?, ?>> callback)
   {
     throw new UnsupportedOperationException();
   }
 
-  public void exists(URI uri, Map<?, ?> options, Callback<Boolean> callback)
+  @Override
+public void exists(URI uri, Map<?, ?> options, Callback<Boolean> callback)
   {
     throw new UnsupportedOperationException();
   }

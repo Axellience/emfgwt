@@ -302,6 +302,8 @@ public abstract class DelegatingEList<E> extends AbstractEList<E> implements Clo
   @Override
   public void addUnique(E object) 
   {
+    ++modCount;
+
     int size = size();
     delegateAdd(validate(size, object));
     didAdd(size, object);
@@ -327,6 +329,8 @@ public abstract class DelegatingEList<E> extends AbstractEList<E> implements Clo
   @Override
   public void addUnique(int index, E object) 
   {
+    ++modCount;
+
     delegateAdd(index, validate(index, object));
     didAdd(index, object);
     didChange();
@@ -351,6 +355,8 @@ public abstract class DelegatingEList<E> extends AbstractEList<E> implements Clo
   @Override
   public boolean addAllUnique(Collection<? extends E> collection) 
   {
+    ++modCount;
+
     if (collection.isEmpty())
     {
       return false;
@@ -383,6 +389,8 @@ public abstract class DelegatingEList<E> extends AbstractEList<E> implements Clo
   @Override
   public boolean addAllUnique(int index, Collection<? extends E> collection) 
   {
+    ++modCount;
+
     if (collection.isEmpty())
     {
       return false;
@@ -416,6 +424,8 @@ public abstract class DelegatingEList<E> extends AbstractEList<E> implements Clo
   public boolean addAllUnique(Object [] objects, int start, int end) 
   {
     int growth = end - start;
+
+    ++modCount;
     
     if (growth == 0)
     {
@@ -453,6 +463,8 @@ public abstract class DelegatingEList<E> extends AbstractEList<E> implements Clo
   {
     int growth = end - start;
 
+    ++modCount;
+    
     if (growth == 0)
     {
       return false;
@@ -525,6 +537,8 @@ public abstract class DelegatingEList<E> extends AbstractEList<E> implements Clo
   @Override
   public E remove(int index) 
   {
+    ++modCount;
+
     E oldObject = delegateRemove(index);
     didRemove(index, oldObject);
     didChange();
@@ -581,6 +595,8 @@ public abstract class DelegatingEList<E> extends AbstractEList<E> implements Clo
    */
   protected void doClear(int oldSize, Object [] oldData) 
   {
+    ++modCount;
+
     delegateClear();
 
     didClear(oldSize, oldData);
@@ -607,6 +623,7 @@ public abstract class DelegatingEList<E> extends AbstractEList<E> implements Clo
   @Override
   public E move(int targetIndex, int sourceIndex)
   {
+    ++modCount;
     int size = size();
     if (targetIndex >= size || targetIndex < 0)
       throw new IndexOutOfBoundsException("targetIndex=" + targetIndex + ", size=" + size);

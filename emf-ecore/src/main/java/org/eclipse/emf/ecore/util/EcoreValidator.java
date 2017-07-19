@@ -11,14 +11,18 @@
  */
 package org.eclipse.emf.ecore.util;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
@@ -30,14 +34,30 @@ import org.eclipse.emf.common.util.ResourceLocator;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.UniqueEList;
-
-import org.eclipse.emf.ecore.*;
-
+import org.eclipse.emf.ecore.EAnnotation;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EEnumLiteral;
+import org.eclipse.emf.ecore.EFactory;
+import org.eclipse.emf.ecore.EGenericType;
+import org.eclipse.emf.ecore.EModelElement;
+import org.eclipse.emf.ecore.ENamedElement;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
-
+import org.eclipse.emf.ecore.EParameter;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.ETypeParameter;
+import org.eclipse.emf.ecore.ETypedElement;
+import org.eclipse.emf.ecore.EValidator;
+import org.eclipse.emf.ecore.EcoreFactory;
+import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-
 import org.eclipse.emf.ecore.xml.namespace.XMLNamespacePackage;
 import org.eclipse.emf.ecore.xml.type.XMLTypePackage;
 import org.eclipse.emf.ecore.xml.type.util.XMLTypeValidator;
@@ -435,6 +455,10 @@ public class EcoreValidator extends EObjectValidator
         return validateEGenericType((EGenericType)value, diagnostics, context);
       case EcorePackage.ETYPE_PARAMETER:
         return validateETypeParameter((ETypeParameter)value, diagnostics, context);
+      case EcorePackage.EBIG_DECIMAL:
+        return validateEBigDecimal((BigDecimal)value, diagnostics, context);
+      case EcorePackage.EBIG_INTEGER:
+        return validateEBigInteger((BigInteger)value, diagnostics, context);
       case EcorePackage.EBOOLEAN:
         return validateEBoolean((Boolean)value, diagnostics, context);
       case EcorePackage.EBOOLEAN_OBJECT:
@@ -735,7 +759,7 @@ public class EcoreValidator extends EObjectValidator
         }
       }
 
-      if (!result)
+      if (!result && diagnostics != null)
       {
         // We do not want to diagnose any errors that have already been diagnosed by a super type.
         //
@@ -823,7 +847,7 @@ public class EcoreValidator extends EObjectValidator
         }
       }
 
-      if (!result)
+      if (!result && diagnostics != null)
       {
         // We do not want to diagnose any errors that have already been diagnosed by a super type.
         //
@@ -1458,7 +1482,8 @@ public class EcoreValidator extends EObjectValidator
    * Validates the WellFormedInstanceTypeName constraint of '<em>EClassifier</em>'.
    * <!-- begin-user-doc -->
    * The instance type name may be null only for a class or an enum
-   * and must be {@link EGenericTypeBuilder#parseInstanceTypeName(String) well formed} when not null.
+   * must be {@link EGenericTypeBuilder#parseInstanceTypeName(String) well formed} when not null,
+   * and must not specify type arguments if the classifier specifies type parameters.
    * <!-- end-user-doc -->
    * @generated NOT
    */
@@ -1545,6 +1570,23 @@ public class EcoreValidator extends EObjectValidator
       }
       diagnostics.add(diagnosic);
     }
+    if (result && instanceTypeName != null && instanceTypeName.indexOf('<') != -1 && eClassifier.getETypeParameters().size() != 0)
+    {
+      result = false;
+      if (diagnostics != null)
+      {
+        diagnostics.add
+          (createDiagnostic
+            (Diagnostic.ERROR,
+             DIAGNOSTIC_SOURCE,
+             WELL_FORMED_INSTANCE_TYPE_NAME,
+             "_UI_EClassifierInstanceTypeNameUnexpectedTypeArguments_diagnostic",
+             null,
+             new Object[] { eClassifier, EcorePackage.Literals.ECLASSIFIER__INSTANCE_TYPE_NAME },
+             context));
+      }
+    }
+
     return result;
   }
 
@@ -1584,7 +1626,7 @@ public class EcoreValidator extends EObjectValidator
       }
     }
 
-    if (!result)
+    if (!result && diagnostics != null)
     {
       for (Map.Entry<String, List<ETypeParameter>> entry : keys.entrySet())
       {
@@ -1702,7 +1744,7 @@ public class EcoreValidator extends EObjectValidator
       }
     }
 
-    if (!result)
+    if (!result && diagnostics != null)
     {
       for (Map.Entry<String, List<EEnumLiteral>> entry : keys.entrySet())
       {
@@ -1797,7 +1839,7 @@ public class EcoreValidator extends EObjectValidator
       }
     }
 
-    if (!result)
+    if (!result && diagnostics != null)
     {
       for (Map.Entry<String, List<EEnumLiteral>> entry : keys.entrySet())
       {
@@ -1897,11 +1939,6 @@ public class EcoreValidator extends EObjectValidator
     return true;
   }
 
-  protected static boolean isWhitespace(int codePoint)
-  {
-    return codePoint == ' ';
-  }
-
   /**
    * Validates the WellFormedName constraint of '<em>ENamed Element</em>'.
    * <!-- begin-user-doc -->
@@ -1924,15 +1961,20 @@ public class EcoreValidator extends EObjectValidator
     if (name != null)
     {
       int length = name.length();
-      if (length > 0 && isJavaIdentifierStart(name.codePointAt(0)))
+      if (length > 0)
       {
-        result = true;
-        for (int i = Character.offsetByCodePoints(name, 0, 1); i < length; i = Character.offsetByCodePoints(name, i, 1))
+        int codePoint = name.codePointAt(0);
+        if (isJavaIdentifierStart(codePoint) && codePoint != '$')
         {
-          if (!isJavaIdentifierPart(name.codePointAt(i)))
+          result = true;
+          for (int i = Character.offsetByCodePoints(name, 0, 1); i < length; i = Character.offsetByCodePoints(name, i, 1))
           {
-            result = false;
-            break;
+            codePoint = name.codePointAt(i);
+            if (codePoint == '$' || !isJavaIdentifierPart(codePoint))
+            {
+              result = false;
+              break;
+            }
           }
         }
       }
@@ -2027,7 +2069,7 @@ public class EcoreValidator extends EObjectValidator
       }
     }
 
-    if (!result)
+    if (!result && diagnostics != null)
     {
       for (Map.Entry<String, List<EParameter>> entry : keys.entrySet())
       {
@@ -2092,7 +2134,7 @@ public class EcoreValidator extends EObjectValidator
       }
     }
 
-    if (!result)
+    if (!result && diagnostics != null)
     {
       for (Map.Entry<String, List<ETypeParameter>> entry : keys.entrySet())
       {
@@ -2270,7 +2312,7 @@ public class EcoreValidator extends EObjectValidator
       }
     }
     
-    if (!result)
+    if (!result && diagnostics != null)
     {
       for (Map.Entry<String, List<EPackage>> entry : keys.entrySet())
       {
@@ -2345,7 +2387,7 @@ public class EcoreValidator extends EObjectValidator
       }
     }
 
-    if (!result)
+    if (!result && diagnostics != null)
     {
       for (Map.Entry<String, List<EClassifier>> entry : keys.entrySet())
       {
@@ -2566,6 +2608,22 @@ public class EcoreValidator extends EObjectValidator
                    context));
             }
           }
+        }
+      }
+      if (result)
+      {
+        result = eReference != eOpposite;
+        if (diagnostics != null && !result)
+        {
+          diagnostics.add
+            (createDiagnostic
+              (Diagnostic.ERROR,
+               DIAGNOSTIC_SOURCE,
+               CONSISTENT_OPPOSITE_BAD_TRANSIENT,
+               "_UI_EReferenceSelfOpposite_diagnostic",
+               null,
+               new Object[] { eReference, eOpposite, EcorePackage.Literals.EREFERENCE__EOPPOSITE, EcorePackage.Literals.EREFERENCE__EOPPOSITE },
+               context));
         }
       }
       if (result)
@@ -2804,10 +2862,11 @@ public class EcoreValidator extends EObjectValidator
           }
           else
           {
-            // If there is a conversion delegate then the lack of a default value really does indicate that there is a problem converting the literal to a value.
+            // If there is a conversion delegate then the lack of a default value really does indicate that there is a problem converting the literal to a value,
+            // unless there is no instance class, in which case we mustn't be able to load the class and we can't expect the conversion delegate to function.
             //
             EDataType.Internal.ConversionDelegate conversionDelegate = ((EDataType.Internal)eDataType).getConversionDelegate();
-            if (conversionDelegate != null)
+            if (conversionDelegate != null && eDataType.getInstanceClass() != null)
             {
               result = false;
             }
@@ -3722,7 +3781,8 @@ public class EcoreValidator extends EObjectValidator
             if (eBoundClass != null)
             {
               Class<?> eClassifierClass = eClassifier.getInstanceClass();
-              if (eClassifierClass != null /*&& !eBoundClass.isAssignableFrom(eClassifierClass)*/)
+//              if (eClassifierClass != null && !eBoundClass.isAssignableFrom(eClassifierClass))
+              if (eClassifierClass != null && !EcoreUtil.isAssignableFrom(eClassifierClass, eBoundClass))
               {
                 return false;
               }
@@ -3756,7 +3816,7 @@ public class EcoreValidator extends EObjectValidator
           {
             return true;
           }
-          else if (substitution != null && substitution.getEUpperBound() != eGenericType && substitution.getELowerBound() != eGenericType)
+          else if (substitution != null && substitution.getEUpperBound() != eGenericType && substitution.getELowerBound() != eGenericType && !isCircularSubstitution(eTypeParameter, substitution, substitutions))
           {
             return isBounded(substitution, eBound, substitutions);
           }
@@ -3889,6 +3949,33 @@ public class EcoreValidator extends EObjectValidator
         }
       }
     }
+  }
+
+  private static boolean isCircularSubstitution(ETypeParameter eTypeParameter, EGenericType substitution, Map<? extends ETypeParameter, ? extends EGenericType> substitutions)
+  {
+    Set<ETypeParameter> visited = new HashSet<ETypeParameter>();
+    for (ETypeParameter otherETypeParameter = substitution.getETypeParameter(); otherETypeParameter != null; )
+    {
+      if (otherETypeParameter == eTypeParameter)
+      {
+        return true;
+      }
+
+      if (!visited.add(otherETypeParameter))
+      {
+        return false;
+      }
+
+      EGenericType otherSubstitution = substitutions.get(otherETypeParameter);
+      if (otherSubstitution == null)
+      {
+        return false;
+      }
+
+      otherETypeParameter = otherSubstitution.getETypeParameter();
+    }
+
+    return false;
   }
 
   public static boolean matchingTypeArguments
@@ -4139,6 +4226,26 @@ public class EcoreValidator extends EObjectValidator
     if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(eTypeParameter, diagnostics, context);
     if (result || diagnostics != null) result &= validateENamedElement_WellFormedName(eTypeParameter, diagnostics, context);
     return result;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean validateEBigDecimal(BigDecimal eBigDecimal, DiagnosticChain diagnostics, Map<Object, Object> context)
+  {
+    return true;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean validateEBigInteger(BigInteger eBigInteger, DiagnosticChain diagnostics, Map<Object, Object> context)
+  {
+    return true;
   }
 
   /**
@@ -4666,7 +4773,7 @@ public class EcoreValidator extends EObjectValidator
                 ++brackets;
                 continue LOOP;
               }
-              else if (!isWhitespace(codePoint))
+              else if (!Character.isWhitespace(codePoint))
               {
                 report
                   (diagnostics, 
@@ -4686,7 +4793,7 @@ public class EcoreValidator extends EObjectValidator
         }
         else if (brackets > 0)
         {
-          if (!isWhitespace(codePoint))
+          if (!Character.isWhitespace(codePoint))
           {
             report
               (diagnostics, 
@@ -4739,7 +4846,7 @@ public class EcoreValidator extends EObjectValidator
           }
           identifierLast = i;
         }
-        else if (isWhitespace(codePoint))
+        else if (Character.isWhitespace(codePoint))
         {
           if (identifierStart == -1)
           {
@@ -4947,7 +5054,7 @@ public class EcoreValidator extends EObjectValidator
                     instanceTypeName[i + 4] == 'n' &&
                     instanceTypeName[i + 5] == 'd' &&
                     instanceTypeName[i + 6] == 's' &&
-                    isWhitespace(Character.codePointAt(instanceTypeName, i + 7)))
+                    Character.isWhitespace(Character.codePointAt(instanceTypeName, i + 7)))
               {
                 EGenericType eUpperBound = 
                   handleInstanceTypeName
@@ -4978,7 +5085,7 @@ public class EcoreValidator extends EObjectValidator
                     instanceTypeName[i + 2] == 'p' &&
                     instanceTypeName[i + 3] == 'e' &&
                     instanceTypeName[i + 4] == 'r' &&
-                    isWhitespace(Character.codePointAt(instanceTypeName, i + 5)))
+                    Character.isWhitespace(Character.codePointAt(instanceTypeName, i + 5)))
               {
                 EGenericType eLowerBound = 
                   handleInstanceTypeName
@@ -5002,7 +5109,7 @@ public class EcoreValidator extends EObjectValidator
           }
           default:
           {
-            if (isWhitespace(codePoint))
+            if (Character.isWhitespace(codePoint))
             {
               break;
             }
@@ -5122,7 +5229,7 @@ public class EcoreValidator extends EObjectValidator
       for (int i = start; i < end; i = Character.offsetByCodePoints(typeParameters, 0, typeParameters.length, i, 1))
       {
         int codePoint = Character.codePointAt(typeParameters, i);
-        if (isWhitespace(codePoint))
+        if (Character.isWhitespace(codePoint))
         {
           if (identifierStart != -1)
           {
@@ -5139,7 +5246,7 @@ public class EcoreValidator extends EObjectValidator
                typeParameters[i + 4] == 'n' &&
                typeParameters[i + 5] == 'd' &&
                typeParameters[i + 6] == 's' &&
-               isWhitespace(Character.codePointAt(typeParameters, i + 7)))
+               Character.isWhitespace(Character.codePointAt(typeParameters, i + 7)))
           {
             i += 7;
             int boundStart = i;

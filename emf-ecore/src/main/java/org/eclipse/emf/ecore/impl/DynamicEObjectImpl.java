@@ -28,7 +28,7 @@ public class DynamicEObjectImpl extends EObjectImpl implements EStructuralFeatur
 {
   public static final class BasicEMapEntry<K, V> extends DynamicEObjectImpl implements BasicEMap.Entry<K, V>
   {
-    protected transient int hash = -1;
+    protected int hash = -1;
     protected EStructuralFeature keyFeature;
     protected EStructuralFeature valueFeature;
 

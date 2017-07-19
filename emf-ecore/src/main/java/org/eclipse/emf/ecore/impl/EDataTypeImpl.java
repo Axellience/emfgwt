@@ -20,9 +20,10 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.ETypeParameter;
 import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.util.ExtendedMetaData;
 
 import com.google.gwt.user.client.rpc.GwtTransient;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 
 
 /**
@@ -72,7 +73,15 @@ public class EDataTypeImpl extends EClassifierImpl implements EDataType, EDataTy
     eFlags |= SERIALIZABLE_EFLAG;
   }
 
-  @GwtTransient
+  @Override
+  protected void freeze()
+  {
+    // Bug 433108: Lock in the shared extended metadata for this data type
+    ExtendedMetaData.INSTANCE.getName(this);
+
+    super.freeze();
+  }
+
   protected Object defaultValue = null;
   @GwtTransient
   protected boolean defaultValueIsSet = false;
@@ -160,7 +169,8 @@ public class EDataTypeImpl extends EClassifierImpl implements EDataType, EDataTy
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isSerializable()
+  @Override
+public boolean isSerializable()
   {
     return (eFlags & SERIALIZABLE_EFLAG) != 0;
   }
@@ -170,7 +180,8 @@ public class EDataTypeImpl extends EClassifierImpl implements EDataType, EDataTy
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setSerializable(boolean newSerializable)
+  @Override
+public void setSerializable(boolean newSerializable)
   {
     boolean oldSerializable = (eFlags & SERIALIZABLE_EFLAG) != 0;
     if (newSerializable) eFlags |= SERIALIZABLE_EFLAG; else eFlags &= ~SERIALIZABLE_EFLAG;
@@ -330,20 +341,25 @@ public class EDataTypeImpl extends EClassifierImpl implements EDataType, EDataTy
   protected ConversionDelegate conversionDelegate;
   protected boolean conversionDelegateIsSet;
 
-  public ConversionDelegate getConversionDelegate()
+  @Override
+public ConversionDelegate getConversionDelegate()
   {
     if (!conversionDelegateIsSet)
     {
       List<String> conversionDelegates = EcoreUtil.getConversionDelegates(getEPackage());
       if (!conversionDelegates.isEmpty())
       {
-        for (String eDataTypeDelegateUri : conversionDelegates)
+        for (String eDataTypeDelegateURI : conversionDelegates)
         {
-          if (this.getEAnnotation(eDataTypeDelegateUri) != null)
+          if (this.getEAnnotation(eDataTypeDelegateURI) != null)
           {
             EDataType.Internal.ConversionDelegate.Factory eDataTypeDelegateFactory = EcoreUtil.getConversionDelegateFactory(this);
-            conversionDelegate = eDataTypeDelegateFactory.createConversionDelegate(this);
-            conversionDelegateIsSet = true;
+            if (eDataTypeDelegateFactory != null)
+            {
+              conversionDelegate = eDataTypeDelegateFactory.createConversionDelegate(this);
+              conversionDelegateIsSet = true;
+              break;
+            }
           }
         }
       }
@@ -351,7 +367,8 @@ public class EDataTypeImpl extends EClassifierImpl implements EDataType, EDataTy
     return conversionDelegate;
   }
 
-  public void setConversionDelegate(ConversionDelegate conversionDelegate)
+  @Override
+public void setConversionDelegate(ConversionDelegate conversionDelegate)
   {
     this.conversionDelegate = conversionDelegate;
     conversionDelegateIsSet = conversionDelegate != null;

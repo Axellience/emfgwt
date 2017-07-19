@@ -12,6 +12,8 @@ package org.eclipse.emf.ecore.impl;
 
 
 import java.util.Arrays;
+ 
+import org.eclipse.emf.common.notify.impl.BasicNotifierImpl;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -34,8 +36,9 @@ import com.google.gwt.user.client.rpc.GwtTransient;
 
 /**
  * A space compact implementation of the model object '<em><b>EObject</b></em>'.
+ * @since 2.5
  */
-public class MinimalEObjectImpl extends BasicEObjectImpl implements EObject, EStructuralFeature.Internal.DynamicValueHolder
+public class MinimalEObjectImpl extends BasicEObjectImpl implements EStructuralFeature.Internal.DynamicValueHolder
 {
   public static class Container extends MinimalEObjectImpl
   {
@@ -203,43 +206,49 @@ public class MinimalEObjectImpl extends BasicEObjectImpl implements EObject, ESt
   private static final int ADAPTER = 1 << 2;
 
   /**
+   * The {@link #eFlags bit flag} for indicating that a dynamic {@link BasicNotifierImpl.EObservableAdapterList.Listener adapter list listener} field is allocated.
+   */
+  private static final int ADAPTER_LISTENER = 1 << 3;
+
+  /**
    * The {@link #eFlags bit flag} for indicating that a dynamic {@link #eClass() class} field is allocated.
    * A derived implementation wishing to allocate a static class field
    * should override {@link #eDynamicClass()} and {@link #eSetClass(EClass)}.
    */
-  private static final int CLASS = 1 << 3;
+  private static final int CLASS = 1 << 4;
 
   /**
    * The {@link #eFlags bit flag} for indicating that a dynamic {@link #eSettings() settings} field is allocated.
    * A derived implementation wishing to allocate a static settings field
    * should override {@link #eHasSettings()}, {@link #eBasicSettings()}, and {@link #eBasicSetSettings(Object[])}.
    */
-  private static final int SETTING = 1 << 4;
+  private static final int SETTING = 1 << 5;
 
   /**
    * The {@link #eFlags bit flag} for indicating that a dynamic {@link #eProxyURI() proxy URI} field is allocated.
    * A derived implementation wishing to allocate a static proxy URI field
    * should override {@link #eIsProxy()}, {@link #eProxyURI()}, and {@link #eSetProxyURI(URI)}.
    */
-  private static final int PROXY = 1 << 5;
+  private static final int PROXY = 1 << 6;
 
   /**
    * The {@link #eFlags bit flag} for indicating that a dynamic {@link #eResource() resource} field is allocated.
    * A derived implementation wishing to allocate a static resource field
    * should override {@link #eDirectResource()} and {@link #eSetDirectResource(Resource.Internal)}.
    */
-  private static final int RESOURCE = 1 << 6;
+  private static final int RESOURCE = 1 << 7;
 
   /**
    * A bit mask for all the bit flags representing fields.
    */
-  private static final int FIELD_MASK = CONTAINER | ADAPTER | CLASS | SETTING | PROXY | RESOURCE;
+  private static final int FIELD_MASK = CONTAINER | ADAPTER | ADAPTER_LISTENER | CLASS | SETTING | PROXY | RESOURCE;
 
   /**
    * A bit flag field with bits for
    * {@link #NO_DELIVER},
    * {@link #CONTAINER},
    * {@link #ADAPTER},
+   * {@link #ADAPTER_LISTENER},
    * {@link #CLASS},
    * {@link #SETTING},
    * {@link #PROXY},
@@ -251,6 +260,7 @@ public class MinimalEObjectImpl extends BasicEObjectImpl implements EObject, ESt
    * @see #NO_DELIVER
    * @see #CONTAINER
    * @see #ADAPTER
+   * @see #ADAPTER_LISTENER
    * @see #CLASS
    * @see #SETTING
    * @see #PROXY
@@ -447,72 +457,135 @@ public class MinimalEObjectImpl extends BasicEObjectImpl implements EObject, ESt
   @Override
   public EList<Adapter> eAdapters()
   {
-    return
-      new ArrayDelegatingEList<Adapter>()
+    class ArrayDelegatingAdapterList extends ArrayDelegatingEList<Adapter> implements BasicNotifierImpl.EObservableAdapterList
+    {
+      private static final long serialVersionUID = 1L;
+
+      @Override
+      protected Object[] newData(int capacity)
       {
-        private static final long serialVersionUID = 1L;
+        return new Adapter[capacity];
+      }
 
-        @Override
-        protected Object[] newData(int capacity)
-        {
-          return new Adapter[capacity];
-        }
+      @Override
+      public Object[] data()
+      {
+        return eBasicAdapterArray();
+      }
 
-        @Override
-        public Object[] data()
+      @Override
+      public void setData(Object[] data)
+      {
+        ++modCount;
+        if (data != null)
         {
-          return eBasicAdapterArray();
-        }
-
-        @Override
-        public void setData(Object[] data)
-        {
-          InternalEObject eContainer = eInternalContainer();
-          if (eContainer instanceof BasicEObjectImpl)
+          Adapter[] eContainerAdapterArray = eContainerAdapterArray();
+          if (Arrays.equals(data, eContainerAdapterArray))
           {
-            Adapter[] eContainerAdapterArray = eContainerAdapterArray();
-            if (Arrays.equals(data, eContainerAdapterArray))
+            eBasicSetAdapterArray(eContainerAdapterArray);
+            return;
+          }
+        }
+        eBasicSetAdapterArray((Adapter[])data);
+      }
+
+      @Override
+      protected void didAdd(int index, Adapter newAdapter)
+      {
+        newAdapter.setTarget(MinimalEObjectImpl.this);
+        Listener[] listeners = eBasicAdapterListeners();
+        if (listeners != null)
+        {
+          for (Listener listener : listeners)
+          {
+            listener.added(MinimalEObjectImpl.this, newAdapter);
+          }
+        }
+      }
+
+      @Override
+      protected void didRemove(int index, Adapter oldAdapter)
+      {
+        Listener[] listeners = eBasicAdapterListeners();
+        if (listeners != null)
+        {
+          for (Listener listener : listeners)
+          {
+            listener.removed(MinimalEObjectImpl.this, oldAdapter);
+          }
+        }
+        Adapter adapter = oldAdapter;
+        if (eDeliver())
+        {
+          Notification notification =
+            new NotificationImpl(Notification.REMOVING_ADAPTER, oldAdapter, null, index)
             {
-              eBasicSetAdapterArray(eContainerAdapterArray);
-              return;
+              @Override
+              public Object getNotifier()
+              {
+                return MinimalEObjectImpl.this;
+              }
+            };
+          adapter.notifyChanged(notification);
+        }
+        if (adapter instanceof Adapter.Internal)
+        {
+          ((Adapter.Internal)adapter).unsetTarget(MinimalEObjectImpl.this);
+        }
+        else if (adapter.getTarget() == MinimalEObjectImpl.this)
+        {
+          adapter.setTarget(null);
+        }
+      }
+
+      public void addListener(Listener listener)
+      {
+        Listener[] listeners = eBasicAdapterListeners();
+        if (listeners == null)
+        {
+          listeners = new Listener [] { listener };
+        }
+        else
+        {
+          Listener[] newListeners = new Listener[listeners.length + 1];
+          System.arraycopy(listeners, 0, newListeners, 0, listeners.length);
+          newListeners[listeners.length] = listener;
+          listeners = newListeners;
+        }
+        eBasicSetAdapterListeners(listeners);
+      }
+
+      public void removeListener(Listener listener)
+      {
+        Listener[] listeners = eBasicAdapterListeners();
+        if (listeners != null)
+        {
+          for (int i = 0; i < listeners.length; ++i)
+          {
+            if (listeners[i] == listener)
+            {
+              if (listeners.length == 1)
+              {
+                listeners = null;
+              }
+              else
+              {
+                Listener[] newListeners = new Listener[listeners.length - 1];
+                System.arraycopy(listeners, 0, newListeners, 0, i);
+                if (i != newListeners.length)
+                {
+                  System.arraycopy(listeners, i + 1, newListeners, i, newListeners.length - i);
+                } 
+                listeners = newListeners;
+              }
+              eBasicSetAdapterListeners(listeners);
+              break;
             }
           }
-          eBasicSetAdapterArray((Adapter[])data);
         }
-
-        @Override
-        protected void didAdd(int index, Adapter newObject)
-        {
-          newObject.setTarget(MinimalEObjectImpl.this);
-        }
-
-        @Override
-        protected void didRemove(int index, Adapter oldObject)
-        {
-          Adapter adapter = oldObject;
-          if (eDeliver())
-          {
-            Notification notification =
-              new NotificationImpl(Notification.REMOVING_ADAPTER, oldObject, null, index)
-              {
-                @Override
-                public Object getNotifier()
-                {
-                  return MinimalEObjectImpl.this;
-                }
-              };
-            adapter.notifyChanged(notification);
-          }
-          if (adapter instanceof Adapter.Internal)
-          {
-            ((Adapter.Internal)adapter).unsetTarget(MinimalEObjectImpl.this);
-          }
-          else if (adapter.getTarget() == MinimalEObjectImpl.this)
-          {
-            adapter.setTarget(null);
-          }
-        }
-      };
+      }
+    }
+    return new ArrayDelegatingAdapterList();
   }
 
   @Override
@@ -530,6 +603,16 @@ public class MinimalEObjectImpl extends BasicEObjectImpl implements EObject, ESt
   protected boolean eBasicHasAdapters()
   {
     return hasField(ADAPTER);
+  }
+
+  protected EObservableAdapterList.Listener[] eBasicAdapterListeners()
+  {
+    return (EObservableAdapterList.Listener[])getField(ADAPTER_LISTENER);
+  }
+
+  protected void eBasicSetAdapterListeners(EObservableAdapterList.Listener[] eAdapterListeners)
+  {
+    setField(ADAPTER_LISTENER, eAdapterListeners);
   }
 
   @Override
@@ -641,7 +724,7 @@ public class MinimalEObjectImpl extends BasicEObjectImpl implements EObject, ESt
       int size =  eClass().getFeatureCount() - eStaticFeatureCount();
       if (size != 0)
       {
-        eBasicSetSettings(size == 0 ? EPropertiesHolderBaseImpl.NO_SETTINGS : new Object [size]);
+        eBasicSetSettings(new Object [size]);
       }
     }
 
@@ -672,7 +755,7 @@ public class MinimalEObjectImpl extends BasicEObjectImpl implements EObject, ESt
     return ECrossReferenceEList.createECrossReferenceEList(this);
   }
 
-  private Object[] eDynamicSettings()
+  Object[] eDynamicSettings()
   {
     Object[] settings = eBasicSettings();
     if (settings == null)

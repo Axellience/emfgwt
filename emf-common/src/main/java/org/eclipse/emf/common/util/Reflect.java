@@ -16,6 +16,7 @@ import java.util.Map;
 /**
  * A utility class for helping implement reflective capabilities not available with Google Widget Toolkit,
  * i.e., specifically the ability to {@link Class#isInstance(Object) instance test} and to {@link Array#newInstance(Class, int) create typed arrays}.
+ * This is provided in the regular core runtime only to support single sourcing of generated client models that are also targeting the EMF GWT runtime.
  * @since 2.7
  */
 public final class Reflect
@@ -24,6 +25,8 @@ public final class Reflect
    * A global registry of helper instances.
    */
   static final Map<Class<?>, Helper> HELPER_REGISTRY = new HashMap<Class<?>, Reflect.Helper>();
+  
+  public static boolean STRICT = false;
 
   /**
    * An interface implemented by reflective helpers.
@@ -59,9 +62,13 @@ public final class Reflect
     {
       return helper.isInstance(instance);
     }
-    else
+    else if (STRICT)
     {
       throw new UnsupportedOperationException();
+    }
+    else
+    {
+        return true;
     }
   }
 }
