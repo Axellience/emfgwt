@@ -26,8 +26,16 @@ public final class Reflect
    */
   static final Map<Class<?>, Helper> HELPER_REGISTRY = new HashMap<Class<?>, Reflect.Helper>();
   
-  public static boolean STRICT = false;
-
+  protected static boolean STRICT = false;
+  
+  public static boolean isStrict() {
+      return STRICT;
+  }
+  
+  public static void setStrict(boolean enable) {
+      STRICT = enable;
+  }
+  
   /**
    * An interface implemented by reflective helpers.
    */
@@ -62,7 +70,7 @@ public final class Reflect
     {
       return helper.isInstance(instance);
     }
-    else if (STRICT)
+    else if (isStrict())
     {
       throw new UnsupportedOperationException();
     }
