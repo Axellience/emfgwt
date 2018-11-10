@@ -17,6 +17,10 @@
 		<module>emf-common</module>
 		<module>emf-ecore</module>
 		<module>emf-edit</module>
+		<module>emf-change</module>
+		<module>emf-validation</module>
+		<module>emf-transaction</module>
+		<module>eclipse-runtime</module>
 	</modules>
 
 	<scm>
