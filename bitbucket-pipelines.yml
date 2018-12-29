@@ -1,0 +1,18 @@
+image: maven:3.5.2
+
+pipelines:
+  default:
+    - step:
+        caches:
+          - maven
+        size: 2x
+        script:
+          - mvn -B -s settings.xml clean test -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=axellience -Dsonar.login=$SONAR_TOKEN sonar:sonar
+  branches:
+    '{master,develop}':
+      - step:
+          caches:
+            - maven
+          size: 2x
+          script:
+            - mvn -B -s settings.xml clean deploy -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=axellience -Dsonar.login=$SONAR_TOKEN sonar:sonar
